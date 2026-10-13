@@ -24,8 +24,8 @@ Para cambios pequeños (bug simple, ajuste menor) el dueño puede autorizar ir d
 Features sin interfaz (solo backend) omiten `ux-designer`.
 
 ## Contexto del proyecto
-- Leer el `CLAUDE.md` del proyecto antes de delegar: su stack, comandos y restricciones son obligatorios para todos los roles y prevalecen sobre estas reglas en lo específico del proyecto.
-- Si el proyecto no tiene `CLAUDE.md` o le faltan stack y comandos de tests, avisar al dueño y proponer completarlo antes de empezar.
+- Leer el {{AGENT_GUIDE_FILE}} del proyecto antes de delegar: su stack, comandos y restricciones son obligatorios para todos los roles y prevalecen sobre estas reglas en lo específico del proyecto.
+- Si el proyecto no tiene {{AGENT_GUIDE_FILE}} o le faltan stack y comandos de tests, avisar al dueño y proponer completarlo antes de empezar.
 
 ## Definition of Done
 - Criterios de aceptación cubiertos por tests y todos en verde.

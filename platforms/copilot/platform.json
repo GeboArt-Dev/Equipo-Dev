@@ -1,0 +1,38 @@
+{
+  "id": "copilot",
+  "displayName": "GitHub Copilot",
+  "status": "draft",
+  "output": {
+    "dir": "dist/copilot",
+    "templateFile": ".github/copilot-instructions.md"
+  },
+  "manifest": {
+    "fields": ["name", "displayName", "version", "description"]
+  },
+  "tools": {
+    "read_file": ["Read"],
+    "list_dir": ["ListDir"],
+    "write_file": ["Write"],
+    "edit_file": ["Edit"],
+    "execute_command": ["Terminal"],
+    "find_by_name": ["FileSearch"],
+    "grep_search": ["GrepSearch"],
+    "web_search": ["WebSearch"],
+    "web_fetch": ["WebFetch"]
+  },
+  "models": {
+    "pro": "claude-3.5-sonnet",
+    "balanced": "claude-3.5-sonnet",
+    "light": "gpt-4o-mini"
+  },
+  "tokens": {
+    "{{AGENT_GUIDE_FILE}}": "`.github/copilot-instructions.md`",
+    "{{CMD_TOOL}}": "Terminal",
+    "{{SEARCH_TOOL}}": "(File Search / Grep)",
+    "{{SUBAGENT_DISPATCH_GUIDE}}": "Actúa como orquestador del equipo de desarrollo, siguiendo las fases del equipo.",
+    "{{UX_SEARCH_LOCATION}}": "Usa ui-ux-pro-max si está instalado en el sistema."
+  },
+  "templates": [
+    { "from": "platforms/copilot/templates/copilot-instructions.md", "to": ".github/copilot-instructions.md" }
+  ]
+}

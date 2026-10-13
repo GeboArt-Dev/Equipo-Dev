@@ -1,0 +1,53 @@
+{
+  "id": "antigravity",
+  "displayName": "Google Antigravity",
+  "status": "active",
+  "output": {
+    "dir": "dist/antigravity/equipo-dev",
+    "manifestFile": "plugin.json"
+  },
+  "manifest": {
+    "fields": ["name", "displayName", "version", "description", "suggestedPrompts"]
+  },
+  "tools": {
+    "read_file": ["view_file", "list_dir"],
+    "list_dir": ["list_dir"],
+    "write_file": ["write_to_file"],
+    "edit_file": ["replace_file_content", "multi_replace_file_content"],
+    "execute_command": ["run_command"],
+    "find_by_name": ["find_by_name"],
+    "grep_search": ["grep_search"],
+    "web_search": ["search_web"],
+    "web_fetch": ["read_url_content"]
+  },
+  "models": {
+    "pro": "pro",
+    "balanced": "inherit",
+    "light": "flash"
+  },
+  "frontmatter": {
+    "inject": {
+      "subagent": true,
+      "mainAgent": false
+    },
+    "drop": ["color", "skills", "permissionMode"]
+  },
+  "tokens": {
+    "{{AGENT_GUIDE_FILE}}": "`AGENTS.md` (o `GEMINI.md` / `CLAUDE.md`)",
+    "{{CMD_TOOL}}": "`run_command`",
+    "{{SEARCH_TOOL}}": "(`find_by_name` / `grep_search`)",
+    "{{SUBAGENT_DISPATCH_GUIDE}}": "Actúa como orquestador. Delega cada paso en su subagente y respeta las pausas.\n\nEn Antigravity, lanza cada rol con `invoke_subagent` usando como `TypeName` el nombre del agente del plugin (`product-owner`, `ux-designer`, `architect`, `backend-dev`, `frontend-dev`, `qa-engineer`, `code-reviewer`) y `Workspace: inherit`. Pásale en el `Prompt` las rutas de entrada y la raíz del proyecto (el subagente no ve esta conversación). Espera su mensaje de resultado antes de seguir; no consultes su estado en bucle.",
+    "{{UX_SEARCH_LOCATION}}": "   - Búscalo con `find_by_name` (patrón `search.py`) dentro de `~/.gemini/config/plugins/` y de `.agents/plugins/` del proyecto, en la carpeta del plugin ui-ux-pro-max.\n   - Si no aparece, prueba en `~/.claude/plugins/` (instalación de Claude Code). Si tampoco está, detente y avisa al orquestador: no diseñes sin el buscador."
+  },
+  "overrides": {
+    "skillsDir": "platforms/antigravity/skills"
+  },
+  "assets": [
+    { "from": "platforms/antigravity/hooks.json", "to": "hooks.json" },
+    { "from": "platforms/antigravity/hooks", "to": "hooks" }
+  ],
+  "install": {
+    "targetDir": "~/.gemini/config/plugins/equipo-dev",
+    "preserve": ["state"]
+  }
+}

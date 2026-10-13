@@ -6,7 +6,7 @@ description: Ejecuta o retoma el flujo del equipo para una feature (PO → UX �
 
 Argumento: descripción de la feature en lenguaje natural, o el nombre de una feature ya empezada ("continuemos con CheckIn").
 
-Antes de empezar, carga la skill `reglas-equipo` y aplícala. Actúa como orquestador. Delega cada paso en su subagente y respeta las pausas.
+Antes de empezar, carga la skill `reglas-equipo` y aplícala. {{SUBAGENT_DISPATCH_GUIDE}}
 
 0. **Retomar antes de empezar** (siempre, antes de lanzar ningún subagente):
    - Busca archivos de la feature por nombre, sin distinguir mayúsculas ni guiones (`checkin`, `check-in`, `check_in`), en `docs/specs/`, `docs/ux/`, `docs/adr/` y `docs/qa/`. Revisa también los cambios pendientes con `git status`.

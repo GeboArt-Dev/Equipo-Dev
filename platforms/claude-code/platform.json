@@ -1,0 +1,46 @@
+{
+  "id": "claude-code",
+  "displayName": "Claude Code",
+  "status": "active",
+  "output": {
+    "dir": "dist/claude-code/equipo-dev",
+    "manifestFile": ".claude-plugin/plugin.json"
+  },
+  "manifest": {
+    "fields": ["name", "version", "description", "author", "keywords", "types"],
+    "extraFields": {
+      "types": "./types/index.d.ts"
+    }
+  },
+  "tools": {
+    "read_file": ["Read"],
+    "list_dir": ["Read"],
+    "write_file": ["Write"],
+    "edit_file": ["Edit"],
+    "execute_command": ["Bash"],
+    "find_by_name": ["Glob"],
+    "grep_search": ["Grep"],
+    "web_search": ["WebSearch"],
+    "web_fetch": ["WebFetch"]
+  },
+  "models": {
+    "pro": "opus",
+    "balanced": "sonnet",
+    "light": "haiku"
+  },
+  "frontmatter": {
+    "inject": {},
+    "drop": []
+  },
+  "tokens": {
+    "{{AGENT_GUIDE_FILE}}": "`CLAUDE.md`",
+    "{{CMD_TOOL}}": "Bash",
+    "{{SEARCH_TOOL}}": "(Glob/Grep)",
+    "{{SUBAGENT_DISPATCH_GUIDE}}": "Actúa como orquestador. Delega cada paso en su subagente y respeta las pausas.",
+    "{{UX_SEARCH_LOCATION}}": "   - Usa `${CLAUDE_PLUGIN_ROOT}` solo si apunta al plugin ui-ux-pro-max.\n   - Si no, búscalo con Glob: `~/.claude/plugins/**/ui-ux-pro-max/scripts/search.py`."
+  },
+  "assets": [
+    { "from": "platforms/claude-code/hooks", "to": "hooks" },
+    { "from": "platforms/claude-code/types", "to": "types" }
+  ]
+}

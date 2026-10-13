@@ -1,0 +1,23 @@
+{
+  "name": "equipo-dev",
+  "displayName": "Equipo Dev",
+  "version": "0.5.0",
+  "description": "Equipo de desarrollo de software con subagentes (Product Owner, Diseñador UI/UX, Arquitecto, Backend, Frontend, QA y Code Reviewer), el flujo /feature con aprobaciones del dueño y panel/estado en vivo.",
+  "author": {
+    "name": "GeboArt.Dev"
+  },
+  "keywords": [
+    "desarrollo",
+    "subagentes",
+    "ux",
+    "product-owner",
+    "arquitectura",
+    "qa",
+    "code-review"
+  ],
+  "suggestedPrompts": [
+    "/feature reservas de citas online",
+    "/feature continuemos con CheckIn",
+    "/equipo-panel"
+  ]
+}

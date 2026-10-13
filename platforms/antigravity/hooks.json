@@ -1,0 +1,17 @@
+{
+  "equipo-dev-bitacora": {
+    "PostToolUse": [
+      {
+        "matcher": "invoke_subagent",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node hooks/bitacora.mjs",
+            "timeout": 10
+          }
+        ]
+      }
+    ]
+  }
+}
+

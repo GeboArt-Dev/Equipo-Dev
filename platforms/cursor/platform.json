@@ -1,0 +1,38 @@
+{
+  "id": "cursor",
+  "displayName": "Cursor",
+  "status": "draft",
+  "output": {
+    "dir": "dist/cursor",
+    "templateFile": ".cursorrules"
+  },
+  "manifest": {
+    "fields": ["name", "displayName", "version", "description"]
+  },
+  "tools": {
+    "read_file": ["Read"],
+    "list_dir": ["ListDir"],
+    "write_file": ["Write"],
+    "edit_file": ["Edit"],
+    "execute_command": ["Terminal"],
+    "find_by_name": ["FileSearch"],
+    "grep_search": ["GrepSearch"],
+    "web_search": ["WebSearch"],
+    "web_fetch": ["WebFetch"]
+  },
+  "models": {
+    "pro": "claude-3-5-sonnet",
+    "balanced": "claude-3-5-sonnet",
+    "light": "gpt-4o-mini"
+  },
+  "tokens": {
+    "{{AGENT_GUIDE_FILE}}": "`.cursorrules`",
+    "{{CMD_TOOL}}": "Terminal",
+    "{{SEARCH_TOOL}}": "(File Search / Grep)",
+    "{{SUBAGENT_DISPATCH_GUIDE}}": "Actúa como orquestador del equipo de desarrollo, asumiendo las responsabilidades del rol correspondiente en cada fase.",
+    "{{UX_SEARCH_LOCATION}}": "Usa el buscador de ui-ux-pro-max si está disponible en el entorno."
+  },
+  "templates": [
+    { "from": "platforms/cursor/templates/.cursorrules", "to": ".cursorrules" }
+  ]
+}

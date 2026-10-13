@@ -1,83 +1,433 @@
-# equipo-dev
+# 🚀 equipo-dev
 
-Equipo de desarrollo de software con subagentes. El dueño (tú) aprueba la spec y el diseño; Claude orquesta y delega en cada rol.
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Node.js](https://img.shields.io/badge/Node.js-%3E%3D18.0.0-brightgreen.svg)](https://nodejs.org/)
+[![Multi-AI Architecture](https://img.shields.io/badge/Multi--AI-Claude%20Code%20%7C%20Antigravity%20%7C%20Cursor%20%7C%20Copilot-orange.svg)](docs/adr/001-reestructuracion-multi-ai.md)
+[![Tests Passing](https://img.shields.io/badge/tests-29%2F29%20passed-success.svg)](tests/)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/GeboArt-Dev/Equipo-Dev/pulls)
 
-## Contenido
+**An autonomous, multi-role software development team of AI subagents for your coding workspace.**  
+Transform feature ideas into production-ready, peer-reviewed code with human-in-the-loop approvals, structured artifacts, and zero technical drift.
 
-| Componente | Nombre | Función |
+---
+
+### 🌐 Language / Idioma
+**English** | [Español](README.es.md)
+
+---
+
+## 📖 Table of Contents
+
+- [Overview](#-overview)
+- [The Team & Roles](#-the-team--roles)
+- [How It Works (Workflow)](#-how-it-works-workflow)
+- [Human-in-the-Loop Approvals](#-human-in-the-loop-approvals)
+- [Installation Guide by OS & Platform](#-installation-guide-by-os--platform)
+  - [Google Antigravity](#1-google-antigravity)
+  - [Claude Code](#2-claude-code)
+  - [Cursor](#3-cursor)
+  - [GitHub Copilot](#4-github-copilot)
+- [Quick Start & Usage](#-quick-start--usage)
+- [Project Configuration Requirements](#-project-configuration-requirements)
+- [Multi-AI Architecture (`src/` + `platforms/`)](#-multi-ai-architecture-src--platforms)
+- [Compiler CLI & Building](#-compiler-cli--building)
+- [Automated Tests](#-automated-tests)
+- [Contributing](#-contributing)
+- [License](#-license)
+
+---
+
+## 🌟 Overview
+
+`equipo-dev` turns your AI coding assistant (Google Antigravity, Claude Code, Cursor, or GitHub Copilot) into a **disciplined software engineering department**. Instead of an unstructured prompt that writes code directly without design or testing, `equipo-dev` orchestrates specialized subagents through an agile software lifecycle:
+
+1. **Requirements & User Stories** (Product Owner)
+2. **UI/UX & Design System** (UI/UX Designer, when UI applies)
+3. **Architecture Decision Records & API Contracts** (Software Architect)
+4. **Implementation & Unit Tests** (Backend & Frontend Developers)
+5. **Quality Assurance & Verification** (QA Engineer)
+6. **Security & Code Review** (Code Reviewer)
+
+> [!IMPORTANT]
+> **You remain the owner and final authority.** The team pauses at two critical stages for your explicit approval:
+> 1. After the Product Owner produces the **Specification** (`docs/specs/`).
+> 2. After the Architect produces the **Technical Design / ADR** (`docs/adr/`).
+
+---
+
+## 👥 The Team & Roles
+
+| Avatar | Role | Name | Responsibilities | Key Outputs | Model Tier |
+|:---:|---|---|---|---|:---:|
+| 🎯 | **Product Owner** | `product-owner` | Transforms raw business needs into user stories with Gherkin acceptance criteria and MoSCoW prioritization. | `docs/specs/<feature>.md` | `pro` (Opus / Pro) |
+| 🎨 | **UI/UX Designer** | `ux-designer` | Defines user journeys, screen flows, state machines (loading/empty/error), accessibility, and design system tokens. | `docs/ux/<feature>.md`<br>`design-system/` | `pro` (Opus / Pro) |
+| 🏗️ | **Software Architect** | `architect` | Designs data schemas, REST/gRPC API contracts, security mitigaciones, and sequential implementation tasks. | `docs/adr/<NNN>-<feature>.md` | `pro` (Opus / Pro) |
+| ⚙️ | **Backend Developer** | `backend-dev` | Implements backend endpoints, business logic, persistence layers, and unit tests adhering strictly to the ADR. | Source code + Unit tests | `balanced` (Sonnet / Inherit) |
+| 💻 | **Frontend Developer** | `frontend-dev` | Builds UI screens, interactive components, responsive views, and tests conforming to the UX design and design tokens. | UI code + Component tests | `balanced` (Sonnet / Inherit) |
+| 🧪 | **QA Engineer** | `qa-engineer` | Tests every Gherkin acceptance criteria, executes test suites, tests edge cases, and emits an APPROVED or REJECTED verdict. | `docs/qa/<feature>.md` | `balanced` (Sonnet / Inherit) |
+| 🛡️ | **Code Reviewer** | `code-reviewer` | Read-only security audit (OWASP Top 10), performance check, ADR compliance, and final merge authorization. | Review Report | `pro` (Opus / Pro) |
+
+---
+
+## 🔄 How It Works (Workflow)
+
+```mermaid
+flowchart TD
+    Start(["💡 Feature Idea / Need"]) --> PO["🎯 Product Owner<br/>(docs/specs/)"]
+    PO --> Pause1{{"⏸️ APPROVAL 1<br/>Owner approves Spec?"}}
+    
+    Pause1 -- "❌ No (Feedback)" --> PO
+    Pause1 -- "✔️ Yes" --> HasUI{"Does it require<br/>User Interface?"}
+    
+    HasUI -- "Yes" --> UX["🎨 UI/UX Designer<br/>(docs/ux/ & design-system/)"]
+    HasUI -- "No" --> Arch["🏗️ Architect<br/>(docs/adr/)"]
+    UX --> Arch
+    
+    Arch --> Pause2{{"⏸️ APPROVAL 2<br/>Owner approves Architecture/ADR?"}}
+    Pause2 -- "❌ No (Feedback)" --> Arch
+    Pause2 -- "✔️ Yes" --> Dev["⚙️💻 Backend & Frontend Devs<br/>(Code + Unit Tests)"]
+    
+    Dev --> QA["🧪 QA Engineer<br/>(docs/qa/)"]
+    QA -- "❌ REJECTED" --> Dev
+    QA -- "✔️ APROBADO" --> Review["🛡️ Code Reviewer<br/>(Security, Quality & Compliance)"]
+    
+    Review -- "❌ CHANGES REQUIRED" --> Dev
+    Review -- "✔️ READY FOR MERGE" --> Done(["🚀 Ready for Merge / Commit"])
+
+    style Pause1 fill:#f97316,stroke:#ea580c,stroke-width:2px,color:#fff
+    style Pause2 fill:#f97316,stroke:#ea580c,stroke-width:2px,color:#fff
+    style Done fill:#16a34a,stroke:#15803d,stroke-width:2px,color:#fff
+    style Start fill:#2563eb,stroke:#1d4ed8,stroke-width:2px,color:#fff
+```
+
+---
+
+## ⏸️ Human-in-the-Loop Approvals
+
+The workflow enforces two non-negotiable pauses where the team halts and awaits your decision:
+
+1. **Spec Approval (`⏸ spec`)**:
+   - The Product Owner delivers `docs/specs/<feature>.md`.
+   - You review scope, acceptance criteria, and priority before any technical or design decisions are made.
+2. **Design Approval (`⏸ diseño`)**:
+   - The Architect delivers `docs/adr/<NNN>-<feature>.md` (and `docs/ux/<feature>.md` if applicable).
+   - You review the technical strategy, dependencies, database changes, and UI layout before a single line of production code is written.
+
+---
+
+## 💻 Installation Guide by OS & Platform
+
+### Prerequisites
+- **Node.js**: `v18.0.0` or higher (LTS recommended). Check with:
+  ```bash
+  node -v
+  ```
+- **Git**: Installed and available in your `PATH`. Check with:
+  ```bash
+  git --version
+  ```
+- **Python 3** *(Optional)*: Only required if using the `ux-designer` agent with `ui-ux-pro-max`.
+
+---
+
+### Clone the Repository
+
+Clone `equipo-dev` to your local machine:
+
+```bash
+git clone https://github.com/GeboArt-Dev/Equipo-Dev.git
+cd Equipo-Dev
+```
+
+---
+
+### 1. Google Antigravity
+
+Antigravity uses a native plugin structure with subagents, skill overrides, and a session logger (`bitacora.mjs`).
+
+#### Option A: Automated Build & Install (Recommended)
+
+Run the unified compiler with the `--install` flag:
+
+```bash
+node scripts/build.mjs --target antigravity --install
+```
+
+The installer automatically detects your operating system, compiles the target to `dist/antigravity/equipo-dev`, copies the plugin to the correct path, and safely preserves your historical state (`bitacora.jsonl`).
+
+#### Option B: Manual Installation
+
+If you prefer manual installation, build the artifacts and copy them:
+
+```bash
+node scripts/build.mjs --target antigravity
+```
+
+Then copy the folder `dist/antigravity/equipo-dev` to the appropriate path:
+
+| Operating System | Target Installation Directory | PowerShell / Bash Command |
 |---|---|---|
-| Agente | `product-owner` | Idea → historias, criterios de aceptación (Gherkin), prioridad |
-| Agente | `ux-designer` | Spec → flujos, pantallas, estados y design system con `ui-ux-pro-max` |
-| Agente | `architect` | Spec + UX → ADR con contratos, seguridad y plan de tareas |
-| Agente | `backend-dev` | ADR → código backend + tests |
-| Agente | `frontend-dev` | ADR + UX → código de interfaz + tests |
-| Agente | `qa-engineer` | Valida contra los criterios; informe APROBADO/RECHAZADO |
-| Agente | `code-reviewer` | Revisión final de seguridad y calidad (solo lectura) |
-| Skill | `/feature` | Ejecuta el flujo completo con pausas de aprobación |
-| Skill | `reglas-equipo` | Flujo, Definition of Done y reglas de seguridad |
-| Skill | `/equipo-dev:equipo-panel` | Abre el panel en vivo del equipo |
-| Skill | `/equipo-dev:equipo-reiniciar` | Vacía el panel para empezar una feature nueva |
+| **Windows** | `%USERPROFILE%\.gemini\config\plugins\equipo-dev` | `Copy-Item -Recurse -Force dist\antigravity\equipo-dev "$HOME\.gemini\config\plugins\"` |
+| **macOS** | `~/.gemini/config/plugins/equipo-dev` | `mkdir -p ~/.gemini/config/plugins && cp -r dist/antigravity/equipo-dev ~/.gemini/config/plugins/` |
+| **Linux** | `~/.gemini/config/plugins/equipo-dev` | `mkdir -p ~/.gemini/config/plugins && cp -r dist/antigravity/equipo-dev ~/.gemini/config/plugins/` |
 
-## Uso
+#### Activating in Antigravity
+1. Open your Antigravity IDE / VS Code.
+2. Open the Command Palette (`Ctrl+Shift+P` on Windows/Linux, `Cmd+Shift+P` on macOS).
+3. Run: **`Developer: Reload Window`**.
+4. The `/feature`, `/equipo-panel`, and `/equipo-reiniciar` skills, as well as the subagents, are now active.
 
-```
-/feature reservas de citas online
-```
+---
 
-O un rol suelto:
+### 2. Claude Code
 
-```
-Usa el subagente code-reviewer sobre los cambios actuales
+Claude Code supports native plugin manifests (`.claude-plugin/plugin.json`), custom TypeScript hooks, and live side panels.
+
+#### Step 1: Compile the Claude Code Target
+
+```bash
+node scripts/build.mjs --target claude-code
 ```
 
-## Diseñador UI/UX
+This compiles `src/` into `dist/claude-code/equipo-dev/` with canonical tools mapped to Claude tools (`Read`, `Write`, `Edit`, `Bash`, `Glob`, `Grep`, `WebSearch`) and model tiers mapped to `opus` and `sonnet`.
 
-`ux-designer` se ejecuta tras aprobar la spec y antes del arquitecto, solo si la feature tiene interfaz. Usa el buscador de `ui-ux-pro-max` (`--design-system --persist`, `--domain`, `--stack`) y entrega:
+#### Step 2: Install the Plugin
 
-- `docs/ux/<feature>.md`: flujos, pantallas, estados, accesibilidad, responsive y necesidades de datos.
-- `design-system/<proyecto>/MASTER.md` (+ `pages/<pantalla>.md`): solo si no existía; nunca usa `--force` sin tu permiso.
+| Operating System | Target Location | Command |
+|---|---|---|
+| **Windows (PowerShell)** | `%USERPROFILE%\.claude\plugins\equipo-dev` | `New-Item -ItemType Directory -Force "$HOME\.claude\plugins" ; Copy-Item -Recurse -Force dist\claude-code\equipo-dev "$HOME\.claude\plugins\"` |
+| **macOS (Symlink or Copy)** | `~/.claude/plugins/equipo-dev` | `mkdir -p ~/.claude/plugins && ln -sfn "$(pwd)/dist/claude-code/equipo-dev" ~/.claude/plugins/equipo-dev` |
+| **Linux (Symlink or Copy)** | `~/.claude/plugins/equipo-dev` | `mkdir -p ~/.claude/plugins && ln -sfn "$(pwd)/dist/claude-code/equipo-dev" ~/.claude/plugins/equipo-dev` |
 
-La segunda aprobación cubre UX + ADR. Frontend, QA y reviewer validan contra ese diseño.
-
-**Requisito**: plugin `ui-ux-pro-max` instalado y Python 3 disponible.
-
-## Panel en vivo
-
-Se abre solo cuando el primer rol del equipo empieza a trabajar (o con `/equipo-dev:equipo-panel`). Muestra:
-
-- Cada rol con su estado: ○ pendiente, ◌ hecho antes de esta sesión, ● trabajando, ✔ terminado, ✖ error, más la duración y las vueltas (por ejemplo, QA repetido).
-- Las dos aprobaciones del dueño (spec y diseño), marcadas con ⏸ cuando el equipo te espera; además aparece un aviso.
-- Una bitácora con los últimos movimientos.
-
-Si la pantalla no admite paneles laterales, `/equipo-dev:equipo-panel` muestra el mismo estado como texto en el chat. En la barra de estado aparece el rol que está trabajando.
-
-Escribe cada comando en su propio mensaje: solo la barra del inicio cuenta como comando (`/feature ... /equipo-dev:equipo-panel` en una línea no abre el panel).
-
-El panel solo observa: si falla, los agentes siguen trabajando igual. Una nueva feature empieza limpia cuando el PO arranca después de la revisión final, o con `/equipo-dev:equipo-reiniciar`.
-
-## Retomar una feature
-
-```
-/feature continuemos con CheckIn
+#### Alternatively, load via CLI:
+```bash
+claude --plugin-dir dist/claude-code/equipo-dev
 ```
 
-Antes de lanzar a nadie, `/feature` busca los archivos de esa feature en `docs/specs/`, `docs/ux/`, `docs/adr/` y `docs/qa/`, revisa los cambios pendientes y te propone desde qué paso seguir. Espera tu confirmación y nunca rehace un paso que ya tiene archivo salvo que lo pidas. En el panel, los pasos hechos en sesiones anteriores aparecen con ◌.
+---
 
-## Requisito por proyecto
+### 3. Cursor
 
-Cada proyecto necesita un `CLAUDE.md` en su raíz con stack, comandos (instalar, ejecutar, tests, lint, build) y restricciones. Genera un borrador con `/init` y complétalo.
+Cursor relies on global or repository-level rules (`.cursorrules` or `.cursor/rules/`).
 
-Las salidas del equipo se guardan en `docs/specs/`, `docs/ux/`, `docs/adr/`, `docs/qa/` y `design-system/` del proyecto.
+1. Compile the Cursor target:
+   ```bash
+   node scripts/build.mjs --target cursor
+   ```
+2. Generated files:
+   - `dist/cursor/.cursorrules`: Ready to copy into your project root.
+3. Apply to a project:
+   ```bash
+   # Windows (PowerShell)
+   Copy-Item dist\cursor\.cursorrules "C:\path\to\your-project\.cursorrules"
 
-## Modelos y permisos
+   # macOS / Linux
+   cp dist/cursor/.cursorrules /path/to/your-project/.cursorrules
+   ```
 
-- `opus` en PO, UX, arquitecto y reviewer; `sonnet` en devs y QA.
-- El reviewer no puede editar archivos; el PO no puede ejecutar comandos; el UX solo ejecuta `search.py`.
+---
 
-## Versiones
+### 4. GitHub Copilot
 
-- 0.4.1: `/equipo-panel` y `/equipo-reiniciar` pasan a ser skills, así aparecen en el menú de la app; si el panel no está activo, la skill arma el estado leyendo `docs/`.
-- 0.4.0: `/feature` retoma features empezadas desde el último paso completado; el panel marca con ◌ los pasos de sesiones anteriores; `/equipo-panel` responde siempre (texto si no hay panel) y línea de estado con el rol activo.
-- 0.3.0: rol `ux-designer` con `ui-ux-pro-max`; panel con 7 roles.
-- 0.2.0: panel en vivo del equipo, comandos `/equipo-panel` y `/equipo-reiniciar`.
-- 0.1.0: versión inicial.
+GitHub Copilot supports repository-level instructions via `.github/copilot-instructions.md`.
+
+1. Compile the Copilot target:
+   ```bash
+   node scripts/build.mjs --target copilot
+   ```
+2. Apply to a project:
+   ```bash
+   # Copy to your target repository
+   mkdir -p /path/to/your-project/.github
+   cp dist/copilot/.github/copilot-instructions.md /path/to/your-project/.github/
+   ```
+
+---
+
+## ⚡ Quick Start & Usage
+
+### 1. Start a New Feature
+In your AI assistant's chat, type `/feature` followed by what you want to build:
+
+```text
+/feature user authentication with OAuth2 and refresh tokens
+```
+
+The orchestrator invokes the **Product Owner**, produces `docs/specs/user-authentication.md`, and pauses for your approval.
+
+### 2. Resume an In-Progress Feature
+If you closed your session or switched branches, resume seamlessly:
+
+```text
+/feature continue with user-authentication
+```
+
+The team inspects `docs/specs/`, `docs/ux/`, `docs/adr/`, and `docs/qa/`, analyzes git status, and proposes resuming from the exact unfinished step without repeating completed work.
+
+### 3. Check Live Team Status (`/equipo-panel`)
+At any time, inspect team progress and pending approvals:
+
+```text
+/equipo-panel
+```
+
+Output format:
+```text
+Feature: user-authentication
+✔ 1. Product Owner
+○ 2. UI/UX Design (not applicable)
+✔ 3. Architect
+● 4. Backend (3 of 5 tasks completed)
+○ 5. Frontend
+○ 6. QA
+○ 7. Code Reviewer
+Bitácora: Backend developer added JWT validation tests
+Next step: Backend developer completing task 4 (refresh token endpoint)
+```
+
+### 4. Reset Session Log (`/equipo-reiniciar`)
+Clean the session history before starting a completely fresh feature:
+
+```text
+/equipo-reiniciar
+```
+
+---
+
+## 📁 Project Configuration Requirements
+
+For `equipo-dev` to function optimally in any project, the project must include a guide file in its root:
+- `AGENTS.md` (recommended standard), `CLAUDE.md`, or `GEMINI.md`.
+
+This file must specify:
+1. **Tech Stack & Versions**: (e.g. TypeScript 5, Node 20, PostgreSQL, React 19).
+2. **Commands**:
+   - Install: `npm install` / `pnpm install` / `cargo build`
+   - Test: `npm test` / `pytest`
+   - Run: `npm run dev`
+   - Lint / Format: `npm run lint`
+3. **Architectural Guidelines & Restrictions**.
+
+The team automatically writes all documentation into your repository:
+```text
+your-project/
+├── AGENTS.md                          # Mandatory project guidelines
+├── design-system/                     # UI tokens & style guide (if UI)
+└── docs/
+    ├── specs/<feature>.md             # Product Owner specifications
+    ├── ux/<feature>.md                # UI/UX screen flows & states
+    ├── adr/<NNN>-<feature>.md         # Architecture Decision Records
+    └── qa/<feature>.md                # QA integration test reports
+```
+
+---
+
+## 🏛️ Multi-AI Architecture (`src/` + `platforms/`)
+
+`equipo-dev` is engineered using a **Source-Adapter-Target Pattern** that completely separates business logic from platform-specific APIs:
+
+```text
+Equipo-Dev/
+├── src/                               # 🌟 SINGLE SOURCE OF TRUTH (Platform-Agnostic)
+│   ├── manifest.json                  # Canonical metadata
+│   ├── agents/                        # 7 team roles with canonical tools & model tiers
+│   └── skills/                        # 4 skills with semantic tokens ({{CMD_TOOL}}, etc.)
+│
+├── platforms/                         # 🔌 MODULAR PLATFORM ADAPTERS
+│   ├── antigravity/                   # Google Antigravity mappings, hooks & skill overrides
+│   ├── claude-code/                   # Claude Code mappings, TypeScript hooks & types
+│   ├── cursor/                        # Cursor templates & .cursorrules generator
+│   └── copilot/                       # Copilot templates & instructions generator
+│
+├── scripts/
+│   └── build.mjs                      # ⚡ Zero-dependency native Node.js compiler
+│
+├── tests/
+│   ├── build.test.mjs                 # Compiler integrity & regression test suite
+│   └── qa-verification.test.mjs       # Comprehensive acceptance verification suite
+│
+└── dist/                              # 📦 COMPILED TARGET ARTIFACTS
+    ├── antigravity/equipo-dev/
+    ├── claude-code/equipo-dev/
+    ├── cursor/
+    └── copilot/
+```
+
+### Key Architectural Strengths:
+- **Zero Drift**: Editing a prompt in `src/agents/` immediately propagates to Claude Code, Antigravity, Cursor, and Copilot.
+- **Path Traversal Protection**: Compiler strictly enforces destination containment via `assertWithin` and validates install directories (`isAuthorizedInstallTarget`).
+- **Atomic Operations**: State preservation (`preserve: ["state"]`) prevents overwriting session logs.
+- **Zero External Dependencies**: Operates exclusively with native Node.js 18+ ESM modules (`node:fs`, `node:path`, `node:os`).
+
+---
+
+## 🛠️ Compiler CLI & Building
+
+The compiler CLI supports selective builds, pre-cleaning, and local installation:
+
+```bash
+# Build all platforms into dist/
+node scripts/build.mjs
+
+# Build a single target
+node scripts/build.mjs --target antigravity
+node scripts/build.mjs --target claude-code
+node scripts/build.mjs --target cursor
+node scripts/build.mjs --target copilot
+
+# Clean dist/ before building
+node scripts/build.mjs --clean
+
+# Clean only a specific target
+node scripts/build.mjs --clean --target antigravity
+
+# Build and install locally (Antigravity)
+node scripts/build.mjs --target antigravity --install
+
+# Display CLI help
+node scripts/build.mjs --help
+```
+
+---
+
+## 🧪 Automated Tests
+
+The repository includes a comprehensive automated test suite with **29 passing tests**:
+- **`tests/build.test.mjs`** (14 tests): Validates manifest integrity, tool mapping, tier resolution, frontmatter serialization, path containment (`assertWithin`), and install target authorization.
+- **`tests/qa-verification.test.mjs`** (15 tests): Validates Gherkin acceptance criteria (HU-1 through HU-5), edge cases, isolated installation, and zero regressions.
+
+Run the entire test suite natively:
+
+```bash
+# Run compiler tests
+node --test tests/build.test.mjs
+
+# Run QA verification tests
+node --test tests/qa-verification.test.mjs
+
+# Run all tests sequentially
+node --test --test-concurrency=1 tests/build.test.mjs tests/qa-verification.test.mjs
+```
+
+---
+
+## 🤝 Contributing
+
+Contributions are warmly welcome! Because of the multi-AI architecture:
+1. **Never edit files inside `dist/` directly.** They are automatically generated.
+2. Edit prompts, roles, or skills in **`src/`**.
+3. Edit platform-specific mappings, hooks, or templates in **`platforms/<platform>/`**.
+4. Run `node scripts/build.mjs` and execute tests with `node --test tests/build.test.mjs` before submitting a PR.
+
+---
+
+## 📄 License
+
+This project is licensed under the [MIT License](LICENSE).
+
+---
+
+<p align="center">
+  Crafted with care by <strong><a href="https://github.com/GeboArt-Dev">GeboArt.Dev</a></strong><br>
+  Empowering developers with autonomous, structured AI teams.
+</p>
