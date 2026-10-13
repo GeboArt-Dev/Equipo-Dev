@@ -1,0 +1,18 @@
+{
+  "name": "equipo-dev",
+  "version": "0.4.1",
+  "description": "Equipo de desarrollo de software con subagentes (Product Owner, Diseñador UI/UX, Arquitecto, Backend, Frontend, QA y Code Reviewer), el flujo /feature con aprobaciones del dueño y un panel en vivo del equipo.",
+  "author": {
+    "name": "GeboArt.Dev"
+  },
+  "keywords": [
+    "desarrollo",
+    "subagentes",
+    "ux",
+    "product-owner",
+    "arquitectura",
+    "qa",
+    "code-review"
+  ],
+  "types": "./types/index.d.ts"
+}
