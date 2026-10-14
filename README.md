@@ -3,7 +3,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Node.js](https://img.shields.io/badge/Node.js-%3E%3D18.0.0-brightgreen.svg)](https://nodejs.org/)
 [![Multi-AI Architecture](https://img.shields.io/badge/Multi--AI-Claude%20Code%20%7C%20Antigravity%20%7C%20Cursor%20%7C%20Copilot-orange.svg)](docs/adr/001-reestructuracion-multi-ai.md)
-[![Tests Passing](https://img.shields.io/badge/tests-29%2F29%20passed-success.svg)](tests/)
+[![Tests Passing](https://img.shields.io/badge/tests-37%2F37%20passed-success.svg)](tests/)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/GeboArt-Dev/Equipo-Dev/pulls)
 
 **An autonomous, multi-role software development team of AI subagents for your coding workspace.**  
@@ -32,6 +32,7 @@ Transform feature ideas into production-ready, peer-reviewed code with human-in-
 - [Multi-AI Architecture (`src/` + `platforms/`)](#-multi-ai-architecture-src--platforms)
 - [Compiler CLI & Building](#-compiler-cli--building)
 - [Automated Tests](#-automated-tests)
+- [New Capabilities & Technical Reference](#-new-capabilities--changes-optimizacion-agentes)
 - [Contributing](#-contributing)
 - [License](#-license)
 
@@ -44,9 +45,9 @@ Transform feature ideas into production-ready, peer-reviewed code with human-in-
 1. **Requirements & User Stories** (Product Owner)
 2. **UI/UX & Design System** (UI/UX Designer, when UI applies)
 3. **Architecture Decision Records & API Contracts** (Software Architect)
-4. **Implementation & Unit Tests** (Backend & Frontend Developers)
-5. **Quality Assurance & Verification** (QA Engineer)
-6. **Security & Code Review** (Code Reviewer)
+4. **Implementation, DevOps & Unit Tests** (Backend & Frontend Developers)
+5. **Quality Assurance, Minimal Suites & Continuous Documentation** (QA Engineer)
+6. **Security & Critical Code Review** (Code Reviewer)
 
 > [!IMPORTANT]
 > **You remain the owner and final authority.** The team pauses at two critical stages for your explicit approval:
@@ -59,13 +60,13 @@ Transform feature ideas into production-ready, peer-reviewed code with human-in-
 
 | Avatar | Role | Name | Responsibilities | Key Outputs | Model Tier |
 |:---:|---|---|---|---|:---:|
-| 🎯 | **Product Owner** | `product-owner` | Transforms raw business needs into user stories with Gherkin acceptance criteria and MoSCoW prioritization. | `docs/specs/<feature>.md` | `pro` (Opus / Pro) |
-| 🎨 | **UI/UX Designer** | `ux-designer` | Defines user journeys, screen flows, state machines (loading/empty/error), accessibility, and design system tokens. | `docs/ux/<feature>.md`<br>`design-system/` | `pro` (Opus / Pro) |
-| 🏗️ | **Software Architect** | `architect` | Designs data schemas, REST/gRPC API contracts, security mitigaciones, and sequential implementation tasks. | `docs/adr/<NNN>-<feature>.md` | `pro` (Opus / Pro) |
-| ⚙️ | **Backend Developer** | `backend-dev` | Implements backend endpoints, business logic, persistence layers, and unit tests adhering strictly to the ADR. | Source code + Unit tests | `balanced` (Sonnet / Inherit) |
-| 💻 | **Frontend Developer** | `frontend-dev` | Builds UI screens, interactive components, responsive views, and tests conforming to the UX design and design tokens. | UI code + Component tests | `balanced` (Sonnet / Inherit) |
-| 🧪 | **QA Engineer** | `qa-engineer` | Tests every Gherkin acceptance criteria, executes test suites, tests edge cases, and emits an APPROVED or REJECTED verdict. | `docs/qa/<feature>.md` | `balanced` (Sonnet / Inherit) |
-| 🛡️ | **Code Reviewer** | `code-reviewer` | Read-only security audit (OWASP Top 10), performance check, ADR compliance, and final merge authorization. | Review Report | `pro` (Opus / Pro) |
+| 🎯 | **Product Owner** | `product-owner` | First-sentence problem diagnosis, epistemic calibration (`[Seguro]`, `[Probable]`, `[Especulando]`), user stories with Gherkin acceptance criteria, and MoSCoW prioritization. | `docs/specs/<feature>.md` | `pro` (Opus / Pro) |
+| 🎨 | **UI/UX Designer** | `ux-designer` | Mobile-first screen flows (< 640px base), design system token binding, WCAG 2.1 AA accessibility checklists, and concise design rationale. | `docs/ux/<feature>.md`<br>`design-system/` | `pro` (Opus / Pro) |
+| 🏗️ | **Software Architect** | `architect` | First-sentence technical diagnosis, epistemic calibration, data schemas, API contracts, security mitigations, and task assignments for backend/DevOps, frontend, and QA/documentation. | `docs/adr/<NNN>-<feature>.md` | `pro` (Opus / Pro) |
+| ⚙️ | **Backend Developer** | `backend-dev` | Full executable backend code, database query optimization (no N+1), integrated DevOps (multi-stage Dockerfiles & CI/CD YAML), zero plain secrets, comments ≤ 1 line. | Source code + Unit tests + Docker/CI-CD | `balanced` (Sonnet / Inherit) |
+| 💻 | **Frontend Developer** | `frontend-dev` | Mobile-first layout (< 640px base), WCAG 2.1 AA compliance (contrast ≥ 4.5:1, touch target ≥ 44px), 5 UI states coverage, and README design documentation. | UI code + Component tests | `balanced` (Sonnet / Inherit) |
+| 🧪 | **QA Engineer** | `qa-engineer` | Minimal essential test suites (1 happy path + critical edge cases per Gherkin criterion), integrated Documenter (continuous README & technical reference updates), and binary verdict. | `docs/qa/<feature>.md` + README updates | `balanced` (Sonnet / Inherit) |
+| 🛡️ | **Code Reviewer** | `code-reviewer` | Exclusive critical-only audit (blocking security vulnerabilities, ADR contract violations, regressions; zero stylistic noise), single-line findings, binary verdict. | Review Report (Blocking only) | `pro` (Opus / Pro) |
 
 ---
 
@@ -85,11 +86,11 @@ flowchart TD
     
     Arch --> Pause2{{"⏸️ APPROVAL 2<br/>Owner approves Architecture/ADR?"}}
     Pause2 -- "❌ No (Feedback)" --> Arch
-    Pause2 -- "✔️ Yes" --> Dev["⚙️💻 Backend & Frontend Devs<br/>(Code + Unit Tests)"]
+    Pause2 -- "✔️ Yes" --> Dev["⚙️💻 Backend & Frontend Devs<br/>(Code + DevOps + Tests)"]
     
-    Dev --> QA["🧪 QA Engineer<br/>(docs/qa/)"]
+    Dev --> QA["🧪 QA Engineer & Documenter<br/>(docs/qa/ & README sync)"]
     QA -- "❌ REJECTED" --> Dev
-    QA -- "✔️ APROBADO" --> Review["🛡️ Code Reviewer<br/>(Security, Quality & Compliance)"]
+    QA -- "✔️ APROBADO" --> Review["🛡️ Code Reviewer<br/>(Critical Security & Contract Audit)"]
     
     Review -- "❌ CHANGES REQUIRED" --> Dev
     Review -- "✔️ READY FOR MERGE" --> Done(["🚀 Ready for Merge / Commit"])
@@ -344,7 +345,8 @@ Equipo-Dev/
 │
 ├── tests/
 │   ├── build.test.mjs                 # Compiler integrity & regression test suite
-│   └── qa-verification.test.mjs       # Comprehensive acceptance verification suite
+│   ├── qa-verification.test.mjs       # Acceptance verification suite
+│   └── agent-optimization.test.mjs    # Agent optimization & token frugality suite
 │
 └── dist/                              # 📦 COMPILED TARGET ARTIFACTS
     ├── antigravity/equipo-dev/
@@ -392,9 +394,10 @@ node scripts/build.mjs --help
 
 ## 🧪 Automated Tests
 
-The repository includes a comprehensive automated test suite with **29 passing tests**:
+The repository includes a comprehensive automated test suite with **37 passing tests**:
 - **`tests/build.test.mjs`** (14 tests): Validates manifest integrity, tool mapping, tier resolution, frontmatter serialization, path containment (`assertWithin`), and install target authorization.
 - **`tests/qa-verification.test.mjs`** (15 tests): Validates Gherkin acceptance criteria (HU-1 through HU-5), edge cases, isolated installation, and zero regressions.
+- **`tests/agent-optimization.test.mjs`** (8 tests): Validates prompt optimization rules, token frugality, epistemic calibration (`[Seguro]`, `[Probable]`, `[Especulando]`), DevOps integration in Backend, mobile-first and WCAG 2.1 AA in UX/Frontend, Documenter role in QA, and critical-only filtering in Code Reviewer.
 
 Run the entire test suite natively:
 
@@ -405,9 +408,27 @@ node --test tests/build.test.mjs
 # Run QA verification tests
 node --test tests/qa-verification.test.mjs
 
-# Run all tests sequentially
-node --test --test-concurrency=1 tests/build.test.mjs tests/qa-verification.test.mjs
+# Run agent optimization tests
+node --test tests/agent-optimization.test.mjs
+
+# Run all test suites sequentially (recommended on Windows to prevent dist/ file locking)
+node --test --test-concurrency=1 tests/build.test.mjs tests/qa-verification.test.mjs tests/agent-optimization.test.mjs
 ```
+
+---
+
+### 📦 Nuevas Capacidades y Cambios (optimizacion-agentes)
+- **Diagnóstico Directo y Calibración Epistémica**: `product-owner` y `architect` inician respuestas con diagnóstico en su primera frase y clasifican afirmaciones con `[Seguro]`, `[Probable]` y `[Especulando]`.
+- **Backend Integral con DevOps Incorporado**: `backend-dev` absorbe la entrega de Dockerfiles multi-stage y pipelines CI/CD YAML completos con instrucciones operativas de ≤ 3 oraciones.
+- **Diseño Mobile-First y WCAG 2.1 AA**: `ux-designer` y `frontend-dev` estandarizan maquetación inicial para pantallas móviles (< 640px) y cumplimiento estricto de accesibilidad (contraste ≥ 4.5:1, táctil ≥ 44px).
+- **Aseguramiento Esencial y Documentador Continuo**: `qa-engineer` limita tests a casos de alto impacto y sincroniza el README y referencias técnicas tras cada entrega.
+- **Filtro Exclusivamente Crítico en Auditoría**: `code-reviewer` elimina observaciones cosméticas y reporta exclusivamente hallazgos bloqueantes en formato directo de 1 línea.
+
+### 🔧 Referencia Técnica de Funciones y Hooks
+| Identificador | Ubicación | Descripción (1 frase corta) |
+|---|---|---|
+| `readAgent` | `tests/agent-optimization.test.mjs` | Función de utilidad para leer y desestructurar frontmatter y cuerpo de agentes en tests. |
+| `tests/agent-optimization.test.mjs` | `tests/agent-optimization.test.mjs` | Suite automatizada que comprueba directivas de concisión, calibración, DevOps, WCAG y filtros críticos en los 7 agentes. |
 
 ---
 
