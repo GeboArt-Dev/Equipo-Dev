@@ -156,7 +156,7 @@ Escenario: Estructura de adaptadores lista para implementación futura
 ---
 
 ## 6. Métricas de Éxito
-- **Paridad funcional del 100%**: Los 7 roles (`product-owner`, `ux-designer`, `architect`, `backend-dev`, `frontend-dev`, `qa-engineer`, `code-reviewer`) y las 4 skills (`equipo-panel`, `equipo-reiniciar`, `feature`, `reglas-equipo`) operan con idéntico comportamiento en Claude Code y Antigravity respecto a la versión previa.
+- **Paridad funcional del 100%**: Los 7 roles (`product-owner`, `ux-designer`, `architect`, `backend-dev`, `frontend-dev`, `qa-engineer`, `code-reviewer`) y las 4 skills (`equipo-panel`, `team-reset`, `feature`, `team-rules`) operan con idéntico comportamiento en Claude Code y Antigravity respecto a la versión previa.
 - **Cero duplicación de definiciones de negocio**: 0 líneas de instrucciones o prompts duplicados manualmente entre plataformas en el directorio fuente (`src/`).
 - **Tiempo de construcción menor a 5 segundos**: La compilación global de todos los targets finaliza en menos de 5 segundos en condiciones normales de desarrollo.
 - **0 fallos de empaquetado**: 100% de los artefactos generados en `dist/` pasan las validaciones de estructura de manifiesto y resolución de variables sin errores.

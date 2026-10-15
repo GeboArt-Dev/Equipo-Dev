@@ -1,5 +1,5 @@
 ---
-name: reglas-equipo
+name: team-rules
 description: Reglas del equipo de desarrollo (flujo PO → UX → arquitecto → dev → QA → reviewer, aprobaciones del dueño, Definition of Done y seguridad). Se carga al desarrollar una feature, al invocar cualquier subagente del equipo (product-owner, ux-designer, architect, backend-dev, frontend-dev, qa-engineer, code-reviewer) o cuando el usuario pregunta cómo trabaja el equipo.
 ---
 # Reglas del equipo de desarrollo

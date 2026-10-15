@@ -61,12 +61,12 @@ Se adopta un **Patrón de Arquitectura Fuente-Adaptador-Target (Source-Adapter-T
 1. **`src/` (Única Fuente de Verdad Agnóstica)**:
    - `src/manifest.json`: Información canónica del plugin (nombre, versión, descripción, autor, keywords, prompts sugeridos).
    - `src/agents/`: Definiciones canónicas de los 7 roles (`product-owner`, `ux-designer`, `architect`, `backend-dev`, `frontend-dev`, `qa-engineer`, `code-reviewer`). Emplea frontmatter YAML estandarizado con herramientas agnósticas (`tools: [read_file, write_file, ...]`) y niveles de modelo (`model_tier: pro | balanced | light`).
-   - `src/skills/`: Definiciones canónicas de las 4 skills (`feature`, `reglas-equipo`, `equipo-panel`, `equipo-reiniciar`). Utiliza tokens de reemplazo contextual (`{{AGENT_GUIDE_FILE}}`, `{{CMD_TOOL}}`, `{{SEARCH_TOOL}}`, `{{SUBAGENT_DISPATCH_GUIDE}}`, `{{UX_SEARCH_LOCATION}}`).
+   - `src/skills/`: Definiciones canónicas de las 4 skills (`feature`, `team-rules`, `equipo-panel`, `team-reset`). Utiliza tokens de reemplazo contextual (`{{AGENT_GUIDE_FILE}}`, `{{CMD_TOOL}}`, `{{SEARCH_TOOL}}`, `{{SUBAGENT_DISPATCH_GUIDE}}`, `{{UX_SEARCH_LOCATION}}`).
 
 2. **`platforms/` (Adaptadores Modulares)**:
    - Cada plataforma cuenta con un subdirectorio propio con un archivo descriptor `platform.json` que define el mapeo de capacidades, transformaciones de texto, assets específicos y rutas de salida.
    - `platforms/claude-code/`: Define mapeo hacia las herramientas nativas de Claude Code (`Read`, `Write`, `Edit`, `Bash`, `Glob`, `Grep`, `WebSearch`), modelos (`opus`, `sonnet`, `haiku`), manifiesto en `.claude-plugin/plugin.json`, e incluye los hooks y tipos TypeScript (`hooks/register.tsx`, `hooks/hooks.json`, `types/index.d.ts`).
-   - `platforms/antigravity/`: Define mapeo hacia las herramientas de Antigravity (`view_file`, `write_to_file`, `replace_file_content`, `run_command`, etc.), modelos (`pro`, `inherit`, `flash`), parámetros requeridos (`subagent: true`, `mainAgent: false`), hooks de bitácora (`hooks/bitacora.mjs`, `hooks.json`) y overrides de skills para ejecución en terminal/chat (`skills/equipo-panel/SKILL.md`, `skills/equipo-reiniciar/SKILL.md`).
+   - `platforms/antigravity/`: Define mapeo hacia las herramientas de Antigravity (`view_file`, `write_to_file`, `replace_file_content`, `run_command`, etc.), modelos (`pro`, `inherit`, `flash`), parámetros requeridos (`subagent: true`, `mainAgent: false`), hooks de bitácora (`hooks/bitacora.mjs`, `hooks.json`) y overrides de skills para ejecución en terminal/chat (`skills/equipo-panel/SKILL.md`, `skills/team-reset/SKILL.md`).
    - `platforms/cursor/`: Define contratos y plantillas para generación de directivas `.cursorrules` / `.cursor/rules/`.
    - `platforms/copilot/`: Define contratos y plantillas para `.github/copilot-instructions.md`.
 
@@ -383,9 +383,9 @@ Todas las tareas están asignadas al desarrollador backend (`backend-dev`), dado
 - [ ] **Tarea 3 [backend-dev]**: Crear las definiciones agnósticas de habilidades en `src/skills/`.
   - *Archivos a crear*:
     - `src/skills/feature/SKILL.md` (incorporando placeholder `{{SUBAGENT_DISPATCH_GUIDE}}`)
-    - `src/skills/reglas-equipo/SKILL.md` (incorporando placeholder `{{AGENT_GUIDE_FILE}}`)
+    - `src/skills/team-rules/SKILL.md` (incorporando placeholder `{{AGENT_GUIDE_FILE}}`)
     - `src/skills/equipo-panel/SKILL.md`
-    - `src/skills/equipo-reiniciar/SKILL.md`
+    - `src/skills/team-reset/SKILL.md`
 - [ ] **Tarea 4 [backend-dev]**: Configurar el adaptador de Claude Code en `platforms/claude-code/`.
   - *Archivos a crear/mover*:
     - Crear `platforms/claude-code/platform.json` (mapeos de tools, modelos, tokens y assets).
@@ -395,7 +395,7 @@ Todas las tareas están asignadas al desarrollador backend (`backend-dev`), dado
   - *Archivos a crear/mover*:
     - Crear `platforms/antigravity/platform.json` (mapeos de tools, modelos `pro`/`inherit`/`flash`, flags `subagent: true`, tokens y assets).
     - Mover `antigravity/hooks/bitacora.mjs` y `antigravity/hooks.json` → `platforms/antigravity/hooks/`
-    - Mover `antigravity/skills/equipo-panel/SKILL.md` y `antigravity/skills/equipo-reiniciar/SKILL.md` → `platforms/antigravity/skills/`
+    - Mover `antigravity/skills/equipo-panel/SKILL.md` y `antigravity/skills/team-reset/SKILL.md` → `platforms/antigravity/skills/`
 - [ ] **Tarea 6 [backend-dev]**: Configurar adaptadores base y plantillas para Cursor y GitHub Copilot.
   - *Archivos a crear*:
     - `platforms/cursor/platform.json`

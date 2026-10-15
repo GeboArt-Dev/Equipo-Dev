@@ -18,6 +18,7 @@ import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { buildCodex, installCodex, safePath } from './codex.mjs'
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const SRC_DIR = path.join(ROOT, 'src')
@@ -45,10 +46,13 @@ Uso:
   node scripts/build.mjs [opciones]
 
 Opciones:
-  --target <id>    Compila el target especificado (claude-code, antigravity, cursor, copilot, all). Por defecto: all.
+  --target <id>    Compila el target especificado (claude-code, antigravity, cursor, copilot, codex, all). Por defecto: all.
   --install        Instala los artefactos en el directorio local de plugins configurado (si la plataforma lo soporta).
   --clean          Limpia la carpeta dist/ antes de la compilación.
   --help           Muestra esta ayuda.
+
+Codex: --target codex --install instala cuatro skills equipo-dev-* en ~/.agents/skills.
+El reconocimiento debe comprobarse en el cliente. --target all --install instala todos los targets soportados.
 `)
 }
 
@@ -439,6 +443,7 @@ export function runBuild(options = {}) {
         const platformConfig = JSON.parse(fs.readFileSync(configPath, 'utf8'))
         const targetOutDir = path.resolve(ROOT, platformConfig.output.dir)
         assertWithin(targetOutDir, DIST_DIR, `Directorio de salida para clean del target '${targetFilter}'`)
+        if (targetFilter === 'codex') safePath(targetOutDir)
         console.log(`[build] Limpiando salida del target '${targetFilter}' (${targetOutDir})...`)
         rmrf(targetOutDir)
       } else {
@@ -449,7 +454,10 @@ export function runBuild(options = {}) {
     }
   }
 
-  validateSourceIntegrity()
+  try { validateSourceIntegrity() } catch (error) {
+    if (targetFilter === 'codex') throw new Error(`CODEX_SOURCE_INVALID: ${error.message}. Revise las fuentes antes de reintentar.`)
+    throw error
+  }
 
   const manifestPath = path.join(SRC_DIR, 'manifest.json')
   const canonicalManifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'))
@@ -468,6 +476,11 @@ export function runBuild(options = {}) {
       throw new Error(`Configuración de plataforma no encontrada: ${configPath}`)
     }
     const platformConfig = JSON.parse(fs.readFileSync(configPath, 'utf8'))
+    if (pid === 'codex') {
+      const out = buildCodex(ROOT, parseFrontmatter)
+      if (doInstall) installCodex(out, options.installDir)
+      continue
+    }
     buildTarget(pid, platformConfig, canonicalManifest)
 
     if (doInstall) {

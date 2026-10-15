@@ -2,8 +2,8 @@
 
 [![Licencia: MIT](https://img.shields.io/badge/Licencia-MIT-blue.svg)](LICENSE)
 [![Node.js](https://img.shields.io/badge/Node.js-%3E%3D18.0.0-brightgreen.svg)](https://nodejs.org/)
-[![Arquitectura Multi-AI](https://img.shields.io/badge/Multi--AI-Claude%20Code%20%7C%20Antigravity%20%7C%20Cursor%20%7C%20Copilot-orange.svg)](docs/adr/001-reestructuracion-multi-ai.md)
-[![Pruebas Exitosas](https://img.shields.io/badge/tests-37%2F37%20passed-success.svg)](tests/)
+[![Arquitectura Multi-AI](https://img.shields.io/badge/Multi--AI-Claude%20Code%20%7C%20Antigravity%20%7C%20Cursor%20%7C%20Copilot%20%7C%20Codex-orange.svg)](docs/adr/001-reestructuracion-multi-ai.md)
+[![Pruebas Exitosas](https://img.shields.io/badge/tests-50%2F50%20passed-success.svg)](tests/)
 [![PRs Bienvenidas](https://img.shields.io/badge/PRs-bienvenidas-brightgreen.svg)](https://github.com/GeboArt-Dev/Equipo-Dev/pulls)
 
 **Un equipo autónomo de desarrollo de software multi-rol con subagentes de IA para tu entorno de desarrollo.**  
@@ -27,6 +27,7 @@ Transforma ideas en código listo para producción, probado y revisado por pares
   - [Claude Code](#2-claude-code)
   - [Cursor](#3-cursor)
   - [GitHub Copilot](#4-github-copilot)
+  - [Codex](#5-codex)
 - [Uso e Inicio Rápido](#-uso-e-inicio-rápido)
 - [Requisitos de Configuración del Proyecto](#-requisitos-de-configuración-del-proyecto)
 - [Arquitectura Multi-AI (`src/` + `platforms/`)](#-arquitectura-multi-ai-src--platforms)
@@ -176,7 +177,7 @@ Luego copia la carpeta `dist/antigravity/equipo-dev` al directorio correspondien
 1. Abre tu IDE de Antigravity / VS Code.
 2. Abre la paleta de comandos (`Ctrl+Shift+P` en Windows/Linux, `Cmd+Shift+P` en macOS).
 3. Ejecuta: **`Developer: Reload Window`**.
-4. Las habilidades `/feature`, `/equipo-panel`, `/equipo-reiniciar` y los subagentes quedarán activos inmediatamente.
+4. Las habilidades `/feature`, `/team-report`, `/equipo-reiniciar` y los subagentes quedarán activos inmediatamente.
 
 ---
 
@@ -235,6 +236,7 @@ GitHub Copilot admite directivas de repositorio mediante `.github/copilot-instru
 1. Compila el target de Copilot:
    ```bash
    node scripts/build.mjs --target copilot
+node scripts/build.mjs --target codex
    ```
 2. Aplicar a un proyecto:
    ```bash
@@ -245,7 +247,52 @@ GitHub Copilot admite directivas de repositorio mediante `.github/copilot-instru
 
 ---
 
+### 5. Codex
+
+Requiere Node.js 18+, un cliente local Codex con skills de usuario y delegación de subagentes autorizada por el host. Windows y el cliente de la sesión del 2026-10-15 superaron una prueba funcional guiada por el usuario; no se registró la versión exacta del cliente ([evidencia QA](docs/qa/instalacion-codex.md)). Otros clientes y sistemas operativos no están certificados.
+
+```bash
+# Generar sin modificar el perfil
+node scripts/build.mjs --target codex
+# Instalar o actualizar solo Codex para el usuario actual
+node scripts/build.mjs --target codex --install
+```
+
+Salida: `dist/codex/equipo-dev/`. La instalación administra cuatro carpetas en `.agents/skills` bajo `os.homedir()` de Node.js (normalmente `%USERPROFILE%\.agents\skills` en Windows), además de metadatos `.equipo-dev-install`. No edita configuración Codex, credenciales, instrucciones del proyecto ni skills sin prefijo. Usa el instalador en vez de copiar manualmente para conservar el registro de propiedad.
+
+| Skill | Propósito |
+|---|---|
+| `equipo-dev-feature` | Delega siete recursos de rol y mantiene aprobaciones de spec/ADR. |
+| `equipo-dev-team-rules` | Carga las reglas compartidas. |
+| `equipo-dev-team-report` | Informa en texto artefactos inspeccionados, aprobaciones y validación pendiente. |
+| `equipo-dev-team-reset` | Explica que no hay panel persistente que reiniciar; conserva documentos. |
+
+Comprueba las cuatro identidades en el selector del cliente; reinícialo si no aparecen. Selecciona explícitamente `equipo-dev-feature` (CLI/IDE pueden exponer `$equipo-dev-feature` o `/skills`; la sintaxis depende del host). Instalar correctamente acredita archivos, no reconocimiento. En un proyecto desechable, pide una feature pequeña, comprueba su pausa de aprobación de spec y selecciona `equipo-dev-team-report` para verificar la aprobación pendiente. Estas comprobaciones funcionales son necesarias antes de certificar un cliente.
+
+Los siete roles Markdown están en `equipo-dev-feature/references/agents`; no son agentes nativos registrados. El host proporciona modelos, herramientas y permisos. Sin delegación autorizada, la feature pausa antes del rol afectado; el reporte sigue disponible. UX necesita la skill externa `ui-ux-pro-max` y Python 3, que el paquete no instala; las features sin UI omiten UX. Codex no tiene hooks del paquete ni panel en vivo.
+
+Repite la instalación para actualizar archivos propios y retirar recursos obsoletos sin cambios locales conservando archivos ajenos. Cierra/reinicia el cliente durante actualizaciones si pudiera observar recursos intermedios. `--clean --target codex` solo limpia la salida generada. `--target all --install` también puede instalar otros targets; usa `--target codex` para instalar exclusivamente Codex.
+
+#### Conflictos y recuperación
+
+- `CODEX_CONFLICT`: conserva la personalización indicada fuera de las rutas administradas, compárala con la fuente y restaura deliberadamente la versión administrada anterior o mueve el archivo sin propietario antes de reintentar; no hay sobrescritura forzada implícita.
+- `CODEX_SOURCE_INVALID`, `CODEX_PATH_UNSAFE`, `CODEX_PERMISSION`: corrige fuentes ausentes/alteradas, rutas inseguras o permisos y genera de nuevo; se rechazan symlinks/junctions administrados.
+- `CODEX_INSTALL_BUSY`: comprueba si hay un instalador activo; nunca retires su lock. Solo retira un lock obsoleto sin journal/transaction tras confirmar que ningún instalador sigue activo.
+- `CODEX_INSTALL_INCOMPLETE`: conserva `journal.json` y respaldos de `transaction/` en `.equipo-dev-install`, detén instaladores y revisa el conflicto antes de recuperar. La recuperación compara hashes y rechaza ediciones posteriores; consérvalas y resuélvelas primero. Una transacción sin journal legible necesita inspección manual; no borres respaldos a ciegas.
+
+Desde el repositorio, recupera la instalación de usuario predeterminada y luego repite la instalación:
+
+```bash
+node --input-type=module -e "import { recoverCodex } from './scripts/codex.mjs'; recoverCodex();"
+```
+
+La recuperación restaura la instalación anterior o termina la limpieza de una ya confirmada. No se expone CLI para destinos arbitrarios. Actualizar varios archivos no es atómico frente a caídas del sistema. Las pruebas automatizadas usan temporales, nunca el perfil personal.
+
+---
+
 ## ⚡ Uso e Inicio Rápido
+
+Para Codex, usa las skills prefijadas y el selector del host anteriores; los comandos slash y ejemplos de bitácora en vivo siguientes corresponden a otros adaptadores.
 
 ### 1. Iniciar una Nueva Feature
 En el chat de tu asistente, escribe `/feature` seguido de lo que deseas construir:
@@ -265,11 +312,11 @@ Si cerraste la sesión o cambiaste de rama, retoma el trabajo sin perder el avan
 
 El equipo inspecciona `docs/specs/`, `docs/ux/`, `docs/adr/` y `docs/qa/`, revisa `git status` y te propone continuar exactamente desde el paso pendiente sin rehacer lo completado.
 
-### 3. Consultar el Estado del Equipo (`/equipo-panel`)
+### 3. Consultar el Estado del Equipo (`/team-report`)
 Revisa en tiempo real el progreso de los roles y aprobaciones pendientes:
 
 ```text
-/equipo-panel
+/team-report
 ```
 
 Ejemplo de respuesta:
@@ -376,6 +423,7 @@ node scripts/build.mjs --target antigravity
 node scripts/build.mjs --target claude-code
 node scripts/build.mjs --target cursor
 node scripts/build.mjs --target copilot
+node scripts/build.mjs --target codex
 
 # Limpiar dist/ antes de compilar
 node scripts/build.mjs --clean
@@ -394,7 +442,8 @@ node scripts/build.mjs --help
 
 ## 🧪 Pruebas Automatizadas
 
-El repositorio cuenta con una suite integral de **37 pruebas en verde**:
+El repositorio cuenta con una suite integral de **50 pruebas automatizadas**:
+- **`tests/codex.test.mjs`** (13 pruebas): Valida generación determinista, instalación temporal, preservación, conflictos, rechazo de junctions, rollback y recuperación; no certifica ejecución del cliente.
 - **`tests/build.test.mjs`** (14 pruebas): Valida integridad de manifiestos, mapeo de herramientas, resolución de tiers, formato de frontmatter, contención de rutas (`assertWithin`) y autorización de destinos.
 - **`tests/qa-verification.test.mjs`** (15 pruebas): Valida los criterios de aceptación Gherkin (HU-1 a HU-5), casos límite, instalación aislada en directorios temporales y cero regresiones.
 - **`tests/agent-optimization.test.mjs`** (8 pruebas): Valida directivas de optimización, concisión, calibración epistémica (`[Seguro]`, `[Probable]`, `[Especulando]`), DevOps en Backend, mobile-first y WCAG 2.1 AA en UX/Frontend, rol de Documentador en QA y filtro crítico en Code Reviewer.
@@ -412,10 +461,24 @@ node --test tests/qa-verification.test.mjs
 node --test tests/agent-optimization.test.mjs
 
 # Ejecución conjunta secuencial (recomendado en Windows para evitar bloqueos en dist/)
-node --test --test-concurrency=1 tests/build.test.mjs tests/qa-verification.test.mjs tests/agent-optimization.test.mjs
+node --test --test-concurrency=1 tests/build.test.mjs tests/qa-verification.test.mjs tests/agent-optimization.test.mjs tests/codex.test.mjs
 ```
 
 ---
+
+### 📦 Nuevas Capacidades y Cambios (instalacion-codex)
+
+Añade generación e instalación Codex por usuario con cuatro skills prefijadas, siete recursos de rol, detección de conflictos y recuperación. Se verificaron reconocimiento, delegación al Product Owner, pausa de aprobación, reporte y reinicio en el cliente de sesión Windows; otros entornos y el flujo completo de roles no están certificados.
+
+### 🔧 Referencia Técnica de Funciones y Hooks
+
+| Identificador | Ubicación | Descripción |
+|---|---|---|
+| `buildCodex` | `scripts/codex.mjs` | Genera y valida el paquete Codex determinista. |
+| `installCodex` | `scripts/codex.mjs` | Sincroniza archivos propios con detección de conflictos y recuperación. |
+| `recoverCodex` | `scripts/codex.mjs` | Recupera una transacción interrumpida comprobando hashes. |
+| `safePath` | `scripts/codex.mjs` | Rechaza enlaces y ancestros existentes inseguros. |
+| `validateManifest` | `scripts/codex.mjs` | Valida identidad, esquema, rutas propias y hashes. |
 
 ### 📦 Nuevas Capacidades y Cambios (optimizacion-agentes)
 - **Diagnóstico Directo y Calibración Epistémica**: `product-owner` y `architect` inician respuestas con diagnóstico en su primera frase y clasifican afirmaciones con `[Seguro]`, `[Probable]` y `[Especulando]`.
@@ -429,6 +492,20 @@ node --test --test-concurrency=1 tests/build.test.mjs tests/qa-verification.test
 |---|---|---|
 | `readAgent` | `tests/agent-optimization.test.mjs` | Función de utilidad para leer y desestructurar frontmatter y cuerpo de agentes en tests. |
 | `tests/agent-optimization.test.mjs` | `tests/agent-optimization.test.mjs` | Suite automatizada que comprueba directivas de concisión, calibración, DevOps, WCAG y filtros críticos en los 7 agentes. |
+
+---
+
+### 📦 Nuevas Capacidades y Cambios (renombrar-equipo-panel-a-team-report)
+- **Estandarización Internacional del Comando de Estado**: Se renombra la habilidad canónica y adaptadores de `equipo-panel` a `team-report` (`/team-report` y `/equipo-dev:team-report`) bajo sustitución estricta inmediata en todas las plataformas soportadas (Antigravity, Claude Code, Cursor y Copilot).
+- **Cero Referencias Obsoletas y Consistencia Multiplataforma**: Se actualizan el manifiesto agnóstico, hooks y UI de Claude Code, overrides de Antigravity y documentación completa eliminando alias obsoletos.
+
+### 🔧 Referencia Técnica de Funciones y Hooks
+| Identificador | Ubicación | Descripción (1 frase corta) |
+|---|---|---|
+| `PANE` | `platforms/claude-code/hooks/register.tsx` | Identificador interno fijado a `'team-report'` para el renderizado del panel lateral en Claude Code. |
+| `PANEL_CMDS` | `platforms/claude-code/hooks/register.tsx` | Lista de comandos interceptados (`['equipo-dev:team-report', 'team-report']`) para abrir el panel de estado. |
+| `team-report` (Agnóstico) | `src/skills/team-report/SKILL.md` | Habilidad canónica agnóstica para inspeccionar y deducir el estado de subagentes en modo texto. |
+| `team-report` (Antigravity) | `platforms/antigravity/skills/team-report/SKILL.md` | Override para Antigravity que combina la inspección de artefactos en `docs/` con la bitácora del plugin. |
 
 ---
 

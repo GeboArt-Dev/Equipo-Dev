@@ -1,0 +1,6 @@
+{
+  "id": "codex",
+  "displayName": "Codex",
+  "output": { "dir": "dist/codex/equipo-dev" },
+  "install": { "targetDir": "~/.agents/skills" }
+}

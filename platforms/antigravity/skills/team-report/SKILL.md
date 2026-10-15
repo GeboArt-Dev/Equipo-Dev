@@ -1,6 +1,6 @@
 ---
-name: equipo-panel
-description: Muestra el estado del equipo de desarrollo (qué rol trabaja, qué pasos terminaron y si se espera aprobación del dueño). Úsalo cuando el usuario escriba /equipo-panel o pregunte en qué va el equipo o una feature.
+name: team-report
+description: Muestra el estado del equipo de desarrollo (qué rol trabaja, qué pasos terminaron y si se espera aprobación del dueño). Úsalo cuando el usuario escriba /team-report o pregunte en qué va el equipo o una feature.
 ---
 # Estado del equipo (Antigravity)
 
@@ -8,7 +8,7 @@ En Antigravity no hay panel lateral: arma el estado tú combinando los archivos 
 
 Argumento opcional: nombre de la feature. Si no se da, usa la feature con archivos modificados más recientemente en `docs/`.
 
-1. **Bitácora**: la carpeta del plugin es la que está dos niveles por encima de la carpeta de este `SKILL.md` (`<plugin>/skills/equipo-panel/SKILL.md`). Ejecuta:
+1. **Bitácora**: la carpeta del plugin es la que está dos niveles por encima de la carpeta de este `SKILL.md` (`<plugin>/skills/team-report/SKILL.md`). Ejecuta:
    `node "<plugin>/hooks/bitacora.mjs" --show "<raíz del proyecto>"`
    Te da cuántas veces se lanzó cada rol, cuándo fue el último lanzamiento y los últimos movimientos. Si falla o no hay Node, sigue sin ella y dilo en una línea.
 2. **Archivos**: busca la feature (sin distinguir mayúsculas ni guiones) en `docs/specs/`, `docs/ux/`, `docs/adr/` y `docs/qa/`, y revisa `git status`.

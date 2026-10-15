@@ -105,7 +105,7 @@ test('Resolución completa de tokens contextuales en agentes y skills', () => {
 })
 
 test('Overrides de skills en Antigravity', () => {
-  const panelSkill = fs.readFileSync(path.join(DIST, 'antigravity', 'equipo-dev', 'skills', 'equipo-panel', 'SKILL.md'), 'utf8')
+  const panelSkill = fs.readFileSync(path.join(DIST, 'antigravity', 'equipo-dev', 'skills', 'team-report', 'SKILL.md'), 'utf8')
   assert.ok(panelSkill.includes('# Estado del equipo (Antigravity)'))
   assert.ok(panelSkill.includes('hooks/bitacora.mjs'))
 
@@ -218,4 +218,3 @@ test('Limpieza selectiva con --clean y --target específico', () => {
   assert.equal(fs.statSync(path.join(DIST, 'cursor', '.cursorrules')).mtimeMs, cursorMtime)
   assert.ok(fs.existsSync(path.join(DIST, 'copilot', '.github', 'copilot-instructions.md')))
 })
-

@@ -20,7 +20,7 @@ async function agentes($: any, on: any, runs: Run[]) {
 }
 
 async function panel($: any, surface: (typeof SURFACES)[number]) {
-  return $.ui.mount({ plugin: 'equipo-dev', surface, component: 'Pane', requestId: 'equipo-panel', props: PANE })
+  return $.ui.mount({ plugin: 'equipo-dev', surface, component: 'Pane', requestId: 'team-report', props: PANE })
 }
 
 test('tras el PO, el panel pide aprobar la spec', async ($, on) => {
@@ -118,24 +118,24 @@ test('retomar en backend no marca al frontend como hecho', async ($, on) => {
   }
 })
 
-test('/equipo-panel responde con el estado aunque no haya panel', async ($, on) => {
+test('/team-report responde con el estado aunque no haya panel', async ($, on) => {
   await agentes($, on, [{ type: 'equipo-dev:product-owner', desc: 'Reservas online' }])
-  const r = await ($ as any).command.run({ command: 'equipo-dev:equipo-panel' })
+  const r = await ($ as any).command.run({ command: 'equipo-dev:team-report' })
   expect(r.text).toMatch(/Esta pantalla no muestra paneles laterales/)
   expect(r.text).toMatch(/Feature: Reservas online/)
   expect(r.text).toMatch(/✔ 1\. Product Owner: terminado/)
   expect(r.text).toMatch(/⏸ Esperando tu aprobación de la spec/)
 })
 
-test('/equipo-reiniciar vacía el estado', async ($, on) => {
+test('/team-reset vacía el estado', async ($, on) => {
   await agentes($, on, [{ type: 'equipo-dev:product-owner', desc: 'Reservas online' }])
-  await ($ as any).command.run({ command: 'equipo-dev:equipo-reiniciar' })
-  const r = await ($ as any).command.run({ command: 'equipo-dev:equipo-panel' })
+  await ($ as any).command.run({ command: 'equipo-dev:team-reset' })
+  const r = await ($ as any).command.run({ command: 'equipo-dev:team-report' })
   expect(r.text).toMatch(/Sin feature activa/)
 })
 
 test('el nombre corto del comando también funciona', async ($, on) => {
   await agentes($, on, [{ type: 'equipo-dev:product-owner', desc: 'CheckIn' }])
-  const r = await ($ as any).command.run({ command: 'equipo-panel' })
+  const r = await ($ as any).command.run({ command: 'team-report' })
   expect(r.text).toMatch(/Feature: CheckIn/)
 })

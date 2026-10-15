@@ -4,11 +4,11 @@ import type { Register } from 'claude-code'
 import type { Flow, RoleId, RoleState } from '../types'
 
 // Panel en vivo del equipo equipo-dev: sigue cada llamada a un subagente del equipo.
-const PANE = 'equipo-panel'
+const PANE = 'team-report'
 const TITLE = 'Equipo de desarrollo'
 const MAX_LOG = 30
-const PANEL_CMDS = ['equipo-dev:equipo-panel', 'equipo-panel']
-const RESET_CMDS = ['equipo-dev:equipo-reiniciar', 'equipo-reiniciar']
+const PANEL_CMDS = ['equipo-dev:team-report', 'team-report']
+const RESET_CMDS = ['equipo-dev:team-reset', 'team-reset']
 
 const ROLES: { id: RoleId; label: string }[] = [
   { id: 'product-owner', label: 'Product Owner' },

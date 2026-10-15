@@ -1,6 +1,6 @@
 ---
-name: equipo-panel
-description: Muestra el estado del equipo de desarrollo (qué rol trabaja, qué pasos terminaron y si se espera aprobación del dueño). Úsalo cuando el usuario escriba /equipo-panel o pregunte en qué va el equipo o una feature.
+name: team-report
+description: Muestra el estado del equipo de desarrollo (qué rol trabaja, qué pasos terminaron y si se espera aprobación del dueño). Úsalo cuando el usuario escriba /team-report o pregunte en qué va el equipo o una feature.
 ---
 # Estado del equipo
 
