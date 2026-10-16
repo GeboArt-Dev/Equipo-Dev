@@ -8,18 +8,23 @@ description: Reglas del equipo de desarrollo (flujo PO → UX → arquitecto →
 - El usuario es el **dueño**: define la visión y aprueba la spec y el ADR.
 - La sesión principal actúa como **Tech Lead / orquestador**: delega en los subagentes, no se salta pasos y no hace el trabajo de un rol que tiene subagente propio.
 
+## Modos de Ejecución
+- **Modo Supervisado / Interactivo (por defecto)**: Flujo estándar con compuertas de aprobación del dueño en los pasos 2 (Spec) y 5 (UX + ADR). Requiere confirmación humana expresa antes de proceder a la siguiente fase.
+- **Modo Continuo / Autónomo (con `--no-pause` o `--auto-approve`)**: Flujo acelerado desatendido donde se omiten las pausas de aprobación intermedia de diseño (Spec y UX + ADR se consideran auto-aprobadas).
+  - Regla de supuestos técnicos: Ante dudas o preguntas abiertas no bloqueantes para el negocio, el subagente u orquestador adopta supuestos técnicos razonables y los documenta explícitamente en el artefacto (Spec o ADR) y en la respuesta. Si una ambigüedad es estrictamente bloqueante para el alcance de negocio, el flujo se detiene para pedir aclaración al dueño.
+
 ## Flujo obligatorio por feature
 1. `product-owner` → `docs/specs/<feature>.md`
-2. Pausa: aprobación del dueño.
+2. Pausa: aprobación del dueño (omitida en modo continuo salvo duda bloqueante de negocio).
 3. `ux-designer` (si hay interfaz) → `docs/ux/<feature>.md` + `design-system/<proyecto>/MASTER.md`, usando `ui-ux-pro-max`.
 4. `architect` → `docs/adr/<NNN>-<feature>.md` (lee `docs/ux/` si existe).
-5. Pausa: aprobación del dueño (UX + ADR).
+5. Pausa: aprobación del dueño (UX + ADR; omitida en modo continuo).
 6. `backend-dev` y/o `frontend-dev` → código + tests unitarios. Frontend sigue `docs/ux/` y el design system.
-7. `qa-engineer` → `docs/qa/<feature>.md`. Si es RECHAZADO, volver al paso 6.
+7. `qa-engineer` → `docs/qa/<feature>.md`. Si es RECHAZADO, volver al paso 6 (máximo 3 vueltas).
 8. `code-reviewer` → veredicto. Si hay CAMBIOS REQUERIDOS, volver al paso 6.
 
 Ningún rol empieza sin el archivo de salida del rol anterior.
-Una feature ya empezada se retoma desde el último paso completado según los archivos de `docs/`; nunca se rehace un paso existente sin que el dueño lo pida.
+Una feature ya empezada se retoma desde el último paso completado según los archivos de `docs/`; nunca se rehace un paso existente sin que el dueño lo pida. El comando para retomar opera en modo supervisado por defecto a menos que se incluya `--no-pause` o `--auto-approve`.
 Para cambios pequeños (bug simple, ajuste menor) el dueño puede autorizar ir directo a dev + reviewer.
 Features sin interfaz (solo backend) omiten `ux-designer`.
 
@@ -33,9 +38,11 @@ Features sin interfaz (solo backend) omiten `ux-designer`.
 - UI conforme a `docs/ux/<feature>.md` y al design system (estados y accesibilidad incluidos).
 - README del proyecto actualizado si cambió el uso, la configuración o la API.
 
-## Seguridad
+## Seguridad y Salvaguardas Críticas
+Las siguientes salvaguardas son inviolables tanto en Modo Supervisado como en Modo Continuo / Autónomo:
 - Nunca escribir secretos, tokens, contraseñas ni certificados en código, docs, logs o commits.
 - No leer archivos `.env`, claves privadas ni certificados salvo petición expresa del dueño.
 - Validar toda entrada externa.
 - No ejecutar comandos destructivos, despliegues ni cambios en bases remotas sin confirmación del dueño.
 - No hacer commit ni push sin autorización explícita del dueño.
+- Si QA Engineer rechaza 3 veces consecutivas o Code Reviewer reporta bloqueos reiterados, pausar obligatoriamente y escalar al dueño.

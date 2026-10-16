@@ -12,6 +12,10 @@
       "types": "./types/index.d.ts"
     }
   },
+  "install": {
+    "targetDir": "~/.claude/plugins/equipo-dev",
+    "preserve": ["state"]
+  },
   "tools": {
     "read_file": ["Read"],
     "list_dir": ["Read"],

@@ -1,7 +1,7 @@
 import { atom, read, update } from 'claude-code'
 import type { Register } from 'claude-code'
 
-import type { Flow, RoleId, RoleState } from '../types'
+import type { Flow, FlowMode, RoleId, RoleState } from '../types'
 
 // Panel en vivo del equipo equipo-dev: sigue cada llamada a un subagente del equipo.
 const PANE = 'team-report'
@@ -26,8 +26,19 @@ const STAGE: Record<RoleId, number> = {
 const ICON = { pendiente: '○', previo: '◌', trabajando: '●', terminado: '✔', error: '✖' } as const
 const LABEL = Object.fromEntries(ROLES.map(r => [r.id, r.label])) as Record<RoleId, string>
 
+export function parseMode(desc?: string): FlowMode {
+  if (!desc) return 'supervised'
+  return /--(?:no-pause|auto-approve)\b/i.test(desc) ? 'continuous' : 'supervised'
+}
+
+export function cleanFeature(desc?: string): string {
+  if (!desc) return ''
+  return desc.replace(/--(?:no-pause|auto-approve)\b\s*/gi, '').trim()
+}
+
 const idle = (): RoleState => ({ status: 'pendiente', runs: 0 })
 const emptyFlow = (): Flow => ({
+  mode: 'supervised',
   roles: {
     'product-owner': idle(),
     'ux-designer': idle(),
@@ -74,8 +85,9 @@ export function markPrevious(f: Flow, role: RoleId): Flow {
 
 // Resumen del flujo en texto: se usa cuando la pantalla no admite paneles.
 export function summary(f: Flow): string {
-  const lines = [f.feature ? `Feature: ${f.feature}` : 'Sin feature activa']
-  if (f.awaiting) lines.push(f.awaiting === 'spec' ? '⏸ Esperando tu aprobación de la spec' : '⏸ Esperando tu aprobación del diseño (UX + ADR)')
+  const modeText = f.mode === 'continuous' ? 'Modo: Continuo / Autónomo' : 'Modo: Supervisado / Interactivo'
+  const lines = [f.feature ? `Feature: ${f.feature}` : 'Sin feature activa', modeText]
+  if (f.awaiting && f.mode !== 'continuous') lines.push(f.awaiting === 'spec' ? '⏸ Esperando tu aprobación de la spec' : '⏸ Esperando tu aprobación del diseño (UX + ADR)')
   ROLES.forEach((r, i) => {
     const st = f.roles[r.id]
     const laps = st.runs > 1 ? ` (${st.runs} vueltas)` : ''
@@ -89,7 +101,7 @@ export function summary(f: Flow): string {
 export function statusLine(f: Flow): string | undefined {
   const busy = ROLES.filter(r => f.roles[r.id].status === 'trabajando').map(r => r.label)
   if (busy.length) return `Equipo: ${busy.join(' + ')} trabajando`
-  if (f.awaiting) return f.awaiting === 'spec' ? 'Equipo: esperando tu aprobación de la spec' : 'Equipo: esperando tu aprobación del diseño'
+  if (f.awaiting && f.mode !== 'continuous') return f.awaiting === 'spec' ? 'Equipo: esperando tu aprobación de la spec' : 'Equipo: esperando tu aprobación del diseño'
   return undefined
 }
 
@@ -118,14 +130,17 @@ export const register: Register = on => {
     try {
     const startedAt = await $.clock.now()
     await update($, flow, f => {
-      const fresh = startsNewFlow(f, role) ? { ...emptyFlow(), feature: e.description } : f
+      const detectedMode = /--(?:no-pause|auto-approve)\b/i.test(e.description ?? '') ? 'continuous' : undefined
+      const currentMode = detectedMode ?? f.mode ?? 'supervised'
+      const fresh = startsNewFlow(f, role) ? { ...emptyFlow(), feature: cleanFeature(e.description), mode: currentMode } : f
       const resumed = !fresh.feature && role !== 'product-owner'
       const base = resumed ? markPrevious(fresh, role) : fresh
       opened = base !== f || !f.feature
       const prev = base.roles[role]
       return {
         ...base,
-        feature: base.feature ?? e.description,
+        feature: base.feature ?? cleanFeature(e.description),
+        mode: currentMode,
         awaiting: undefined,
         roles: { ...base.roles, [role]: { status: 'trabajando', runs: prev.runs + 1, task: e.description, startedAt } },
         log: addLog(
@@ -146,20 +161,22 @@ export const register: Register = on => {
     try {
     const endedAt = await $.clock.now()
     const failed = 'deny' in ran && ran.deny ? true : Boolean((ran as { isError?: boolean }).isError)
-    const awaiting = failed ? undefined : role === 'product-owner' ? 'spec' : role === 'architect' ? 'adr' : undefined
     await update($, flow, f => {
+      const isContinuous = f.mode === 'continuous'
+      const awaiting = failed || isContinuous ? undefined : role === 'product-owner' ? 'spec' : role === 'architect' ? 'adr' : undefined
       const prev = f.roles[role]
       const took = duration(endedAt - (prev.startedAt ?? endedAt))
       return {
         ...f,
-        awaiting: awaiting ?? f.awaiting,
+        awaiting: awaiting ?? (isContinuous ? undefined : f.awaiting),
         roles: { ...f.roles, [role]: { ...prev, status: failed ? 'error' : 'terminado', endedAt } },
         log: addLog(f, endedAt, `${LABEL[role]} ${failed ? 'falló' : 'terminó'} (${took})`),
       }
     })
     try { $.ui.status(statusLine(await read($, flow))) } catch {}
-    if (awaiting) {
-      $.ui.toast(awaiting === 'spec' ? 'Spec lista: el equipo espera tu aprobación.' : 'Diseño (UX + ADR) listo: el equipo espera tu aprobación.')
+    const latest = await read($, flow)
+    if (latest.awaiting && latest.mode !== 'continuous') {
+      $.ui.toast(latest.awaiting === 'spec' ? 'Spec lista: el equipo espera tu aprobación.' : 'Diseño (UX + ADR) listo: el equipo espera tu aprobación.')
     }
     } catch {
       // Igual que arriba: nunca alterar el resultado del agente.
@@ -194,14 +211,18 @@ export const register: Register = on => {
     const gate = (kind: 'spec' | 'adr', done: boolean) => {
       const what = kind === 'spec' ? 'Aprobación de la spec' : 'Aprobación del diseño'
       if (done) return <Text color="success">   ✔ {what}</Text>
-      if (f.awaiting === kind) return <Text color="permission" bold>   ⏸ {what}: te toca a ti</Text>
+      if (f.mode === 'continuous' && (kind === 'spec' ? f.roles['product-owner'].status === 'terminado' : f.roles.architect.status === 'terminado')) {
+        return <Text color="success">   ✔ {what} (auto-aprobado)</Text>
+      }
+      if (f.awaiting === kind && f.mode !== 'continuous') return <Text color="permission" bold>   ⏸ {what}: te toca a ti</Text>
       return <Text color="inactive">   ○ {what}</Text>
     }
 
     return (
       <Box flexDirection="column">
         <Text bold wrap="truncate-end">{f.feature ? `Feature: ${f.feature}` : 'Sin feature activa'}</Text>
-        {f.awaiting && (
+        <Text dimColor>{f.mode === 'continuous' ? 'Modo: Continuo / Autónomo' : 'Modo: Supervisado / Interactivo'}</Text>
+        {f.awaiting && f.mode !== 'continuous' && (
           <Text color="permission" bold>
             {f.awaiting === 'spec' ? 'Revisa docs/specs y aprueba para seguir.' : 'Revisa docs/ux y docs/adr y aprueba para seguir.'}
           </Text>

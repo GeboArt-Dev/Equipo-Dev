@@ -3,6 +3,7 @@ import assert from 'node:assert/strict'
 import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
+import { spawnSync } from 'node:child_process'
 import { fileURLToPath } from 'node:url'
 import { runBuild, parseFrontmatter, applyTokens, assertWithin, isAuthorizedInstallTarget, serializeFrontmatterField } from '../scripts/build.mjs'
 
@@ -22,9 +23,10 @@ test('Validación de esquema y manifiesto para Claude Code', () => {
   const manifestPath = path.join(DIST, 'claude-code', 'equipo-dev', '.claude-plugin', 'plugin.json')
   assert.ok(fs.existsSync(manifestPath), 'Manifiesto .claude-plugin/plugin.json debe existir')
   const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'))
+  const srcManifest = JSON.parse(fs.readFileSync(path.join(ROOT, 'src', 'manifest.json'), 'utf8'))
 
   assert.equal(manifest.name, 'equipo-dev')
-  assert.equal(manifest.version, '0.5.0')
+  assert.equal(manifest.version, srcManifest.version)
   assert.equal(manifest.types, './types/index.d.ts')
   assert.ok(Array.isArray(manifest.keywords))
   assert.equal(manifest.author?.name, 'GeboArt.Dev')
@@ -38,10 +40,11 @@ test('Validación de esquema y manifiesto para Antigravity', () => {
   const manifestPath = path.join(DIST, 'antigravity', 'equipo-dev', 'plugin.json')
   assert.ok(fs.existsSync(manifestPath), 'Manifiesto plugin.json debe existir en la raíz')
   const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'))
+  const srcManifest = JSON.parse(fs.readFileSync(path.join(ROOT, 'src', 'manifest.json'), 'utf8'))
 
   assert.equal(manifest.name, 'equipo-dev')
   assert.equal(manifest.displayName, 'Equipo Dev')
-  assert.equal(manifest.version, '0.5.0')
+  assert.equal(manifest.version, srcManifest.version)
   assert.ok(Array.isArray(manifest.suggestedPrompts))
 
   // Hooks en raíz
@@ -218,3 +221,14 @@ test('Limpieza selectiva con --clean y --target específico', () => {
   assert.equal(fs.statSync(path.join(DIST, 'cursor', '.cursorrules')).mtimeMs, cursorMtime)
   assert.ok(fs.existsSync(path.join(DIST, 'copilot', '.github', 'copilot-instructions.md')))
 })
+
+test('Soporte de --install-all y ayuda en build.mjs', () => {
+  const procHelp = spawnSync('node', ['scripts/build.mjs', '--help'], {
+    cwd: ROOT,
+    encoding: 'utf8'
+  })
+  assert.equal(procHelp.status, 0)
+  assert.ok(procHelp.stdout.includes('--install-all'), 'La ayuda de build.mjs debe documentar --install-all')
+  assert.ok(procHelp.stdout.includes('Instalación simultánea'), 'La ayuda debe explicar la instalación simultánea')
+})
+

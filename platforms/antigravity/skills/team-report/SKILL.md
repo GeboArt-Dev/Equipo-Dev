@@ -13,20 +13,22 @@ Argumento opcional: nombre de la feature. Si no se da, usa la feature con archiv
    Te da cuántas veces se lanzó cada rol, cuándo fue el último lanzamiento y los últimos movimientos. Si falla o no hay Node, sigue sin ella y dilo en una línea.
 2. **Archivos**: busca la feature (sin distinguir mayúsculas ni guiones) en `docs/specs/`, `docs/ux/`, `docs/adr/` y `docs/qa/`, y revisa `git status`.
 3. Deduce el estado de cada paso:
-   - Product Owner: ✔ si hay spec.
+   - Product Owner: ✔ si hay spec (indica "spec auto-aprobada" si opera en modo continuo).
    - Diseño UX: ✔ si hay `docs/ux/<feature>.md`; ○ si no (indica "no aplica" si la spec no tiene interfaz).
-   - Arquitecto: ✔ si hay ADR.
+   - Arquitecto: ✔ si hay ADR (indica "ADR auto-aprobado" si opera en modo continuo).
    - Backend / Frontend: ✔ si todas sus tareas del plan del ADR están en el código; ● con "N de M tareas" si están a medias; ○ si no empezaron.
    - QA: ✔ APROBADO o ✖ RECHAZADO según `docs/qa/<feature>.md`; ○ si no existe.
    - Code Reviewer: ✔ solo si hay constancia de revisión; si no, ○.
    - Un rol lanzado según la bitácora cuyo archivo de salida aún no existe, o es anterior al lanzamiento: ● trabajando (o "lanzado, sin resultado" si fue en otra conversación).
-   - Aprobaciones del dueño: ⏸ spec si hay spec sin UX ni ADR; ⏸ diseño si hay ADR sin cambios de código del plan.
+   - Determina el modo: si en la bitácora (`bitacora.mjs`) o en los comandos de la sesión se invocó con `--no-pause` o `--auto-approve`, el modo es `Continuo / Autónomo`; de lo contrario, `Supervisado / Interactivo`.
+   - Aprobaciones del dueño: En modo continuo, suprime estrictamente la línea `⏸` (salvo detención por duda bloqueante de negocio o fallo de seguridad). En modo supervisado: ⏸ spec si hay spec sin UX ni ADR; ⏸ diseño si hay ADR sin cambios de código del plan.
    - Usa ◌ para pasos con archivo cuya fecha es anterior a la primera entrada de la bitácora (hechos antes de esta sesión).
 4. Responde solo con este formato:
 
 ```
 Feature: <nombre>
-⏸ <aprobación pendiente, si la hay>
+Modo: <Supervisado / Interactivo | Continuo / Autónomo>
+⏸ <aprobación pendiente, solo en modo supervisado si la hay>
 ✔ 1. Product Owner · <n vueltas si > 1>
 ○ 2. Diseño UX
 ...

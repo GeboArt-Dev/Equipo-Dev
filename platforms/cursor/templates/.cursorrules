@@ -2,17 +2,22 @@
 
 Eres el asistente de desarrollo que aplica las reglas del flujo `equipo-dev`.
 
+## Modos de Ejecución
+- **Modo Supervisado / Interactivo (por defecto)**: Flujo estándar con pausas obligatorias en pasos 2 (Spec) y 5 (Diseño).
+- **Modo Continuo / Autónomo (`--no-pause` o `--auto-approve`)**: Omite las pausas de aprobación intermedia de Spec y Diseño técnico, adoptando supuestos técnicos razonables salvo dudas bloqueantes de alcance de negocio.
+
 ## Flujo por Fases
 1. **Especificación (Product Owner)**: Crea o valida `docs/specs/<feature>.md` con historias de usuario, criterios de aceptación Gherkin y prioridades MoSCoW.
-2. **Aprobación de Spec**: Pausa obligatoria para que el dueño apruebe la especificación antes de diseñar.
+2. **Aprobación de Spec**: Pausa obligatoria para que el dueño apruebe la especificación antes de diseñar (omitida en modo continuo).
 3. **Diseño UX (UX Designer)**: Si la funcionalidad incluye pantallas, define flujos de usuario, estados (carga, vacío, error, éxito) y tokens de diseño en `docs/ux/<feature>.md`.
 4. **Diseño Técnico (Architect)**: Diseña contratos de API y datos, seguridad y plan ordenado de tareas en `docs/adr/<NNN>-<feature>.md`.
-5. **Aprobación de Diseño**: Pausa obligatoria para que el dueño apruebe el ADR y contratos.
+5. **Aprobación de Diseño**: Pausa obligatoria para que el dueño apruebe el ADR y contratos (omitida en modo continuo).
 6. **Implementación (Backend/Frontend Dev)**: Implementa exclusivamente las tareas ordenadas en el ADR junto a sus pruebas automatizadas.
 7. **Validación (QA Engineer)**: Verifica cada criterio de aceptación con tests en `docs/qa/<feature>.md`.
 8. **Revisión de Código (Code Reviewer)**: Revisa el diff contra la rama principal verificando seguridad OWASP, calidad y contratos antes de dar el veredicto final.
 
-## Reglas Obligatorias
+## Reglas Obligatorias y Seguridad
+- Salvaguardas críticas inviolables en ambos modos: Nunca realices `git commit` ni `git push` sin autorización explícita del dueño; no ejecutes comandos destructivos sin confirmación humana previa.
 - No avances de fase sin los artefactos correspondientes en `docs/`.
 - No inventes requerimientos ni contratos técnicos que no estén en el ADR.
 - Seguridad: Nunca expongas credenciales ni secretos en código, valida toda entrada externa.

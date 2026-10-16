@@ -1,9 +1,10 @@
 # 🚀 equipo-dev
 
+[![Version](https://img.shields.io/badge/version-0.6.0-blue.svg)](CHANGELOG.md)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Node.js](https://img.shields.io/badge/Node.js-%3E%3D18.0.0-brightgreen.svg)](https://nodejs.org/)
 [![Multi-AI Architecture](https://img.shields.io/badge/Multi--AI-Claude%20Code%20%7C%20Antigravity%20%7C%20Cursor%20%7C%20Copilot%20%7C%20Codex-orange.svg)](docs/adr/001-reestructuracion-multi-ai.md)
-[![Tests Passing](https://img.shields.io/badge/tests-50%2F50%20passed-success.svg)](tests/)
+[![Tests Passing](https://img.shields.io/badge/tests-58%2F58%20passed-success.svg)](tests/)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/GeboArt-Dev/Equipo-Dev/pulls)
 
 **An autonomous, multi-role software development team of AI subagents for your coding workspace.**  
@@ -12,7 +13,7 @@ Transform feature ideas into production-ready, peer-reviewed code with human-in-
 ---
 
 ### 🌐 Language / Idioma
-**English** | [Español](README.es.md)
+**English** | [Español](README.es.md) | [Changelog](CHANGELOG.md)
 
 ---
 
@@ -22,6 +23,7 @@ Transform feature ideas into production-ready, peer-reviewed code with human-in-
 - [The Team & Roles](#-the-team--roles)
 - [How It Works (Workflow)](#-how-it-works-workflow)
 - [Human-in-the-Loop Approvals](#-human-in-the-loop-approvals)
+- [Execution Modes & Safeguards](#-execution-modes--safeguards)
 - [Installation Guide by OS & Platform](#-installation-guide-by-os--platform)
   - [Google Antigravity](#1-google-antigravity)
   - [Claude Code](#2-claude-code)
@@ -33,7 +35,8 @@ Transform feature ideas into production-ready, peer-reviewed code with human-in-
 - [Multi-AI Architecture (`src/` + `platforms/`)](#-multi-ai-architecture-src--platforms)
 - [Compiler CLI & Building](#-compiler-cli--building)
 - [Automated Tests](#-automated-tests)
-- [New Capabilities & Technical Reference](#-nuevas-capacidades-y-cambios-optimizacion-agentes)
+- [New Capabilities & Technical Reference](#-nuevas-capacidades-y-cambios-control-aprobaciones-equipo)
+- [Changelog](CHANGELOG.md)
 - [Contributing](#-contributing)
 - [License](#-license)
 
@@ -106,7 +109,7 @@ flowchart TD
 
 ## ⏸️ Human-in-the-Loop Approvals
 
-The workflow enforces two non-negotiable pauses where the team halts and awaits your decision:
+The workflow enforces two structured design gates where the team halts and awaits your decision in supervised mode:
 
 1. **Spec Approval (`⏸ spec`)**:
    - The Product Owner delivers `docs/specs/<feature>.md`.
@@ -114,6 +117,30 @@ The workflow enforces two non-negotiable pauses where the team halts and awaits 
 2. **Design Approval (`⏸ diseño`)**:
    - The Architect delivers `docs/adr/<NNN>-<feature>.md` (and `docs/ux/<feature>.md` if applicable).
    - You review the technical strategy, dependencies, database changes, and UI layout before a single line of production code is written.
+
+---
+
+## 🎛️ Execution Modes & Safeguards
+
+`equipo-dev` provides two execution modes to balance governance and velocity:
+
+### 1. Supervised / Interactive Mode (Default)
+- **Invocation**: `/feature <description>` or `/feature continue with <name>`.
+- **Behavior**: Pauses deterministically at Gate 1 (Spec approval) and Gate 2 (UX + ADR approval).
+- **Ideal for**: Complex features, domain-critical logic, or when close human oversight is required.
+
+### 2. Continuous / Autonomous Mode (`--no-pause` / `--auto-approve`)
+- **Invocation**: `/feature --no-pause <description>` or `/feature --auto-approve <description>`.
+- **Behavior**: Bypasses design gates (Spec and UX/ADR). Transitions smoothly from Product Owner directly to UX/Architect and then to Developers.
+- **Ambiguity Rule**: If non-blocking technical questions arise, the team adopts simplest reasonable technical assumptions and documents them in the artifacts. If a blocking business ambiguity arises, it halts and requests human clarification.
+- **Ideal for**: Rapid prototyping, unattended execution, or automated developer pipelines.
+
+> [!CAUTION]
+> ### 🛡️ Inviolable Security Safeguards (Both Modes)
+> Continuous mode **never** bypasses critical security gates. The following actions **strictly pause and demand explicit human approval**:
+> 1. **Git Commits & Pushes**: Never commit or push without explicit owner consent.
+> 2. **Destructive Commands**: Dropping tables, deleting directories, or altering infrastructure.
+> 3. **Persistent QA/Review Failures**: On 3 consecutive QA rejections or unresolved blocking reviewer findings, execution halts immediately and escalates to the owner.
 
 ---
 
@@ -236,7 +263,7 @@ GitHub Copilot supports repository-level instructions via `.github/copilot-instr
 1. Compile the Copilot target:
    ```bash
    node scripts/build.mjs --target copilot
-node scripts/build.mjs --target codex
+   node scripts/build.mjs --target codex
    ```
 2. Apply to a project:
    ```bash
@@ -294,43 +321,68 @@ Recovery restores the previous installation or finishes cleanup of a committed o
 
 For Codex, use the prefixed skills and host selector above; the slash commands and live log examples below apply to other adapters.
 
-### 1. Start a New Feature
+### 1. Start a New Feature (Supervised vs Continuous)
 In your AI assistant's chat, type `/feature` followed by what you want to build:
 
 ```text
+# Standard Supervised Mode (halts at Spec and UX/ADR approvals)
 /feature user authentication with OAuth2 and refresh tokens
+
+# Continuous Autonomous Mode (bypasses design gates)
+/feature --no-pause user authentication with OAuth2 and refresh tokens
+# or
+/feature --auto-approve user authentication with OAuth2 and refresh tokens
 ```
 
-The orchestrator invokes the **Product Owner**, produces `docs/specs/user-authentication.md`, and pauses for your approval.
+In supervised mode, the orchestrator invokes the **Product Owner**, produces `docs/specs/user-authentication.md`, and pauses for your approval. In continuous mode, it validates scope, logs any non-blocking assumptions, and continues automatically into design and implementation.
 
 ### 2. Resume an In-Progress Feature
 If you closed your session or switched branches, resume seamlessly:
 
 ```text
+# Resume in Supervised Mode (default)
 /feature continue with user-authentication
+
+# Resume in Continuous Mode
+/feature continue with user-authentication --no-pause
 ```
 
 The team inspects `docs/specs/`, `docs/ux/`, `docs/adr/`, and `docs/qa/`, analyzes git status, and proposes resuming from the exact unfinished step without repeating completed work.
 
 ### 3. Check Live Team Status (`/team-report`)
-At any time, inspect team progress and pending approvals:
+At any time, inspect team progress, active execution mode, and pending approvals:
 
 ```text
 /team-report
 ```
 
-Output format:
+Output format in Supervised Mode:
 ```text
 Feature: user-authentication
+Modo: Supervisado / Interactivo
+⏸ Esperando aprobación de spec
 ✔ 1. Product Owner
 ○ 2. UI/UX Design (not applicable)
-✔ 3. Architect
-● 4. Backend (3 of 5 tasks completed)
+○ 3. Architect
+○ 4. Backend
 ○ 5. Frontend
 ○ 6. QA
 ○ 7. Code Reviewer
-Bitácora: Backend developer added JWT validation tests
-Next step: Backend developer completing task 4 (refresh token endpoint)
+Next step: Awaiting owner approval of docs/specs/user-authentication.md
+```
+
+Output format in Continuous Mode:
+```text
+Feature: user-authentication
+Modo: Continuo / Autónomo
+✔ 1. Product Owner (spec auto-aprobada)
+✔ 2. UI/UX Design (not applicable)
+✔ 3. Architect (ADR auto-aprobado)
+● 4. Backend (implementing tasks from plan)
+○ 5. Frontend
+○ 6. QA
+○ 7. Code Reviewer
+Next step: Backend developer completing task 2
 ```
 
 ### 4. Reset Session Log (`/equipo-reiniciar`)
@@ -393,7 +445,9 @@ Equipo-Dev/
 ├── tests/
 │   ├── build.test.mjs                 # Compiler integrity & regression test suite
 │   ├── qa-verification.test.mjs       # Acceptance verification suite
-│   └── agent-optimization.test.mjs    # Agent optimization & token frugality suite
+│   ├── agent-optimization.test.mjs    # Agent optimization & token frugality suite
+│   ├── codex.test.mjs                 # Codex package, installer and recovery test suite
+│   └── approval-control.test.mjs      # Approval mode control & safety safeguards suite
 │
 └── dist/                              # 📦 COMPILED TARGET ARTIFACTS
     ├── antigravity/equipo-dev/
@@ -431,8 +485,16 @@ node scripts/build.mjs --clean
 # Clean only a specific target
 node scripts/build.mjs --clean --target antigravity
 
-# Build and install locally (Antigravity)
+# Build and install locally (single platform)
 node scripts/build.mjs --target antigravity --install
+node scripts/build.mjs --target claude-code --install
+node scripts/build.mjs --target codex --install
+
+# 🚀 Build and install to ALL supported platforms simultaneously (Antigravity, Claude Code, Codex)
+node scripts/build.mjs --install-all
+
+# Or using npm:
+npm run install:all
 
 # Display CLI help
 node scripts/build.mjs --help
@@ -442,7 +504,8 @@ node scripts/build.mjs --help
 
 ## 🧪 Automated Tests
 
-The repository includes a comprehensive automated test suite with **50 automated tests**:
+The repository includes a comprehensive automated test suite with **57 automated tests**:
+- **`tests/approval-control.test.mjs`** (7 tests): Validates parsing of `--no-pause` and `--auto-approve`, supervised fallback, contract enforcement across platforms, safety safeguards, and multi-target compilation without tokens.
 - **`tests/codex.test.mjs`** (13 tests): Validates deterministic generation, temporary installation, preservation, conflicts, junction rejection, rollback and recovery; it does not certify client execution.
 - **`tests/build.test.mjs`** (14 tests): Validates manifest integrity, tool mapping, tier resolution, frontmatter serialization, path containment (`assertWithin`), and install target authorization.
 - **`tests/qa-verification.test.mjs`** (15 tests): Validates Gherkin acceptance criteria (HU-1 through HU-5), edge cases, isolated installation, and zero regressions.
@@ -460,9 +523,29 @@ node --test tests/qa-verification.test.mjs
 # Run agent optimization tests
 node --test tests/agent-optimization.test.mjs
 
+# Run approval control tests
+node --test tests/approval-control.test.mjs
+
 # Run all test suites sequentially (recommended on Windows to prevent dist/ file locking)
-node --test --test-concurrency=1 tests/build.test.mjs tests/qa-verification.test.mjs tests/agent-optimization.test.mjs tests/codex.test.mjs
+node --test --test-concurrency=1 tests/build.test.mjs tests/qa-verification.test.mjs tests/agent-optimization.test.mjs tests/codex.test.mjs tests/approval-control.test.mjs
 ```
+
+---
+
+### 📦 Nuevas Capacidades y Cambios (control-aprobaciones-equipo)
+
+Introduce los modificadores idempotentes `--no-pause` y `--auto-approve` para `/feature`, permitiendo alternar deterministamente entre el Modo Supervisado estándar y el Modo Continuo/Autónomo sin esperas intermedias de diseño. Mantiene intactas las compuertas críticas de seguridad (commits, push y comandos destructivos) y refleja el modo operativo en cabeceras y reportes.
+
+### 🔧 Referencia Técnica de Funciones y Hooks
+
+| Identificador | Ubicación | Descripción (1 frase corta) |
+|---|---|---|
+| `parseCommandMode` | `tests/approval-control.test.mjs` | Parsea comandos de `/feature` para extraer modificadores continuos y sanitizar la descripción de la feature. |
+| `parseMode` | `platforms/claude-code/hooks/register.tsx` | Analiza argumentos de la invocación para resolver el modo (`supervised` o `continuous`) en Claude Code. |
+| `summary` | `platforms/claude-code/hooks/register.tsx` | Renderiza el estado del panel suprimiendo indicadores `⏸` en modo continuo e informando el modo activo. |
+| `feature` (Agnóstico) | `src/skills/feature/SKILL.md` | Habilidad canónica con soporte para omitir compuertas 1 y 2 bajo supuestos razonables en modo continuo. |
+| `reglas-equipo` | `src/skills/reglas-equipo/SKILL.md` | Habilidad canónica que formaliza los Modos de Ejecución y la inviolabilidad de las salvaguardas de seguridad. |
+| `team-report` (Reporte) | `src/skills/team-report/SKILL.md` | Habilidad canónica de reporte que documenta el modo activo y suprime pausas en modo continuo. |
 
 ---
 
@@ -479,6 +562,8 @@ Adds user-scoped Codex generation and installation with four prefixed skills, se
 | `recoverCodex` | `scripts/codex.mjs` | Recovers an interrupted transaction after checking hashes. |
 | `safePath` | `scripts/codex.mjs` | Rejects links and unsafe existing path ancestors. |
 | `validateManifest` | `scripts/codex.mjs` | Validates identity, schema, owned paths and hashes. |
+
+---
 
 ### 📦 Nuevas Capacidades y Cambios (optimizacion-agentes)
 - **Diagnóstico Directo y Calibración Epistémica**: `product-owner` y `architect` inician respuestas con diagnóstico en su primera frase y clasifican afirmaciones con `[Seguro]`, `[Probable]` y `[Especulando]`.

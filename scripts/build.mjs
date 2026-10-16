@@ -46,13 +46,16 @@ Uso:
   node scripts/build.mjs [opciones]
 
 Opciones:
-  --target <id>    Compila el target especificado (claude-code, antigravity, cursor, copilot, codex, all). Por defecto: all.
+  --target <id>    Compila el target especificado (claude-code, antigravity, codex, cursor, copilot, all). Por defecto: all.
   --install        Instala los artefactos en el directorio local de plugins configurado (si la plataforma lo soporta).
+  --install-all    Instala simultáneamente en todas las plataformas soportadas (Antigravity, Claude Code, Codex).
   --clean          Limpia la carpeta dist/ antes de la compilación.
   --help           Muestra esta ayuda.
 
-Codex: --target codex --install instala cuatro skills equipo-dev-* en ~/.agents/skills.
-El reconocimiento debe comprobarse en el cliente. --target all --install instala todos los targets soportados.
+Instalación simultánea:
+  node scripts/build.mjs --install-all
+  (o bien: node scripts/build.mjs --target all --install)
+  Compila e instala en ~/.gemini/config/plugins (Antigravity), ~/.claude/plugins (Claude Code) y ~/.agents/skills (Codex).
 `)
 }
 
@@ -137,6 +140,7 @@ export function isAuthorizedInstallTarget(targetPath, allowedExtraBases = []) {
   const authorizedBases = [
     path.join(home, '.gemini', 'config', 'plugins'),
     path.join(home, '.claude', 'plugins'),
+    path.join(home, '.agents', 'skills'),
     path.resolve(os.tmpdir()),
     ...allowedExtraBases.map(b => path.resolve(b)),
   ]
@@ -404,7 +408,7 @@ function buildTarget(platformId, platformConfig, canonicalManifest) {
 function installTarget(platformId, platformConfig, installDirOverride = null) {
   const rawTarget = installDirOverride || platformConfig.install?.targetDir
   if (!rawTarget) {
-    console.log(`[install] Target '${platformId}' no define configuración de instalación. Se omite.`)
+    console.log(`[install] Target '${platformId}' no requiere instalación global (artefacto disponible en dist/${platformId} para copiar a proyectos). Se omite.`)
     return
   }
 
@@ -429,8 +433,9 @@ function installTarget(platformId, platformConfig, installDirOverride = null) {
 
 export function runBuild(options = {}) {
   const startTime = Date.now()
-  const targetFilter = options.target || 'all'
-  const doInstall = Boolean(options.install)
+  const doInstallAll = Boolean(options.installAll)
+  const targetFilter = doInstallAll ? 'all' : (options.target || 'all')
+  const doInstall = Boolean(options.install) || doInstallAll
   const doClean = Boolean(options.clean)
 
   if (doClean) {
@@ -478,13 +483,17 @@ export function runBuild(options = {}) {
     const platformConfig = JSON.parse(fs.readFileSync(configPath, 'utf8'))
     if (pid === 'codex') {
       const out = buildCodex(ROOT, parseFrontmatter)
-      if (doInstall) installCodex(out, options.installDir)
+      if (doInstall) {
+        const codexDir = targetsToBuild.length === 1 ? options.installDir : null
+        installCodex(out, codexDir)
+      }
       continue
     }
     buildTarget(pid, platformConfig, canonicalManifest)
 
     if (doInstall) {
-      installTarget(pid, platformConfig, options.installDir)
+      const targetOverride = targetsToBuild.length === 1 ? options.installDir : null
+      installTarget(pid, platformConfig, targetOverride)
     }
   }
 
@@ -502,17 +511,18 @@ if (isDirectExecution) {
     process.exit(0)
   }
 
+  const installAll = args.includes('--install-all')
   let target = 'all'
   const targetIdx = args.indexOf('--target')
   if (targetIdx !== -1 && args[targetIdx + 1]) {
     target = args[targetIdx + 1]
   }
 
-  const install = args.includes('--install')
+  const install = args.includes('--install') || installAll
   const clean = args.includes('--clean')
 
   try {
-    runBuild({ target, install, clean })
+    runBuild({ target, install, installAll, clean })
     process.exit(0)
   } catch (err) {
     console.error(`[build ERROR] ${err.message}`)

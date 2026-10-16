@@ -20,8 +20,11 @@ export type RoleState = {
 
 export type LogEntry = { at: number; text: string }
 
+export type FlowMode = 'supervised' | 'continuous'
+
 export type Flow = {
   feature?: string
+  mode?: FlowMode
   roles: Record<RoleId, RoleState>
   awaiting?: 'spec' | 'adr'
   log: LogEntry[]
