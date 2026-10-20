@@ -16,7 +16,8 @@ y este proyecto se adhiere a [Semantic Versioning](https://semver.org/spec/v2.0.
 - **Filtrado Dinámico en `/team-report`**: Ocultación completa de las filas de Product Owner, Diseñador UX y Arquitecto y compuertas `⏸` de diseño en flujos de tipo `FIX`, mostrando únicamente el circuito técnico activo (`Dev`, `QA`, `Reviewer`).
 - **Soporte de Panel en Vivo para Claude Code**: Tipos extendidos con `FlowKind = 'feature' | 'fix'` y renderizado en `register.tsx` de un panel compacto de 3 roles técnicos para remediaciones FIX.
 - **Empaquetado de Plugins (`--package`)**: Soporte para generación automática de paquetes `.zip` y `.plugin` (`npm run package:claude`, `npm run package:all`) compatibles con la interfaz gráfica de Claude Desktop y cargadores de extensiones.
-- **Cobertura de Pruebas Ampliada**: Suite `tests/fix-skill.test.mjs`, elevando la cobertura a 66 pruebas automatizadas (`66/66 aprobadas`).
+- **Sincronización Automática Multi-IDE (Git Hooks)**: Incorporación de `scripts/setup-hooks.mjs` y comando `npm run setup:hooks` para instalar hooks de `post-commit` y `post-merge`, manteniendo Antigravity, Claude Code y Codex actualizados automáticamente tras cada commit o pull.
+- **Cobertura de Pruebas Ampliada**: Suite `tests/fix-skill.test.mjs` y validación de hooks, elevando la cobertura a 67 pruebas automatizadas (`67/67 aprobadas`).
 
 ---
 

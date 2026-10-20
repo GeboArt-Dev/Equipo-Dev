@@ -245,3 +245,13 @@ test('Empaquetado de plugins con flag --package (.zip y .plugin)', () => {
   assert.equal(fs.statSync(zipPath).size, fs.statSync(pluginPath).size, '.plugin debe ser réplica del .zip')
 })
 
+test('Configuración idempotente de Git Hooks con setup-hooks.mjs', () => {
+  const proc = spawnSync('node', ['scripts/setup-hooks.mjs', '--status'], {
+    cwd: ROOT,
+    encoding: 'utf8'
+  })
+  assert.equal(proc.status, 0)
+  assert.ok(proc.stdout.includes('post-commit: ACTIVO'))
+  assert.ok(proc.stdout.includes('post-merge: ACTIVO'))
+})
+

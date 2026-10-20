@@ -16,7 +16,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Dynamic Team Status Filtering**: `/team-report` dynamically hides non-participating business roles (Product Owner, UX Designer, Architect) and design pause indicators (`⏸`) when inspecting `FIX` workflows, displaying exclusively the active technical circuit (`Dev`, `QA`, `Reviewer`).
 - **Claude Code Live Side Panel Fix Mode**: Extended TypeScript definitions with `FlowKind = 'feature' | 'fix'` and updated `hooks/register.tsx` to render a compact 3-role live side panel for fix workflows.
 - **Package Archive Generation (`--package`)**: Added packaging capabilities producing ready-to-load `.zip` and `.plugin` bundles (`npm run package:claude`, `npm run package:all`) with root-level manifests for Claude Desktop GUI and extension loaders.
-- **Expanded Test Coverage**: Added `tests/fix-skill.test.mjs`, expanding test suite coverage to 66 automated tests (`66/66 passed`).
+- **Automated Multi-IDE Synchronization (Git Hooks)**: Added `scripts/setup-hooks.mjs` and `npm run setup:hooks` to install `post-commit` and `post-merge` hooks, keeping Antigravity, Claude Code, and Codex automatically synchronized upon every commit and pull.
+- **Expanded Test Coverage**: Added `tests/fix-skill.test.mjs` and hook configuration tests, expanding test suite coverage to 67 automated tests (`67/67 passed`).
 
 ---
 
