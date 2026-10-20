@@ -1,10 +1,10 @@
 # 🚀 equipo-dev
 
-[![Version](https://img.shields.io/badge/version-0.6.0-blue.svg)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-0.7.0-blue.svg)](CHANGELOG.md)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Node.js](https://img.shields.io/badge/Node.js-%3E%3D18.0.0-brightgreen.svg)](https://nodejs.org/)
 [![Multi-AI Architecture](https://img.shields.io/badge/Multi--AI-Claude%20Code%20%7C%20Antigravity%20%7C%20Cursor%20%7C%20Copilot%20%7C%20Codex-orange.svg)](docs/adr/001-reestructuracion-multi-ai.md)
-[![Tests Passing](https://img.shields.io/badge/tests-58%2F58%20passed-success.svg)](tests/)
+[![Tests Passing](https://img.shields.io/badge/tests-66%2F66%20passed-success.svg)](tests/)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/GeboArt-Dev/Equipo-Dev/pulls)
 
 **An autonomous, multi-role software development team of AI subagents for your coding workspace.**  
@@ -35,7 +35,7 @@ Transform feature ideas into production-ready, peer-reviewed code with human-in-
 - [Multi-AI Architecture (`src/` + `platforms/`)](#-multi-ai-architecture-src--platforms)
 - [Compiler CLI & Building](#-compiler-cli--building)
 - [Automated Tests](#-automated-tests)
-- [New Capabilities & Technical Reference](#-nuevas-capacidades-y-cambios-control-aprobaciones-equipo)
+- [New Capabilities & Technical Reference](#-nuevas-capacidades-y-cambios-skill-fix-resolucion-problemas)
 - [Changelog](CHANGELOG.md)
 - [Contributing](#-contributing)
 - [License](#-license)
@@ -204,7 +204,7 @@ Then copy the folder `dist/antigravity/equipo-dev` to the appropriate path:
 1. Open your Antigravity IDE / VS Code.
 2. Open the Command Palette (`Ctrl+Shift+P` on Windows/Linux, `Cmd+Shift+P` on macOS).
 3. Run: **`Developer: Reload Window`**.
-4. The `/feature`, `/team-report`, and `/equipo-reiniciar` skills, as well as the subagents, are now active.
+4. The `/feature`, `/fix`, `/team-report`, and `/equipo-reiniciar` skills, as well as the subagents, are now active.
 
 ---
 
@@ -285,16 +285,17 @@ node scripts/build.mjs --target codex
 node scripts/build.mjs --target codex --install
 ```
 
-Output: `dist/codex/equipo-dev/`. Installation manages four folders in `.agents/skills` under Node.js `os.homedir()` (normally `%USERPROFILE%\.agents\skills` on Windows), plus `.equipo-dev-install` metadata. It does not edit Codex configuration, credentials, project instructions or unprefixed skills. Use the installer instead of manual copying to preserve ownership tracking.
+Output: `dist/codex/equipo-dev/`. Installation manages five folders in `.agents/skills` under Node.js `os.homedir()` (normally `%USERPROFILE%\.agents\skills` on Windows), plus `.equipo-dev-install` metadata. It does not edit Codex configuration, credentials, project instructions or unprefixed skills. Use the installer instead of manual copying to preserve ownership tracking.
 
 | Skill | Purpose |
 |---|---|
 | `equipo-dev-feature` | Delegates seven role resources and preserves spec/ADR approval gates. |
+| `equipo-dev-fix` | Executes direct technical bugfix circuit (Dev -> QA -> Reviewer) with regression test. |
 | `equipo-dev-team-rules` | Loads shared team rules. |
 | `equipo-dev-team-report` | Reports inspected artifacts, approvals and pending validation in text. |
 | `equipo-dev-team-reset` | Explains that there is no persistent panel to reset; preserves documents. |
 
-Check all four names in the client's skill selector; restart if needed. Select `equipo-dev-feature` explicitly (CLI/IDE may expose `$equipo-dev-feature` or `/skills`; syntax depends on the host). Installation success confirms files, not recognition. In a disposable project, request a small feature, check its spec approval pause, then select `equipo-dev-team-report` and verify approval is pending. These functional checks are required before certifying a client.
+Check all five names in the client's skill selector; restart if needed. Select `equipo-dev-feature` or `equipo-dev-fix` explicitly (CLI/IDE may expose `$equipo-dev-feature` or `/skills`; syntax depends on the host). Installation success confirms files, not recognition. In a disposable project, request a small feature, check its spec approval pause, then select `equipo-dev-team-report` and verify approval is pending. These functional checks are required before certifying a client.
 
 The seven Markdown roles live in `equipo-dev-feature/references/agents`; they are not registered native agents. Models, tools and permissions come from the host. Without authorized delegation, feature execution pauses before the affected role; reporting remains available. UX needs external `ui-ux-pro-max` and Python 3, neither installed by this package; features without UI skip UX. Codex has no package hooks or live panel.
 
@@ -336,7 +337,29 @@ In your AI assistant's chat, type `/feature` followed by what you want to build:
 
 In supervised mode, the orchestrator invokes the **Product Owner**, produces `docs/specs/user-authentication.md`, and pauses for your approval. In continuous mode, it validates scope, logs any non-blocking assumptions, and continues automatically into design and implementation.
 
-### 2. Resume an In-Progress Feature
+### 2. Fast Bug Fixing and Regressions (`/fix`)
+When resolving runtime errors, broken test assertions, or regressions, use `/fix` with a description or error trace:
+
+```text
+/fix Cannot read properties of undefined (reading 'status')
+# or with an affected file path:
+/fix src/auth/token.ts expired token validation throwing unhandled error
+```
+
+#### Comparison: `/feature` vs `/fix`
+
+| Aspect / Flow | `/feature` (Full Agile Cycle) | `/fix` (Rapid Technical Remediation) |
+|---|---|---|
+| **Primary Scope** | New features, domain user stories | Surgical bug fixes, runtime crashes, regressions |
+| **Participating Roles** | PO → UX → Architect → Devs → QA → Reviewer (7 roles) | Dev (Backend or Frontend) → QA → Reviewer (3 roles) |
+| **Intermediate Pauses** | 2 mandatory design approvals (Spec and UX/ADR) | Zero intermediate pauses (continuous technical loop) |
+| **Regression Test** | Recommended based on scope | **Mandatory** (must reproduce defect before patch) |
+| **Persisted Artifact** | `docs/specs/`, `docs/ux/`, `docs/adr/`, `docs/qa/` | `docs/fixes/<slug>.md` (root cause, patch, tests) |
+| **Token Consumption** | 40,000 to 80,000+ tokens | **60% to 75% savings** (~10,000 to 20,000 tokens) |
+| **Cycle Latency** | Full architectural alignment cycle | **≥ 50% reduction** in time to verified resolution |
+| **Critical Safeguards** | Zero unapproved commits/push; max 3 QA retries | **Identical**: zero unapproved commits/push; max 3 retries |
+
+### 3. Resume an In-Progress Feature
 If you closed your session or switched branches, resume seamlessly:
 
 ```text
@@ -349,7 +372,7 @@ If you closed your session or switched branches, resume seamlessly:
 
 The team inspects `docs/specs/`, `docs/ux/`, `docs/adr/`, and `docs/qa/`, analyzes git status, and proposes resuming from the exact unfinished step without repeating completed work.
 
-### 3. Check Live Team Status (`/team-report`)
+### 4. Check Live Team Status (`/team-report`)
 At any time, inspect team progress, active execution mode, and pending approvals:
 
 ```text
@@ -371,21 +394,18 @@ Modo: Supervisado / Interactivo
 Next step: Awaiting owner approval of docs/specs/user-authentication.md
 ```
 
-Output format in Continuous Mode:
+Output format in FIX Mode:
 ```text
-Feature: user-authentication
-Modo: Continuo / Autónomo
-✔ 1. Product Owner (spec auto-aprobada)
-✔ 2. UI/UX Design (not applicable)
-✔ 3. Architect (ADR auto-aprobado)
-● 4. Backend (implementing tasks from plan)
-○ 5. Frontend
-○ 6. QA
-○ 7. Code Reviewer
-Next step: Backend developer completing task 2
+Fix: unhandled-token-expiry
+Tipo: FIX
+Modo: Remediación directa (Dev -> QA -> Reviewer)
+✔ 1. Dev (Backend): terminado · 1m
+✔ 2. QA: APROBADO (suite completa sin regresiones)
+✔ 3. Code Reviewer: APROBADO (sin hallazgos de seguridad)
+Siguiente paso: Cierre y autorización del dueño para commit/push
 ```
 
-### 4. Reset Session Log (`/equipo-reiniciar`)
+### 5. Reset Session Log (`/equipo-reiniciar`)
 Clean the session history before starting a completely fresh feature:
 
 ```text
@@ -417,6 +437,7 @@ your-project/
     ├── specs/<feature>.md             # Product Owner specifications
     ├── ux/<feature>.md                # UI/UX screen flows & states
     ├── adr/<NNN>-<feature>.md         # Architecture Decision Records
+    ├── fixes/<slug>.md                # Rapid bugfix remediation records
     └── qa/<feature>.md                # QA integration test reports
 ```
 
@@ -431,7 +452,7 @@ Equipo-Dev/
 ├── src/                               # 🌟 SINGLE SOURCE OF TRUTH (Platform-Agnostic)
 │   ├── manifest.json                  # Canonical metadata
 │   ├── agents/                        # 7 team roles with canonical tools & model tiers
-│   └── skills/                        # 4 skills with semantic tokens ({{CMD_TOOL}}, etc.)
+│   └── skills/                        # 5 skills with semantic tokens ({{CMD_TOOL}}, etc.)
 │
 ├── platforms/                         # 🔌 MODULAR PLATFORM ADAPTERS
 │   ├── antigravity/                   # Google Antigravity mappings, hooks & skill overrides
@@ -440,14 +461,16 @@ Equipo-Dev/
 │   └── copilot/                       # Copilot templates & instructions generator
 │
 ├── scripts/
-│   └── build.mjs                      # ⚡ Zero-dependency native Node.js compiler
+│   ├── build.mjs                      # ⚡ Zero-dependency native Node.js compiler
+│   └── codex.mjs                      # Codex packaging and installation manager
 │
 ├── tests/
 │   ├── build.test.mjs                 # Compiler integrity & regression test suite
 │   ├── qa-verification.test.mjs       # Acceptance verification suite
 │   ├── agent-optimization.test.mjs    # Agent optimization & token frugality suite
 │   ├── codex.test.mjs                 # Codex package, installer and recovery test suite
-│   └── approval-control.test.mjs      # Approval mode control & safety safeguards suite
+│   ├── approval-control.test.mjs      # Approval mode control & safety safeguards suite
+│   └── fix-skill.test.mjs             # Rapid bugfix skill contracts and validation suite
 │
 └── dist/                              # 📦 COMPILED TARGET ARTIFACTS
     ├── antigravity/equipo-dev/
@@ -504,12 +527,13 @@ node scripts/build.mjs --help
 
 ## 🧪 Automated Tests
 
-The repository includes a comprehensive automated test suite with **57 automated tests**:
+The repository includes a comprehensive automated test suite with **66 automated tests**:
 - **`tests/approval-control.test.mjs`** (7 tests): Validates parsing of `--no-pause` and `--auto-approve`, supervised fallback, contract enforcement across platforms, safety safeguards, and multi-target compilation without tokens.
 - **`tests/codex.test.mjs`** (13 tests): Validates deterministic generation, temporary installation, preservation, conflicts, junction rejection, rollback and recovery; it does not certify client execution.
 - **`tests/build.test.mjs`** (14 tests): Validates manifest integrity, tool mapping, tier resolution, frontmatter serialization, path containment (`assertWithin`), and install target authorization.
 - **`tests/qa-verification.test.mjs`** (15 tests): Validates Gherkin acceptance criteria (HU-1 through HU-5), edge cases, isolated installation, and zero regressions.
 - **`tests/agent-optimization.test.mjs`** (8 tests): Validates prompt optimization rules, token frugality, epistemic calibration (`[Seguro]`, `[Probable]`, `[Especulando]`), DevOps integration in Backend, mobile-first and WCAG 2.1 AA in UX/Frontend, Documenter role in QA, and critical-only filtering in Code Reviewer.
+- **`tests/fix-skill.test.mjs`** (9 tests/assertions): Validates invocation syntax, parameter enforcement, contract assertions in canonical files, compact reporting, multi-platform adapters, and safety safeguards for `/fix`.
 
 Run the entire test suite natively:
 
@@ -526,9 +550,29 @@ node --test tests/agent-optimization.test.mjs
 # Run approval control tests
 node --test tests/approval-control.test.mjs
 
+# Run fix skill tests
+node --test tests/fix-skill.test.mjs
+
 # Run all test suites sequentially (recommended on Windows to prevent dist/ file locking)
-node --test --test-concurrency=1 tests/build.test.mjs tests/qa-verification.test.mjs tests/agent-optimization.test.mjs tests/codex.test.mjs tests/approval-control.test.mjs
+node --test --test-concurrency=1 tests/build.test.mjs tests/qa-verification.test.mjs tests/agent-optimization.test.mjs tests/codex.test.mjs tests/approval-control.test.mjs tests/fix-skill.test.mjs
 ```
+
+---
+
+### 📦 Nuevas Capacidades y Cambios (skill-fix-resolucion-problemas)
+
+Introduce la habilidad canónica `/fix` para la remediación rápida y quirúrgica de defectos técnicos, excepciones en tiempo de ejecución y regresiones mediante un circuito directo Dev -> QA -> Code Reviewer. Reduce entre un 60% y un 75% el consumo de tokens y acorta la latencia a la mitad frente a `/feature`, exigiendo un test de regresión automatizado obligatorio y registrando un reporte sintético en `docs/fixes/<slug>.md`.
+
+### 🔧 Referencia Técnica de Funciones y Hooks
+
+| Identificador | Ubicación | Descripción (1 frase corta) |
+|---|---|---|
+| `validateFixInvocation` | `tests/fix-skill.test.mjs` | Valida sintaxis obligatoria de `/fix` requiriendo descripción no vacía. |
+| `parseKind` | `platforms/claude-code/hooks/register.tsx` | Identifica si la invocación corresponde a un flujo de tipo fix o feature. |
+| `startsNewFlow` | `platforms/claude-code/hooks/register.tsx` | Permite el inicio autónomo de un flujo fix directamente desde desarrolladores técnicos. |
+| `fix` (Agnóstico) | `src/skills/fix/SKILL.md` | Habilidad canónica que orquesta el circuito directo Dev -> QA -> Reviewer con test de regresión obligatorio. |
+| `team-report` (FIX) | `src/skills/team-report/SKILL.md` | Reporta el estado suprimiendo roles de negocio y compuertas de diseño en modo FIX. |
+| `SKILLS.fix` | `scripts/codex.mjs` | Registra el paquete y recurso de distribución para la skill fix en Codex. |
 
 ---
 

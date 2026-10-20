@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.7.0] - 2026-10-20
+
+### Added
+- **Surgical Problem Resolution Skill (`/fix`)**: Added `/fix <description or stacktrace>` canonical skill for rapid, cost-effective defect and regression remediation (ADR 006). Reduces token expenditure by 60%–75% and latency by ≥50% by bypassing product-owner, ux-designer, architect, and design approval pauses.
+- **Mandatory Automated Regression Testing**: Requires developer to provide an automated test reproducing the issue (red to green) and a minimal code patch before QA validation.
+- **Lightweight Defect Documentation**: Automated generation of `docs/fixes/<slug>.md` audit artifacts documenting root cause analysis (RCA ≤ 5 lines), modified files, and regression test verification.
+- **Dynamic Team Status Filtering**: `/team-report` dynamically hides non-participating business roles (Product Owner, UX Designer, Architect) and design pause indicators (`⏸`) when inspecting `FIX` workflows, displaying exclusively the active technical circuit (`Dev`, `QA`, `Reviewer`).
+- **Claude Code Live Side Panel Fix Mode**: Extended TypeScript definitions with `FlowKind = 'feature' | 'fix'` and updated `hooks/register.tsx` to render a compact 3-role live side panel for fix workflows.
+- **Package Archive Generation (`--package`)**: Added packaging capabilities producing ready-to-load `.zip` and `.plugin` bundles (`npm run package:claude`, `npm run package:all`) with root-level manifests for Claude Desktop GUI and extension loaders.
+- **Expanded Test Coverage**: Added `tests/fix-skill.test.mjs`, expanding test suite coverage to 66 automated tests (`66/66 passed`).
+
+---
+
 ## [0.6.0] - 2026-10-16
 
 ### Added

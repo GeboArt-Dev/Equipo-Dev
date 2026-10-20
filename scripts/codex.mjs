@@ -3,7 +3,7 @@ import os from 'node:os'
 import path from 'node:path'
 import { createHash } from 'node:crypto'
 
-export const SKILLS = { feature: 'equipo-dev-feature', 'reglas-equipo': 'equipo-dev-team-rules', 'team-report': 'equipo-dev-team-report', 'equipo-reiniciar': 'equipo-dev-team-reset' }
+export const SKILLS = { feature: 'equipo-dev-feature', fix: 'equipo-dev-fix', 'reglas-equipo': 'equipo-dev-team-rules', 'team-report': 'equipo-dev-team-report', 'equipo-reiniciar': 'equipo-dev-team-reset' }
 export const ROLES = ['architect', 'backend-dev', 'code-reviewer', 'frontend-dev', 'product-owner', 'qa-engineer', 'ux-designer']
 const PACKAGE = 'equipo-dev-codex'
 const META = '.equipo-dev-install'
@@ -90,8 +90,10 @@ function generateCodex(root, parseFrontmatter) {
     if (source === 'feature') {
       text = text.replace('`team-rules`', '[equipo-dev-team-rules](../equipo-dev-team-rules/SKILL.md)').replace('# Flujo /feature', '# Flujo Equipo Dev').replace('en `docs/specs/`,', '(incluyendo prefijos numéricos de ADR) en `docs/specs/`,')
       text += '\n## Recursos de roles\n' + ROLES.map(role => `- [${role}](references/agents/${role}.md)`).join('\n') + '\n'
+    } else if (source === 'fix') {
+      text = text.replace('`team-rules`', '[equipo-dev-team-rules](../equipo-dev-team-rules/SKILL.md)')
     }
-    files.set(`${name}/SKILL.md`, `---\nname: ${name}\ndescription: ${JSON.stringify(`Equipo Dev en Codex: selecciona explícitamente ${name}. ${attributes.description}`.replace(/\/feature|\/team-report/g, name))}\n---\n${text}`)
+    files.set(`${name}/SKILL.md`, `---\nname: ${name}\ndescription: ${JSON.stringify(`Equipo Dev en Codex: selecciona explícitamente ${name}. ${attributes.description}`.replace(/\/feature|\/team-report|\/fix/g, name))}\n---\n${text}`)
   }
   for (const role of ROLES) {
     const source = path.join(root, 'src/agents', `${role}.md`)

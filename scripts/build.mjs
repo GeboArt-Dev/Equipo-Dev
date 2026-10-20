@@ -17,6 +17,7 @@
 import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
+import { spawnSync } from 'node:child_process'
 import { fileURLToPath } from 'node:url'
 import { buildCodex, installCodex, safePath } from './codex.mjs'
 
@@ -49,6 +50,7 @@ Opciones:
   --target <id>    Compila el target especificado (claude-code, antigravity, codex, cursor, copilot, all). Por defecto: all.
   --install        Instala los artefactos en el directorio local de plugins configurado (si la plataforma lo soporta).
   --install-all    Instala simultáneamente en todas las plataformas soportadas (Antigravity, Claude Code, Codex).
+  --package        Empaqueta los artefactos en archivos .zip y .plugin listos para instalación en interfaz gráfica.
   --clean          Limpia la carpeta dist/ antes de la compilación.
   --help           Muestra esta ayuda.
 
@@ -431,12 +433,66 @@ function installTarget(platformId, platformConfig, installDirOverride = null) {
   console.log(`[install] Target '${platformId}' instalado exitosamente en ${resolvedTarget}`)
 }
 
+export function packageTarget(platformId, platformConfig) {
+  if (!platformConfig.output?.dir) return
+  const outDir = path.resolve(ROOT, platformConfig.output.dir)
+  if (!fs.existsSync(outDir)) return
+
+  const targetDistDir = path.dirname(outDir)
+  const baseName = path.basename(outDir)
+  const zipPath = path.join(targetDistDir, `${baseName}.zip`)
+  const pluginPath = path.join(targetDistDir, `${baseName}.plugin`)
+
+  // Asegurar manifest.json en la raíz si existe en subcarpeta (.claude-plugin/plugin.json)
+  const claudeManifest = path.join(outDir, '.claude-plugin', 'plugin.json')
+  const rootManifest = path.join(outDir, 'manifest.json')
+  if (fs.existsSync(claudeManifest) && !fs.existsSync(rootManifest)) {
+    fs.copyFileSync(claudeManifest, rootManifest)
+  }
+
+  let packed = false
+  try {
+    const tarCheck = spawnSync('tar', ['--version'])
+    if (tarCheck.status === 0) {
+      const tarResult = spawnSync('tar', ['-a', '-cf', zipPath, '-C', outDir, '.'])
+      if (tarResult.status === 0) packed = true
+    }
+  } catch {
+    // fallback a powershell / zip
+  }
+
+  if (!packed && process.platform === 'win32') {
+    const psCmd = `Compress-Archive -Path '${path.join(outDir, '*')}' -DestinationPath '${zipPath}' -Force`
+    const psResult = spawnSync('powershell', ['-NoProfile', '-Command', psCmd])
+    if (psResult.status === 0) packed = true
+  }
+
+  if (!packed) {
+    try {
+      const zipResult = spawnSync('zip', ['-r', zipPath, '.'], { cwd: outDir })
+      if (zipResult.status === 0) packed = true
+    } catch {
+      // fallback
+    }
+  }
+
+  if (!packed) {
+    throw new Error(`[package] No se pudo generar el archivo zip para '${platformId}'`)
+  }
+
+  fs.copyFileSync(zipPath, pluginPath)
+  console.log(`[package] Target '${platformId}' empaquetado exitosamente:`)
+  console.log(`          - ${zipPath}`)
+  console.log(`          - ${pluginPath}`)
+}
+
 export function runBuild(options = {}) {
   const startTime = Date.now()
   const doInstallAll = Boolean(options.installAll)
   const targetFilter = doInstallAll ? 'all' : (options.target || 'all')
   const doInstall = Boolean(options.install) || doInstallAll
   const doClean = Boolean(options.clean)
+  const doPackage = Boolean(options.package)
 
   if (doClean) {
     if (targetFilter === 'all') {
@@ -495,6 +551,10 @@ export function runBuild(options = {}) {
       const targetOverride = targetsToBuild.length === 1 ? options.installDir : null
       installTarget(pid, platformConfig, targetOverride)
     }
+
+    if (doPackage && platformConfig.output?.dir) {
+      packageTarget(pid, platformConfig)
+    }
   }
 
   const duration = Date.now() - startTime
@@ -512,6 +572,7 @@ if (isDirectExecution) {
   }
 
   const installAll = args.includes('--install-all')
+  const doPackage = args.includes('--package')
   let target = 'all'
   const targetIdx = args.indexOf('--target')
   if (targetIdx !== -1 && args[targetIdx + 1]) {
@@ -522,7 +583,7 @@ if (isDirectExecution) {
   const clean = args.includes('--clean')
 
   try {
-    runBuild({ target, install, installAll, clean })
+    runBuild({ target, install, installAll, clean, package: doPackage })
     process.exit(0)
   } catch (err) {
     console.error(`[build ERROR] ${err.message}`)

@@ -7,6 +7,19 @@ y este proyecto se adhiere a [Semantic Versioning](https://semver.org/spec/v2.0.
 
 ---
 
+## [0.7.0] - 2026-10-20
+
+### Agregado
+- **Habilidad Canónica de Remediación Rápida (`/fix`)**: Incorporación del comando `/fix <descripción o traza>` para la corrección quirúrgica de bugs, excepciones y regresiones (ADR 006). Ahorro de entre 60% y 75% de tokens y reducción de latencia en ≥50% al suprimir etapas de PO, UX, Arquitecto y pausas de diseño.
+- **Test de Regresión Obligatorio**: Requisito innegociable de formulación de Causa Raíz (RCA ≤ 5 líneas), test automatizado que reproduce el fallo (rojo a verde) y parche de código mínimo indispensable.
+- **Documentación Liviana de Defectos**: Generación automática de artefactos sintéticos en `docs/fixes/<slug>.md` con registro de RCA, archivos modificados y verificación de no-regresión.
+- **Filtrado Dinámico en `/team-report`**: Ocultación completa de las filas de Product Owner, Diseñador UX y Arquitecto y compuertas `⏸` de diseño en flujos de tipo `FIX`, mostrando únicamente el circuito técnico activo (`Dev`, `QA`, `Reviewer`).
+- **Soporte de Panel en Vivo para Claude Code**: Tipos extendidos con `FlowKind = 'feature' | 'fix'` y renderizado en `register.tsx` de un panel compacto de 3 roles técnicos para remediaciones FIX.
+- **Empaquetado de Plugins (`--package`)**: Soporte para generación automática de paquetes `.zip` y `.plugin` (`npm run package:claude`, `npm run package:all`) compatibles con la interfaz gráfica de Claude Desktop y cargadores de extensiones.
+- **Cobertura de Pruebas Ampliada**: Suite `tests/fix-skill.test.mjs`, elevando la cobertura a 66 pruebas automatizadas (`66/66 aprobadas`).
+
+---
+
 ## [0.6.0] - 2026-10-16
 
 ### Añadido

@@ -28,6 +28,16 @@ Una feature ya empezada se retoma desde el último paso completado según los ar
 Para cambios pequeños (bug simple, ajuste menor) el dueño puede autorizar ir directo a dev + reviewer.
 Features sin interfaz (solo backend) omiten `ux-designer`.
 
+## Protocolo de Remediación Técnica (`/fix`)
+Circuito técnico directo para corrección de bugs, excepciones en ejecución y regresiones, omitiendo Product Owner, UX Designer, Arquitecto y pausas de diseño:
+1. **Desarrollador (`backend-dev` o `frontend-dev`)**:
+   - Diagnóstico de Causa Raíz (RCA ≤ 5 líneas).
+   - Test automatizado de regresión obligatorio (falla antes del arreglo, pasa con el parche).
+   - Parche de código mínimo indispensable. Si la solución demanda rediseño visual, esquemas arquitectónicos nuevos o endpoints no existentes, se detiene y se canaliza mediante `/feature`.
+2. **QA Engineer (`qa-engineer`)**: Ejecuta la suite completa de pruebas. Si rechaza, reintento a Dev (máximo 3 reintentos antes de escalar al dueño).
+3. **Code Reviewer (`code-reviewer`)**: Auditoría de seguridad OWASP y calidad sin hallazgos bloqueantes (máximo 3 vueltas).
+4. **Artefacto de reporte liviano**: Registro sintético en `docs/fixes/<slug>.md` resumiendo RCA, parche, test de regresión y verificación de no-regresión.
+
 ## Contexto del proyecto
 - Leer el {{AGENT_GUIDE_FILE}} del proyecto antes de delegar: su stack, comandos y restricciones son obligatorios para todos los roles y prevalecen sobre estas reglas en lo específico del proyecto.
 - Si el proyecto no tiene {{AGENT_GUIDE_FILE}} o le faltan stack y comandos de tests, avisar al dueño y proponer completarlo antes de empezar.

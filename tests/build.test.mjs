@@ -232,3 +232,16 @@ test('Soporte de --install-all y ayuda en build.mjs', () => {
   assert.ok(procHelp.stdout.includes('Instalación simultánea'), 'La ayuda debe explicar la instalación simultánea')
 })
 
+test('Empaquetado de plugins con flag --package (.zip y .plugin)', () => {
+  const result = runBuild({ target: 'claude-code', package: true })
+  assert.equal(result.targets.length, 1)
+
+  const zipPath = path.join(DIST, 'claude-code', 'equipo-dev.zip')
+  const pluginPath = path.join(DIST, 'claude-code', 'equipo-dev.plugin')
+
+  assert.ok(fs.existsSync(zipPath), 'Archivo .zip debe generarse')
+  assert.ok(fs.existsSync(pluginPath), 'Archivo .plugin debe generarse')
+  assert.ok(fs.statSync(zipPath).size > 1000, 'Archivo .zip no debe estar vacío')
+  assert.equal(fs.statSync(zipPath).size, fs.statSync(pluginPath).size, '.plugin debe ser réplica del .zip')
+})
+

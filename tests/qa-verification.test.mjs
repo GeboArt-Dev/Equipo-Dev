@@ -45,7 +45,7 @@ test('HU-1: src/ es agnóstico (sin herramientas propietarias ni rutas duras)', 
   checkDir(path.join(SRC_DIR, 'skills'))
 })
 
-test('HU-1: Todos los 7 agentes canónicos y 4 skills están presentes en src/', () => {
+test('HU-1: Todos los 7 agentes canónicos y 5 skills están presentes en src/', () => {
   const expectedAgents = [
     'product-owner.md',
     'ux-designer.md',
@@ -59,7 +59,7 @@ test('HU-1: Todos los 7 agentes canónicos y 4 skills están presentes en src/',
     assert.ok(fs.existsSync(path.join(SRC_DIR, 'agents', agent)), `Agente canónico faltante: ${agent}`)
   }
 
-  const expectedSkills = ['feature', 'reglas-equipo', 'team-report', 'equipo-reiniciar']
+  const expectedSkills = ['feature', 'fix', 'reglas-equipo', 'team-report', 'equipo-reiniciar']
   for (const skill of expectedSkills) {
     assert.ok(fs.existsSync(path.join(SRC_DIR, 'skills', skill, 'SKILL.md')), `Skill canónica faltante: ${skill}`)
   }

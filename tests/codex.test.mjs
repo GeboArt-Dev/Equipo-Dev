@@ -30,11 +30,11 @@ function change(pkg) {
   update(pkg, m => { m.version = '99.0.0'; m.files.find(e => e.path === entryPath).sha256 = sha(fs.readFileSync(path.join(pkg, 'skills', entryPath))) })
 }
 
-test('Codex: generación determinista, 4 skills y 7 recursos trazables', () => {
+test('Codex: generación determinista, 5 skills y 7 recursos trazables', () => {
   runBuild({ target: 'codex' })
   const first = fs.readFileSync(path.join(out, 'package-manifest.json'))
   const manifest = readManifest(out)
-  assert.equal(manifest.files.length, 11)
+  assert.equal(manifest.files.length, 12)
   assert.equal(manifest.sources.roles.length, 7)
   for (const entry of manifest.files) {
     const data = fs.readFileSync(path.join(out, 'skills', entry.path), 'utf8')
@@ -58,11 +58,11 @@ test('Codex: generación determinista, 4 skills y 7 recursos trazables', () => {
 test('instalación, repetición sin escrituras y preservación de ajenos', t => {
   const { base, pkg } = fixture(t)
   const first = installCodex(pkg, base)
-  assert.equal(first.created, 11)
+  assert.equal(first.created, 12)
   const file = path.join(base, entryPath), mtime = fs.statSync(file).mtimeMs
   fs.writeFileSync(path.join(base, 'equipo-dev-feature/personal.txt'), 'personal')
   fs.writeFileSync(path.join(base, 'config.toml'), 'ajeno')
-  assert.equal(installCodex(pkg, base).unchanged, 11)
+  assert.equal(installCodex(pkg, base).unchanged, 12)
   assert.equal(fs.statSync(file).mtimeMs, mtime)
   assert.equal(fs.readFileSync(path.join(base, 'config.toml'), 'utf8'), 'ajeno')
   assert.equal(fs.readFileSync(path.join(base, 'equipo-dev-feature/personal.txt'), 'utf8'), 'personal')

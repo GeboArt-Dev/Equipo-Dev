@@ -1,10 +1,10 @@
 # 🚀 equipo-dev
 
-[![Versión](https://img.shields.io/badge/versión-0.6.0-blue.svg)](CHANGELOG.es.md)
+[![Versión](https://img.shields.io/badge/versión-0.7.0-blue.svg)](CHANGELOG.es.md)
 [![Licencia: MIT](https://img.shields.io/badge/Licencia-MIT-blue.svg)](LICENSE)
 [![Node.js](https://img.shields.io/badge/Node.js-%3E%3D18.0.0-brightgreen.svg)](https://nodejs.org/)
 [![Arquitectura Multi-AI](https://img.shields.io/badge/Multi--AI-Claude%20Code%20%7C%20Antigravity%20%7C%20Cursor%20%7C%20Copilot%20%7C%20Codex-orange.svg)](docs/adr/001-reestructuracion-multi-ai.md)
-[![Pruebas Exitosas](https://img.shields.io/badge/tests-58%2F58%20passed-success.svg)](tests/)
+[![Pruebas Exitosas](https://img.shields.io/badge/tests-66%2F66%20passed-success.svg)](tests/)
 [![PRs Bienvenidas](https://img.shields.io/badge/PRs-bienvenidas-brightgreen.svg)](https://github.com/GeboArt-Dev/Equipo-Dev/pulls)
 
 **Un equipo autónomo de desarrollo de software multi-rol con subagentes de IA para tu entorno de desarrollo.**  
@@ -35,7 +35,7 @@ Transforma ideas en código listo para producción, probado y revisado por pares
 - [Arquitectura Multi-AI (`src/` + `platforms/`)](#-arquitectura-multi-ai-src--platforms)
 - [Compilador CLI y Empaquetado](#-compilador-cli-y-empaquetado)
 - [Pruebas Automatizadas](#-pruebas-automatizadas)
-- [Nuevas Capacidades y Referencia Técnica](#-nuevas-capacidades-y-cambios-control-aprobaciones-equipo)
+- [Nuevas Capacidades y Referencia Técnica](#-nuevas-capacidades-y-cambios-skill-fix-resolucion-problemas)
 - [Historial de Cambios (Changelog)](CHANGELOG.es.md)
 - [Cómo Contribuir](#-cómo-contribuir)
 - [Licencia](#-licencia)
@@ -204,7 +204,7 @@ Luego copia la carpeta `dist/antigravity/equipo-dev` al directorio correspondien
 1. Abre tu IDE de Antigravity / VS Code.
 2. Abre la paleta de comandos (`Ctrl+Shift+P` en Windows/Linux, `Cmd+Shift+P` en macOS).
 3. Ejecuta: **`Developer: Reload Window`**.
-4. Las habilidades `/feature`, `/team-report`, `/equipo-reiniciar` y los subagentes quedarán activos inmediatamente.
+4. Las habilidades `/feature`, `/fix`, `/team-report`, `/equipo-reiniciar` y los subagentes quedarán activos inmediatamente.
 
 ---
 
@@ -285,16 +285,17 @@ node scripts/build.mjs --target codex
 node scripts/build.mjs --target codex --install
 ```
 
-Salida: `dist/codex/equipo-dev/`. La instalación administra cuatro carpetas en `.agents/skills` bajo `os.homedir()` de Node.js (normalmente `%USERPROFILE%\.agents\skills` en Windows), además de metadatos `.equipo-dev-install`. No edita configuración Codex, credenciales, instrucciones del proyecto ni skills sin prefijo. Usa el instalador en vez de copiar manualmente para conservar el registro de propiedad.
+Salida: `dist/codex/equipo-dev/`. La instalación administra cinco carpetas en `.agents/skills` bajo `os.homedir()` de Node.js (normalmente `%USERPROFILE%\.agents\skills` en Windows), además de metadatos `.equipo-dev-install`. No edita configuración Codex, credenciales, instrucciones del proyecto ni skills sin prefijo. Usa el instalador en vez de copiar manualmente para conservar el registro de propiedad.
 
 | Skill | Propósito |
 |---|---|
 | `equipo-dev-feature` | Delega siete recursos de rol y mantiene aprobaciones de spec/ADR. |
+| `equipo-dev-fix` | Ejecuta circuito técnico directo de remediación rápida (Dev -> QA -> Reviewer) con test de regresión. |
 | `equipo-dev-team-rules` | Carga las reglas compartidas. |
 | `equipo-dev-team-report` | Informa en texto artefactos inspeccionados, aprobaciones y validación pendiente. |
 | `equipo-dev-team-reset` | Explica que no hay panel persistente que reiniciar; conserva documentos. |
 
-Comprueba las cuatro identidades en el selector del cliente; reinícialo si no aparecen. Selecciona explícitamente `equipo-dev-feature` (CLI/IDE pueden exponer `$equipo-dev-feature` o `/skills`; la sintaxis depende del host). Instalar correctamente acredita archivos, no reconocimiento. En un proyecto desechable, pide una feature pequeña, comprueba su pausa de aprobación de spec y selecciona `equipo-dev-team-report` para verificar la aprobación pendiente. Estas comprobaciones funcionales son necesarias antes de certificar un cliente.
+Comprueba las cinco identidades en el selector del cliente; reinícialo si no aparecen. Selecciona explícitamente `equipo-dev-feature` o `equipo-dev-fix` (CLI/IDE pueden exponer `$equipo-dev-feature` o `/skills`; la sintaxis depende del host). Instalar correctamente acredita archivos, no reconocimiento. En un proyecto desechable, pide una feature pequeña, comprueba su pausa de aprobación de spec y selecciona `equipo-dev-team-report` para verificar la aprobación pendiente. Estas comprobaciones funcionales son necesarias antes de certificar un cliente.
 
 Los siete roles Markdown están en `equipo-dev-feature/references/agents`; no son agentes nativos registrados. El host proporciona modelos, herramientas y permisos. Sin delegación autorizada, la feature pausa antes del rol afectado; el reporte sigue disponible. UX necesita la skill externa `ui-ux-pro-max` y Python 3, que el paquete no instala; las features sin UI omiten UX. Codex no tiene hooks del paquete ni panel en vivo.
 
@@ -336,7 +337,29 @@ En el chat de tu asistente, escribe `/feature` seguido de lo que deseas construi
 
 En modo supervisado, el orquestador convoca al **Product Owner**, genera `docs/specs/autenticacion.md` y pausa esperando tu aprobación. En modo continuo, valida el alcance, registra supuestos razonables no bloqueantes y avanza automáticamente a diseño e implementación.
 
-### 2. Retomar una Feature Existente
+### 2. Remediación Rápida de Defectos y Regresiones (`/fix`)
+Para corregir excepciones en tiempo de ejecución, aserciones rotas o fallos de tipado, utiliza `/fix` con la descripción o traza del error:
+
+```text
+/fix Cannot read properties of undefined (reading 'status')
+# o indicando el archivo afectado:
+/fix src/auth/token.ts excepcion no controlada al validar tokens expirados
+```
+
+#### Comparativa: `/feature` vs `/fix`
+
+| Aspecto / Flujo | `/feature` (Ciclo Ágil Completo) | `/fix` (Remediación Rápida Técnica) |
+|---|---|---|
+| **Alcance Principal** | Nuevas funcionalidades, historias de negocio | Corrección quirúrgica de bugs, excepciones y regresiones |
+| **Roles Convocados** | PO → UX → Arquitecto → Devs → QA → Reviewer (7 roles) | Dev (Backend o Frontend) → QA → Reviewer (3 roles) |
+| **Pausas Intermedias** | 2 aprobaciones de diseño obligatorias (Spec y UX/ADR) | Cero pausas intermedias (circuito técnico continuo) |
+| **Test de Regresión** | Recomendado según el alcance | **Obligatorio** (debe reproducir el fallo antes del parche) |
+| **Artefacto Persistido** | `docs/specs/`, `docs/ux/`, `docs/adr/`, `docs/qa/` | `docs/fixes/<slug>.md` (causa raíz, parche y tests) |
+| **Consumo de Tokens** | 40.000 a 80.000+ tokens | **Ahorro del 60% al 75%** (~10.000 a 20.000 tokens) |
+| **Latencia de Ciclo** | Ciclo completo con alineación de arquitectura | **Reducción ≥ 50%** del tiempo hasta la validación |
+| **Salvaguardas Críticas** | Cero commits/push no aprobados; máx 3 reintentos QA | **Idénticas**: cero commits/push no autorizados; máx 3 reintentos |
+
+### 3. Retomar una Feature Existente
 Si cerraste la sesión o cambiaste de rama, retoma el trabajo sin perder el avance:
 
 ```text
@@ -349,7 +372,7 @@ Si cerraste la sesión o cambiaste de rama, retoma el trabajo sin perder el avan
 
 El equipo inspecciona `docs/specs/`, `docs/ux/`, `docs/adr/` y `docs/qa/`, revisa `git status` y te propone continuar exactamente desde el paso pendiente sin rehacer lo completado.
 
-### 3. Consultar el Estado del Equipo (`/team-report`)
+### 4. Consultar el Estado del Equipo (`/team-report`)
 Revisa en tiempo real el progreso de los roles, el modo de ejecución activo y las aprobaciones pendientes:
 
 ```text
@@ -371,21 +394,18 @@ Modo: Supervisado / Interactivo
 Siguiente paso: Esperando confirmación del dueño para docs/specs/autenticacion.md
 ```
 
-Ejemplo de respuesta en Modo Continuo:
+Ejemplo de respuesta en Modo FIX:
 ```text
-Feature: autenticacion
-Modo: Continuo / Autónomo
-✔ 1. Product Owner (spec auto-aprobada)
-✔ 2. Diseño UX (no aplica)
-✔ 3. Arquitecto (ADR auto-aprobado)
-● 4. Backend (implementando tareas del plan)
-○ 5. Frontend
-○ 6. QA
-○ 7. Code Reviewer
-Siguiente paso: Backend dev completando la tarea 2
+Fix: unhandled-token-expiry
+Tipo: FIX
+Modo: Remediación directa (Dev -> QA -> Reviewer)
+✔ 1. Dev (Backend): terminado · 1m
+✔ 2. QA: APROBADO (suite completa sin regresiones)
+✔ 3. Code Reviewer: APROBADO (sin hallazgos de seguridad)
+Siguiente paso: Cierre y autorización del dueño para commit/push
 ```
 
-### 4. Reiniciar la Bitácora de Sesión (`/equipo-reiniciar`)
+### 5. Reiniciar la Bitácora de Sesión (`/equipo-reiniciar`)
 Limpia el registro de la feature actual para iniciar una completamente nueva:
 
 ```text
@@ -417,6 +437,7 @@ tu-proyecto/
     ├── specs/<feature>.md             # Especificaciones del Product Owner
     ├── ux/<feature>.md                # Flujos de pantalla y estados del diseñador
     ├── adr/<NNN>-<feature>.md         # Decisiones de arquitectura y contratos
+    ├── fixes/<slug>.md                # Registros ligeros de remediación técnica
     └── qa/<feature>.md                # Informes de pruebas de QA
 ```
 
@@ -431,7 +452,7 @@ Equipo-Dev/
 ├── src/                               # 🌟 FUENTE ÚNICA DE VERDAD (Agnóstica)
 │   ├── manifest.json                  # Metadatos canónicos
 │   ├── agents/                        # 7 roles con herramientas y tiers canónicos
-│   └── skills/                        # 4 skills con tokens semánticos ({{CMD_TOOL}}, etc.)
+│   └── skills/                        # 5 skills con tokens semánticos ({{CMD_TOOL}}, etc.)
 │
 ├── platforms/                         # 🔌 ADAPTADORES MODULARES POR PLATAFORMA
 │   ├── antigravity/                   # Mapeos, hooks y overrides de skills para Antigravity
@@ -440,14 +461,16 @@ Equipo-Dev/
 │   └── copilot/                       # Plantillas y contratos para instrucciones de Copilot
 │
 ├── scripts/
-│   └── build.mjs                      # ⚡ Compilador nativo Node.js sin dependencias
+│   ├── build.mjs                      # ⚡ Compilador nativo Node.js sin dependencias
+│   └── codex.mjs                      # Gestor de empaquetado e instalación en Codex
 │
 ├── tests/
 │   ├── build.test.mjs                 # Suite de integridad del compilador y regresión
 │   ├── qa-verification.test.mjs       # Suite de verificación de criterios de aceptación
 │   ├── agent-optimization.test.mjs    # Suite de optimización y concisión de agentes
 │   ├── codex.test.mjs                 # Suite de generación, instalación y recuperación en Codex
-│   └── approval-control.test.mjs      # Suite de control de aprobaciones y salvaguardas
+│   ├── approval-control.test.mjs      # Suite de control de aprobaciones y salvaguardas
+│   └── fix-skill.test.mjs             # Suite de contratos y validación de la skill fix
 │
 └── dist/                              # 📦 ARTEFACTOS COMPILADOS POR PLATAFORMA
     ├── antigravity/equipo-dev/
@@ -504,12 +527,13 @@ node scripts/build.mjs --help
 
 ## 🧪 Pruebas Automatizadas
 
-El repositorio cuenta con una suite integral de **57 pruebas automatizadas**:
+El repositorio cuenta con una suite integral de **66 pruebas automatizadas**:
 - **`tests/approval-control.test.mjs`** (7 pruebas): Valida parsing de `--no-pause` y `--auto-approve`, fallback supervisado, contratos en todas las plataformas, salvaguardas de seguridad y compilación multi-target sin tokens rotos.
 - **`tests/codex.test.mjs`** (13 pruebas): Valida generación determinista, instalación temporal, preservación, conflictos, rechazo de junctions, rollback y recuperación; no certifica ejecución del cliente.
 - **`tests/build.test.mjs`** (14 pruebas): Valida integridad de manifiestos, mapeo de herramientas, resolución de tiers, formato de frontmatter, contención de rutas (`assertWithin`) y autorización de destinos.
 - **`tests/qa-verification.test.mjs`** (15 pruebas): Valida los criterios de aceptación Gherkin (HU-1 a HU-5), casos límite, instalación aislada en directorios temporales y cero regresiones.
 - **`tests/agent-optimization.test.mjs`** (8 pruebas): Valida directivas de optimización, concisión, calibración epistémica (`[Seguro]`, `[Probable]`, `[Especulando]`), DevOps en Backend, mobile-first y WCAG 2.1 AA en UX/Frontend, rol de Documentador en QA y filtro crítico en Code Reviewer.
+- **`tests/fix-skill.test.mjs`** (9 pruebas/aserciones): Valida sintaxis de invocación, validación obligatoria de parámetros, aserciones contractuales en fuentes canónicas, reportes compactos, adaptadores multiplataforma y salvaguardas de `/fix`.
 
 Ejecutar las suites de pruebas de forma nativa:
 
@@ -526,9 +550,29 @@ node --test tests/agent-optimization.test.mjs
 # Pruebas de control de aprobaciones
 node --test tests/approval-control.test.mjs
 
+# Pruebas de la skill fix
+node --test tests/fix-skill.test.mjs
+
 # Ejecución conjunta secuencial (recomendado en Windows para evitar bloqueos en dist/)
-node --test --test-concurrency=1 tests/build.test.mjs tests/qa-verification.test.mjs tests/agent-optimization.test.mjs tests/codex.test.mjs tests/approval-control.test.mjs
+node --test --test-concurrency=1 tests/build.test.mjs tests/qa-verification.test.mjs tests/agent-optimization.test.mjs tests/codex.test.mjs tests/approval-control.test.mjs tests/fix-skill.test.mjs
 ```
+
+---
+
+### 📦 Nuevas Capacidades y Cambios (skill-fix-resolucion-problemas)
+
+Introduce la habilidad canónica `/fix` para la remediación rápida y quirúrgica de defectos técnicos, excepciones en tiempo de ejecución y regresiones mediante un circuito directo Dev -> QA -> Code Reviewer. Reduce entre un 60% y un 75% el consumo de tokens y acorta la latencia a la mitad frente a `/feature`, exigiendo un test de regresión automatizado obligatorio y registrando un reporte sintético en `docs/fixes/<slug>.md`.
+
+### 🔧 Referencia Técnica de Funciones y Hooks
+
+| Identificador | Ubicación | Descripción (1 frase corta) |
+|---|---|---|
+| `validateFixInvocation` | `tests/fix-skill.test.mjs` | Valida sintaxis obligatoria de `/fix` requiriendo descripción no vacía. |
+| `parseKind` | `platforms/claude-code/hooks/register.tsx` | Identifica si la invocación corresponde a un flujo de tipo fix o feature. |
+| `startsNewFlow` | `platforms/claude-code/hooks/register.tsx` | Permite el inicio autónomo de un flujo fix directamente desde desarrolladores técnicos. |
+| `fix` (Agnóstico) | `src/skills/fix/SKILL.md` | Habilidad canónica que orquesta el circuito directo Dev -> QA -> Reviewer con test de regresión obligatorio. |
+| `team-report` (FIX) | `src/skills/team-report/SKILL.md` | Reporta el estado suprimiendo roles de negocio y compuertas de diseño en modo FIX. |
+| `SKILLS.fix` | `scripts/codex.mjs` | Registra el paquete y recurso de distribución para la skill fix en Codex. |
 
 ---
 

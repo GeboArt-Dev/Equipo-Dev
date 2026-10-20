@@ -1,7 +1,7 @@
 import { atom, read, update } from 'claude-code'
 import type { Register } from 'claude-code'
 
-import type { Flow, FlowMode, RoleId, RoleState } from '../types'
+import type { Flow, FlowKind, FlowMode, RoleId, RoleState } from '../types'
 
 // Panel en vivo del equipo equipo-dev: sigue cada llamada a un subagente del equipo.
 const PANE = 'team-report'
@@ -29,6 +29,11 @@ const LABEL = Object.fromEntries(ROLES.map(r => [r.id, r.label])) as Record<Role
 export function parseMode(desc?: string): FlowMode {
   if (!desc) return 'supervised'
   return /--(?:no-pause|auto-approve)\b/i.test(desc) ? 'continuous' : 'supervised'
+}
+
+export function parseKind(desc?: string): FlowKind {
+  if (!desc) return 'feature'
+  return /^\/fix\b|^fix\b|^\[fix\]/i.test(desc.trim()) ? 'fix' : 'feature'
 }
 
 export function cleanFeature(desc?: string): string {
@@ -69,8 +74,11 @@ function addLog(f: Flow, at: number, text: string): LogEntry[] {
 }
 type LogEntry = Flow['log'][number]
 
-// Un flujo nuevo empieza cuando el PO arranca y no hay feature o la anterior ya pasó revisión.
-export function startsNewFlow(f: Flow, role: RoleId): boolean {
+// Un flujo nuevo empieza cuando el PO arranca (feature) o cuando arranca un dev (fix) y no hay feature o la anterior ya pasó revisión.
+export function startsNewFlow(f: Flow, role: RoleId, kind?: FlowKind): boolean {
+  if (kind === 'fix' || f.kind === 'fix') {
+    return !f.feature || f.roles['code-reviewer'].status === 'terminado'
+  }
   return role === 'product-owner' && (!f.feature || f.roles['code-reviewer'].status === 'terminado')
 }
 
@@ -85,6 +93,27 @@ export function markPrevious(f: Flow, role: RoleId): Flow {
 
 // Resumen del flujo en texto: se usa cuando la pantalla no admite paneles.
 export function summary(f: Flow): string {
+  if (f.kind === 'fix') {
+    const lines = [
+      f.feature ? `Fix: ${f.feature}` : 'Sin fix activo',
+      'Tipo: FIX',
+      'Modo: Remediación directa (Dev -> QA -> Reviewer)',
+    ]
+    const technicalRoles = ROLES.filter(r => !['product-owner', 'ux-designer', 'architect'].includes(r.id))
+      .filter(r => {
+        if (r.id === 'backend-dev' && f.roles['frontend-dev'].status !== 'pendiente' && f.roles['backend-dev'].status === 'pendiente') return false
+        if (r.id === 'frontend-dev' && f.roles['frontend-dev'].status === 'pendiente') return false
+        return true
+      })
+    technicalRoles.forEach((r, i) => {
+      const st = f.roles[r.id]
+      const laps = st.runs > 1 ? ` (${st.runs} vueltas)` : ''
+      const label = st.status === 'previo' ? 'hecho antes de esta sesión' : st.status
+      lines.push(`${ICON[st.status]} ${i + 1}. ${r.label}: ${label}${laps}`)
+    })
+    return lines.join('\n')
+  }
+
   const modeText = f.mode === 'continuous' ? 'Modo: Continuo / Autónomo' : 'Modo: Supervisado / Interactivo'
   const lines = [f.feature ? `Feature: ${f.feature}` : 'Sin feature activa', modeText]
   if (f.awaiting && f.mode !== 'continuous') lines.push(f.awaiting === 'spec' ? '⏸ Esperando tu aprobación de la spec' : '⏸ Esperando tu aprobación del diseño (UX + ADR)')
@@ -132,14 +161,17 @@ export const register: Register = on => {
     await update($, flow, f => {
       const detectedMode = /--(?:no-pause|auto-approve)\b/i.test(e.description ?? '') ? 'continuous' : undefined
       const currentMode = detectedMode ?? f.mode ?? 'supervised'
-      const fresh = startsNewFlow(f, role) ? { ...emptyFlow(), feature: cleanFeature(e.description), mode: currentMode } : f
-      const resumed = !fresh.feature && role !== 'product-owner'
+      const detectedKind = parseKind(e.description)
+      const currentKind: FlowKind = (f.kind === 'fix' || detectedKind === 'fix') ? 'fix' : 'feature'
+      const fresh = startsNewFlow(f, role, currentKind) ? { ...emptyFlow(), feature: cleanFeature(e.description), mode: currentMode, kind: currentKind } : f
+      const resumed = !fresh.feature && role !== 'product-owner' && currentKind !== 'fix'
       const base = resumed ? markPrevious(fresh, role) : fresh
       opened = base !== f || !f.feature
       const prev = base.roles[role]
       return {
         ...base,
         feature: base.feature ?? cleanFeature(e.description),
+        kind: currentKind,
         mode: currentMode,
         awaiting: undefined,
         roles: { ...base.roles, [role]: { status: 'trabajando', runs: prev.runs + 1, task: e.description, startedAt } },
@@ -163,12 +195,13 @@ export const register: Register = on => {
     const failed = 'deny' in ran && ran.deny ? true : Boolean((ran as { isError?: boolean }).isError)
     await update($, flow, f => {
       const isContinuous = f.mode === 'continuous'
-      const awaiting = failed || isContinuous ? undefined : role === 'product-owner' ? 'spec' : role === 'architect' ? 'adr' : undefined
+      const isFix = f.kind === 'fix'
+      const awaiting = failed || isContinuous || isFix ? undefined : role === 'product-owner' ? 'spec' : role === 'architect' ? 'adr' : undefined
       const prev = f.roles[role]
       const took = duration(endedAt - (prev.startedAt ?? endedAt))
       return {
         ...f,
-        awaiting: awaiting ?? (isContinuous ? undefined : f.awaiting),
+        awaiting: awaiting ?? (isContinuous || isFix ? undefined : f.awaiting),
         roles: { ...f.roles, [role]: { ...prev, status: failed ? 'error' : 'terminado', endedAt } },
         log: addLog(f, endedAt, `${LABEL[role]} ${failed ? 'falló' : 'terminó'} (${took})`),
       }
@@ -216,6 +249,27 @@ export const register: Register = on => {
       }
       if (f.awaiting === kind && f.mode !== 'continuous') return <Text color="permission" bold>   ⏸ {what}: te toca a ti</Text>
       return <Text color="inactive">   ○ {what}</Text>
+    }
+
+    if (f.kind === 'fix') {
+      const showFront = f.roles['frontend-dev'].status !== 'pendiente'
+      const showBack = f.roles['backend-dev'].status !== 'pendiente' || !showFront
+      let num = 1
+      return (
+        <Box flexDirection="column">
+          <Text bold wrap="truncate-end">{f.feature ? `Fix: ${f.feature}` : 'Sin fix activo'}</Text>
+          <Text dimColor>Tipo: FIX (Remediación rápida)</Text>
+          <Text> </Text>
+          {showBack && roleRow(num++, 'backend-dev')}
+          {showFront && roleRow(num++, 'frontend-dev')}
+          {roleRow(num++, 'qa-engineer')}
+          {roleRow(num++, 'code-reviewer')}
+          <Text> </Text>
+          <Text bold>Bitácora</Text>
+          {f.log.length === 0 && <Text dimColor>Aún no ha trabajado ningún rol. Usa /fix para empezar.</Text>}
+          {f.log.slice(-8).reverse().map(l => <Text dimColor wrap="truncate-end">· {l.text}</Text>)}
+        </Box>
+      )
     }
 
     return (
