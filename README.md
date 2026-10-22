@@ -1,10 +1,10 @@
 # 🚀 equipo-dev
 
-[![Version](https://img.shields.io/badge/version-0.7.0-blue.svg)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-0.8.0-blue.svg)](CHANGELOG.md)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Node.js](https://img.shields.io/badge/Node.js-%3E%3D18.0.0-brightgreen.svg)](https://nodejs.org/)
 [![Multi-AI Architecture](https://img.shields.io/badge/Multi--AI-Claude%20Code%20%7C%20Antigravity%20%7C%20Cursor%20%7C%20Copilot%20%7C%20Codex-orange.svg)](docs/adr/001-reestructuracion-multi-ai.md)
-[![Tests Passing](https://img.shields.io/badge/tests-67%2F67%20passed-success.svg)](tests/)
+[![Tests Passing](https://img.shields.io/badge/tests-85%2F85%20passed-success.svg)](tests/)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/GeboArt-Dev/Equipo-Dev/pulls)
 
 **An autonomous, multi-role software development team of AI subagents for your coding workspace.**  
@@ -208,30 +208,44 @@ Then copy the folder `dist/antigravity/equipo-dev` to the appropriate path:
 
 ---
 
-### 2. Claude Code
+### 2. Claude Code (including the official VS Code extension)
 
-Claude Code supports native plugin manifests (`.claude-plugin/plugin.json`), custom TypeScript hooks, and live side panels.
-
-#### Step 1: Compile the Claude Code Target
+Requires Node.js 18+, Claude CLI on PATH with plugin marketplace commands, and the official Claude extension. The CLI and extension can have different versions. Mods require a compatible client; the documentary report remains available independently of the side panel.
 
 ```bash
-node scripts/build.mjs --target claude-code
+node scripts/host-plugins.mjs diagnose --host claude-code --json
+node scripts/host-plugins.mjs install --host claude-code
+node scripts/host-plugins.mjs update --host claude-code
 ```
 
-This compiles `src/` into `dist/claude-code/equipo-dev/` with canonical tools mapped to Claude tools (`Read`, `Write`, `Edit`, `Bash`, `Glob`, `Grep`, `WebSearch`) and model tiers mapped to `opus` and `sonnet`.
+Install/update builds versioned artifacts and uses Claude's official manager for `equipo-dev@equipo-dev-local`, scope `user`. The equivalent build command is `node scripts/build.mjs --target claude-code --install`. Keep this checkout and `dist/marketplace` at a stable absolute path; rebuild before updates. Never clean `dist/` between preparation and registration. For manual registration of an already built marketplace:
 
-#### Step 2: Install the Plugin
-
-| Operating System | Target Location | Command |
-|---|---|---|
-| **Windows (PowerShell)** | `%USERPROFILE%\.claude\plugins\equipo-dev` | `New-Item -ItemType Directory -Force "$HOME\.claude\plugins" ; Copy-Item -Recurse -Force dist\claude-code\equipo-dev "$HOME\.claude\plugins\"` |
-| **macOS (Symlink or Copy)** | `~/.claude/plugins/equipo-dev` | `mkdir -p ~/.claude/plugins && ln -sfn "$(pwd)/dist/claude-code/equipo-dev" ~/.claude/plugins/equipo-dev` |
-| **Linux (Symlink or Copy)** | `~/.claude/plugins/equipo-dev` | `mkdir -p ~/.claude/plugins && ln -sfn "$(pwd)/dist/claude-code/equipo-dev" ~/.claude/plugins/equipo-dev` |
-
-#### Alternatively, load via CLI:
 ```bash
-claude --plugin-dir dist/claude-code/equipo-dev
+claude plugin marketplace add "D:\GeboArt.Dev\Equipo-Dev\dist\marketplace" --scope user
+claude plugin install equipo-dev@equipo-dev-local --scope user
 ```
+
+If `equipo-dev@synced` or another active origin appears, installation stops with `origin-conflict`. Choose whether to keep/update that account-managed copy, or explicitly disable it in Claude's manager before installing the local origin. Mandatory organizational plugins require administrator action. Legacy manual copies are preserved; copying into `.claude/plugins` does not register an update. No credentials, policies or automatic-update preferences are changed.
+
+In the official extension, open `/plugins`, verify origin/version, then `/reload-plugins` or start a new session. Verify five skills (`feature`, `fix`, `team-report`, `team-reset`, `team-rules`), seven agents, run the documentary `team-report` and confirm `fix` is discoverable without requesting a fictitious repair. Validate the side panel separately. A CLI registration is not proof that an open conversation loaded it.
+
+### 2b. VS Code Agent Plugins
+
+This is a different host from the official Claude extension. It requires VS Code with Agent Plugins 1.0 and the experimental `chat.pluginLocations` setting. It receives five skills and seven `.agent.md` agents; Claude's TSX panel/hooks/types are intentionally absent. Models and permissions come from the host.
+
+```bash
+node scripts/host-plugins.mjs diagnose --host vscode-agent --json
+node scripts/host-plugins.mjs install --host vscode-agent --json
+node scripts/host-plugins.mjs update --host vscode-agent --json
+```
+
+These commands prepare the package and return exit 2 (`manual-action-required`); they do not claim registration. Merge the emitted `chat.pluginLocations` object into VS Code Settings JSON, preserving all existing entries. Resolve any old Equipo Dev installation in its original Agent Customizations/Agent Plugins UI (or `/plugin` harness inventory) before enabling a second origin. Never edit `.vscode/agent-plugins/github.com/` directly. Rebuild the same local path for updates, reload the window/session, inspect version/origin and perform the same skill/agent checks above.
+
+For either host, JSON separates source, disk artifacts, registrations and `loaded.status`. Exit 0 means the technical operation completed, 2 requires manual action, and 1 indicates failure; runtime verification can remain pending after exit 0. On failure, inspect `issues`, `completedSteps` and `nextSteps`, resolve the stated conflict and retry. Do not delete registries or marketplaces to roll back; preserve customized files when a hash conflict is reported.
+
+`node scripts/build.mjs --target claude-code --package` produces host and marketplace ZIPs with SHA256 sidecars; `--target vscode-agent --package` produces its separate ZIP. Hidden metadata is included. Extract into a stable location before registration; `.plugin` is not a universal installer. The source GitHub checkout does not distribute ignored `dist/` artifacts, so no remote install URL is claimed.
+
+Official references: [Claude plugin management](https://code.claude.com/docs/en/discover-plugins), [Claude mods](https://code.claude.com/docs/en/plugins/mods/reference), [VS Code plugin authoring](https://code.visualstudio.com/docs/agents/reference/agent-plugin-reference). Functional validation status and the exact owner checklist are in [QA](docs/qa/integracion-vscode-claude.md).
 
 ---
 
@@ -513,7 +527,7 @@ node scripts/build.mjs --target antigravity --install
 node scripts/build.mjs --target claude-code --install
 node scripts/build.mjs --target codex --install
 
-# 🚀 Build and install to ALL supported platforms simultaneously (Antigravity, Claude Code, Codex)
+# 🚀 Build and process each host independently (VS Code may require manual action)
 node scripts/build.mjs --install-all
 
 # Or using npm:
@@ -527,7 +541,7 @@ node scripts/build.mjs --help
 
 ## 🧪 Automated Tests
 
-The repository includes a comprehensive automated test suite with **66 automated tests**:
+The repository includes a comprehensive automated test suite with **85 automated tests**:
 - **`tests/approval-control.test.mjs`** (7 tests): Validates parsing of `--no-pause` and `--auto-approve`, supervised fallback, contract enforcement across platforms, safety safeguards, and multi-target compilation without tokens.
 - **`tests/codex.test.mjs`** (13 tests): Validates deterministic generation, temporary installation, preservation, conflicts, junction rejection, rollback and recovery; it does not certify client execution.
 - **`tests/build.test.mjs`** (14 tests): Validates manifest integrity, tool mapping, tier resolution, frontmatter serialization, path containment (`assertWithin`), and install target authorization.
@@ -554,7 +568,7 @@ node --test tests/approval-control.test.mjs
 node --test tests/fix-skill.test.mjs
 
 # Run all test suites sequentially (recommended on Windows to prevent dist/ file locking)
-node --test --test-concurrency=1 tests/build.test.mjs tests/qa-verification.test.mjs tests/agent-optimization.test.mjs tests/codex.test.mjs tests/approval-control.test.mjs tests/fix-skill.test.mjs
+node --test --test-concurrency=1 tests/build.test.mjs tests/qa-verification.test.mjs tests/agent-optimization.test.mjs tests/codex.test.mjs tests/approval-control.test.mjs tests/fix-skill.test.mjs tests/host-plugins.test.mjs tests/vscode-client.test.mjs
 ```
 
 ---
@@ -658,3 +672,23 @@ This project is licensed under the [MIT License](LICENSE).
   Crafted with care by <strong><a href="https://github.com/GeboArt-Dev">GeboArt.Dev</a></strong><br>
   Empowering developers with autonomous, structured AI teams.
 </p>
+
+### 📦 Nuevas Capacidades y Cambios (integracion-vscode-claude)
+
+Version 0.8.0 separates Claude marketplace management from VS Code Agent Plugins, with preserved local edits, reproducible ZIPs and explicit runtime-verification status. Automated checks do not certify recognition in an interactive client.
+
+### 🔧 Referencia Técnica de Funciones y Hooks
+
+| Identificador | Ubicación | Descripción |
+| --- | --- | --- |
+| `parseFrontmatter` | `scripts/frontmatter.mjs` | Parses shared Markdown metadata. |
+| `checkedPath` | `scripts/plugin-artifacts.mjs` | Rejects unsafe output paths and managed caches. |
+| `treeFiles` | `scripts/plugin-artifacts.mjs` | Enumerates validated files deterministically. |
+| `sha256` | `scripts/plugin-artifacts.mjs` | Hashes artifact bytes for integrity checks. |
+| `verifyGenerated` | `scripts/plugin-artifacts.mjs` | Detects customized or untracked output files. |
+| `publishTrees` | `scripts/plugin-artifacts.mjs` | Publishes staged trees with backup recovery. |
+| `buildHost` | `scripts/plugin-artifacts.mjs` | Generates host packages and the Claude marketplace. |
+| `packageHost` | `scripts/plugin-artifacts.mjs` | Produces deterministic ZIP and checksum files. |
+| `execute` | `scripts/host-plugins.mjs` | Runs bounded CLI commands without a shell. |
+| `manageHost` | `scripts/host-plugins.mjs` | Diagnoses and manages each host with conflict checks. |
+| `printReport` | `scripts/host-plugins.mjs` | Emits structured or readable operation evidence. |

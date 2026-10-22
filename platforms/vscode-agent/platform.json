@@ -1,0 +1,24 @@
+{
+  "id": "vscode-agent",
+  "displayName": "VS Code Agent Plugins",
+  "status": "active",
+  "output": { "dir": "dist/vscode-agent/equipo-dev", "manifestFile": "plugin.json" },
+  "manifest": {
+    "fields": ["name", "version", "description", "author", "keywords"],
+    "extraFields": { "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json" }
+  },
+  "install": { "manager": "vscode-settings" },
+  "tools": {
+    "read_file": ["read"], "list_dir": ["read"], "write_file": ["edit"],
+    "edit_file": ["edit"], "execute_command": ["execute"],
+    "find_by_name": ["search"], "grep_search": ["search"],
+    "web_search": ["web"], "web_fetch": ["web"]
+  },
+  "tokens": {
+    "{{AGENT_GUIDE_FILE}}": "`AGENTS.md` y, cuando exista, `CLAUDE.md`",
+    "{{CMD_TOOL}}": "la herramienta de terminal disponible en el host",
+    "{{SEARCH_TOOL}}": "la búsqueda de archivos y texto disponible en el host",
+    "{{SUBAGENT_DISPATCH_GUIDE}}": "Delega en los agentes del plugin con la capacidad de subagentes de VS Code disponible y autorizada. Hereda modelos y permisos. Si el host no permite delegar, informa el bloqueo y pausa; no simules agentes ni ejecutes su trabajo. El panel persistente Claude no está disponible: consulta team-report para estado documental.",
+    "{{UX_SEARCH_LOCATION}}": "   - Busca ui-ux-pro-max en el catálogo del host y sigue sus instrucciones desde su ubicación. Si falta esa skill, Python o una herramienta requerida, informa la limitación y pausa UX; las features sin interfaz omiten UX."
+  }
+}

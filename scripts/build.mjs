@@ -20,6 +20,10 @@ import path from 'node:path'
 import { spawnSync } from 'node:child_process'
 import { fileURLToPath } from 'node:url'
 import { buildCodex, installCodex, safePath } from './codex.mjs'
+import { HOSTS, buildHost, packageHost, checkedPath, treeFiles, verifyGenerated } from './plugin-artifacts.mjs'
+import { manageHost, printReport } from './host-plugins.mjs'
+import { parseFrontmatter } from './frontmatter.mjs'
+export { parseFrontmatter } from './frontmatter.mjs'
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const SRC_DIR = path.join(ROOT, 'src')
@@ -47,69 +51,21 @@ Uso:
   node scripts/build.mjs [opciones]
 
 Opciones:
-  --target <id>    Compila el target especificado (claude-code, antigravity, codex, cursor, copilot, all). Por defecto: all.
+  --target <id>    Compila el target especificado (claude-code, vscode-agent, antigravity, codex, cursor, copilot, all). Por defecto: all.
   --install        Instala los artefactos en el directorio local de plugins configurado (si la plataforma lo soporta).
   --install-all    Instala simultáneamente en todas las plataformas soportadas (Antigravity, Claude Code, Codex).
-  --package        Empaqueta los artefactos en archivos .zip y .plugin listos para instalación en interfaz gráfica.
+  --package        Claude/VS Code: ZIP reproducible y SHA256; otros targets conservan su formato previo.
   --clean          Limpia la carpeta dist/ antes de la compilación.
   --help           Muestra esta ayuda.
 
 Instalación simultánea:
   node scripts/build.mjs --install-all
   (o bien: node scripts/build.mjs --target all --install)
-  Compila e instala en ~/.gemini/config/plugins (Antigravity), ~/.claude/plugins (Claude Code) y ~/.agents/skills (Codex).
+  Antigravity/Codex usan sus instaladores; Claude usa su gestor oficial y VS Code requiere Settings.
+  Cada host informa su resultado; una acción manual pendiente devuelve código 2.
 `)
 }
 
-export function parseFrontmatter(content) {
-  const norm = content.replace(/\r\n/g, '\n')
-  const match = norm.match(/^---\n([\s\S]*?)\n---\n?([\s\S]*)$/)
-  if (!match) return { attributes: {}, body: content }
-  const rawFm = match[1]
-  const body = match[2]
-  const attributes = {}
-
-  const lines = rawFm.split('\n')
-  let currentKey = null
-  let isList = false
-
-  for (let i = 0; i < lines.length; i++) {
-    const line = lines[i]
-    if (!line.trim()) continue
-
-    const listMatch = line.match(/^\s*-\s+(.*)$/)
-    if (listMatch && currentKey && isList) {
-      attributes[currentKey].push(listMatch[1].trim())
-      continue
-    }
-
-    const kvMatch = line.match(/^([A-Za-z0-9_-]+):\s*(.*)$/)
-    if (kvMatch) {
-      currentKey = kvMatch[1]
-      const val = kvMatch[2].trim()
-      if (val === '') {
-        attributes[currentKey] = []
-        isList = true
-      } else {
-        isList = false
-        if ((val.startsWith('"') && val.endsWith('"')) || (val.startsWith("'") && val.endsWith("'"))) {
-          try {
-            attributes[currentKey] = JSON.parse(val)
-          } catch {
-            attributes[currentKey] = val.slice(1, -1)
-          }
-        } else if (val === 'true') {
-          attributes[currentKey] = true
-        } else if (val === 'false') {
-          attributes[currentKey] = false
-        } else {
-          attributes[currentKey] = val
-        }
-      }
-    }
-  }
-  return { attributes, body }
-}
 
 export function applyTokens(text, tokens = {}) {
   let result = text
@@ -438,6 +394,13 @@ export function packageTarget(platformId, platformConfig) {
   const outDir = path.resolve(ROOT, platformConfig.output.dir)
   if (!fs.existsSync(outDir)) return
 
+  if (HOSTS.includes(platformId)) {
+    packageHost(outDir, path.join(path.dirname(outDir), 'equipo-dev.zip'))
+    if (platformId === 'claude-code') packageHost(path.join(DIST_DIR, 'marketplace'), path.join(DIST_DIR, 'marketplace.zip'))
+    console.log(`[package] ${platformId}: ZIP y SHA256 generados; registre el paquete extraído mediante su gestor.`)
+    return
+  }
+
   const targetDistDir = path.dirname(outDir)
   const baseName = path.basename(outDir)
   const zipPath = path.join(targetDistDir, `${baseName}.zip`)
@@ -495,6 +458,14 @@ export function runBuild(options = {}) {
   const doPackage = Boolean(options.package)
 
   if (doClean) {
+    checkedPath(DIST_DIR)
+    treeFiles(DIST_DIR)
+    for (const host of HOSTS) {
+      if (targetFilter !== 'all' && targetFilter !== host) continue
+      const output = path.join(DIST_DIR, host, 'equipo-dev')
+      if (fs.existsSync(path.join(output, '.equipo-dev-build.json'))) verifyGenerated(output)
+    }
+    if ((targetFilter === 'all' || targetFilter === 'claude-code') && fs.existsSync(path.join(DIST_DIR, 'marketplace/.equipo-dev-build.json'))) verifyGenerated(path.join(DIST_DIR, 'marketplace'))
     if (targetFilter === 'all') {
       console.log('[build] Limpiando todo dist/...')
       rmrf(DIST_DIR)
@@ -531,12 +502,26 @@ export function runBuild(options = {}) {
     ? platformDirs
     : [targetFilter]
 
+  const installations = []
+
   for (const pid of targetsToBuild) {
     const configPath = path.join(PLATFORMS_DIR, pid, 'platform.json')
     if (!fs.existsSync(configPath)) {
       throw new Error(`Configuración de plataforma no encontrada: ${configPath}`)
     }
     const platformConfig = JSON.parse(fs.readFileSync(configPath, 'utf8'))
+    if (HOSTS.includes(pid)) {
+      if (doInstall) {
+        if (options.installDir) throw new Error('path-conflict: Claude/VS Code requieren su gestor, no installDir.')
+        const report = manageHost({ host: pid, operation: 'install', prepare: host => buildHost(ROOT, host, parseFrontmatter), runner: options.hostRunner, home: options.home })
+        installations.push(report)
+        printReport(report)
+        if (report.exitCode !== 0 && report.status === 'failed') continue
+        if (report.issues.some(item => ['origin-conflict', 'path-conflict'].includes(item.code))) continue
+      } else buildHost(ROOT, pid, parseFrontmatter)
+      if (doPackage) packageTarget(pid, platformConfig)
+      continue
+    }
     if (pid === 'codex') {
       const out = buildCodex(ROOT, parseFrontmatter)
       if (doInstall) {
@@ -559,7 +544,8 @@ export function runBuild(options = {}) {
 
   const duration = Date.now() - startTime
   console.log(`[build] Proceso finalizado en ${duration}ms.`)
-  return { duration, targets: targetsToBuild }
+  const exitCode = installations.some(item => item.exitCode === 1) ? 1 : installations.some(item => item.exitCode === 2) ? 2 : 0
+  return { duration, targets: targetsToBuild, installations, exitCode }
 }
 
 // Ejecución CLI si se invoca directamente
@@ -583,8 +569,8 @@ if (isDirectExecution) {
   const clean = args.includes('--clean')
 
   try {
-    runBuild({ target, install, installAll, clean, package: doPackage })
-    process.exit(0)
+    const result = runBuild({ target, install, installAll, clean, package: doPackage })
+    process.exit(result.exitCode)
   } catch (err) {
     console.error(`[build ERROR] ${err.message}`)
     process.exit(1)

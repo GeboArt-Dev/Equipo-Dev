@@ -1,6 +1,6 @@
 {
   "name": "equipo-dev",
-  "version": "0.7.0",
+  "version": "0.8.0",
   "description": "Equipo de desarrollo de software multi-IA con subagentes",
   "type": "module",
   "scripts": {
@@ -14,7 +14,7 @@
     "install:antigravity": "node scripts/build.mjs --target antigravity --install",
     "install:claude": "node scripts/build.mjs --target claude-code --install",
     "install:codex": "node scripts/build.mjs --target codex --install",
-    "test": "node --test --test-concurrency=1 tests/build.test.mjs tests/qa-verification.test.mjs tests/agent-optimization.test.mjs tests/codex.test.mjs tests/approval-control.test.mjs tests/fix-skill.test.mjs"
+    "test": "node --test --test-concurrency=1 tests/build.test.mjs tests/qa-verification.test.mjs tests/agent-optimization.test.mjs tests/codex.test.mjs tests/approval-control.test.mjs tests/fix-skill.test.mjs tests/host-plugins.test.mjs tests/vscode-client.test.mjs"
   },
   "keywords": [
     "subagentes",

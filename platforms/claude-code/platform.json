@@ -13,8 +13,8 @@
     }
   },
   "install": {
-    "targetDir": "~/.claude/plugins/equipo-dev",
-    "preserve": ["state"]
+    "manager": "claude-marketplace",
+    "marketplace": "equipo-dev-local"
   },
   "tools": {
     "read_file": ["Read"],
@@ -45,6 +45,7 @@
   },
   "assets": [
     { "from": "platforms/claude-code/hooks", "to": "hooks" },
-    { "from": "platforms/claude-code/types", "to": "types" }
+    { "from": "platforms/claude-code/types", "to": "types" },
+    { "from": "platforms/claude-code/tests", "to": "tests" }
   ]
 }

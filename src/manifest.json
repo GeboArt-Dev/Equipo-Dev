@@ -1,7 +1,7 @@
 {
   "name": "equipo-dev",
   "displayName": "Equipo Dev",
-  "version": "0.7.0",
+  "version": "0.8.0",
   "description": "Equipo de desarrollo de software con subagentes (Product Owner, Diseñador UI/UX, Arquitecto, Backend, Frontend, QA y Code Reviewer), el flujo /feature con aprobaciones del dueño y panel/estado en vivo.",
   "author": {
     "name": "GeboArt.Dev"
