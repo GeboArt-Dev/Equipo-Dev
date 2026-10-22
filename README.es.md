@@ -692,3 +692,14 @@ La versión 0.8.0 separa el marketplace Claude de los plugins de agentes VS Code
 | `execute` | `scripts/host-plugins.mjs` | Ejecuta comandos con límites y sin shell. |
 | `manageHost` | `scripts/host-plugins.mjs` | Diagnostica y gestiona cada host comprobando conflictos. |
 | `printReport` | `scripts/host-plugins.mjs` | Emite evidencia estructurada o legible de la operación. |
+
+## 🧠 Memoria de largo plazo (opcional)
+
+Memoria compartida entre proyectos en un vault de Obsidian, leída por `product-owner`, `architect` y `code-reviewer` y escrita por el orquestador al cerrar `/feature` y `/fix`. Nunca bloquea: sin memoria el equipo funciona igual.
+
+```text
+/memoria-setup          # instala lo que falte (idempotente, pide confirmación)
+/memoria-setup check    # solo informa del estado
+```
+
+Instala Node ≥ 18, Obsidian, el vault (por defecto `~/Documents/EquipoDev-Memoria`, personalizable), el plugin Local REST API (servidor HTTP solo en `127.0.0.1:27123`), las variables `OBSIDIAN_API_KEY` y `OBSIDIAN_VAULT_PATH`, y registra `obsidian-graph-memory@1.0.1` (solo lectura). Scripts: `scripts/memoria/setup.ps1` y `setup.sh`. Obsidian debe estar abierto para que responda. Desinstalar: `claude mcp remove graph-memory --scope user` y quitar las variables.

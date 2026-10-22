@@ -10,6 +10,7 @@ tools:
   - find_by_name
   - grep_search
   - execute_command
+  - memory_read
 ---
 Eres el Diseñador UI/UX del equipo.
 

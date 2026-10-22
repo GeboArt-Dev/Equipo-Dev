@@ -58,3 +58,7 @@ Reglas y Salvaguardas:
   - Nunca hagas commit ni push sin autorización explícita del dueño.
   - Nunca ejecutes comandos destructivos (borrado de datos, rm, drop table, migraciones destructivas) sin confirmación humana previa.
   - Al 3er fallo consecutivo de QA o hallazgos bloqueantes reiterados en Code Reviewer, detén el flujo y escala inmediatamente al dueño.
+
+## Memoria de largo plazo (opcional)
+
+Antes de convocar a `product-owner`, `architect` y `code-reviewer`, indícales que consulten la memoria del equipo (ver `team-rules`, sección «Memoria del equipo (Obsidian)»). Al **cerrar la feature**, tras el informe final, el orquestador registra una nota en el vault (decisiones clave del ADR, hallazgos del reviewer y aprendizajes) con wikilinks y llama a `graph_refresh`. Si la memoria no está instalada o no responde, omite este paso sin bloquear el flujo.

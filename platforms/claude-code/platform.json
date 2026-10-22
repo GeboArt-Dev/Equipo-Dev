@@ -25,7 +25,8 @@
     "find_by_name": ["Glob"],
     "grep_search": ["Grep"],
     "web_search": ["WebSearch"],
-    "web_fetch": ["WebFetch"]
+    "web_fetch": ["WebFetch"],
+    "memory_read": ["mcp__graph-memory__graph_query_related", "mcp__graph-memory__graph_find_path", "mcp__graph-memory__graph_get_hubs", "mcp__graph-memory__graph_get_orphans", "mcp__graph-memory__graph_get_clusters", "mcp__graph-memory__graph_get_stats", "mcp__graph-memory__graph_refresh"]
   },
   "models": {
     "pro": "opus",
@@ -46,6 +47,7 @@
   "assets": [
     { "from": "platforms/claude-code/hooks", "to": "hooks" },
     { "from": "platforms/claude-code/types", "to": "types" },
-    { "from": "platforms/claude-code/tests", "to": "tests" }
+    { "from": "platforms/claude-code/tests", "to": "tests" },
+    { "from": "scripts/memoria", "to": "scripts/memoria" }
   ]
 }

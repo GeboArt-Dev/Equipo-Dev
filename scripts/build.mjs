@@ -41,6 +41,7 @@ const KNOWN_CANONICAL_TOOLS = new Set([
   'grep_search',
   'web_search',
   'web_fetch',
+  'memory_read',
 ])
 
 function showHelp() {

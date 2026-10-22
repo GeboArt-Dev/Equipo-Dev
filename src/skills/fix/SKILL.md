@@ -82,3 +82,7 @@ Antes de empezar, carga la skill `team-rules` y aplícala. {{SUBAGENT_DISPATCH_G
 - **Cero comandos destructivos**: No ejecutes comandos como `rm -rf`, borrado masivo de directorios o sentencias SQL destructivas (`DROP TABLE`, `TRUNCATE`) sin confirmación previa del dueño.
 - **Gestión de secretos**: Prohibido incluir credenciales, tokens o datos confidenciales expuestos en trazas de error dentro del código, los tests o `docs/fixes/`.
 - **Límite de 3 reintentos**: Ante 3 rechazos consecutivos de QA o Reviewer, detén el flujo y escala inmediatamente al dueño.
+
+## Memoria de largo plazo (opcional)
+
+Antes de convocar a `code-reviewer`, indícale que consulte la memoria del equipo (ver `team-rules`). Al **cerrar el fix**, el orquestador registra en el vault una nota en `Aprendizajes/` con la causa raíz y el patrón del defecto (enlazada con wikilinks al proyecto) y llama a `graph_refresh`. Nunca incluyas secretos ni trazas con datos sensibles. Si la memoria no está instalada o no responde, omite este paso sin bloquear el flujo.

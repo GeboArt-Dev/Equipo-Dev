@@ -9,6 +9,7 @@ tools:
   - execute_command
   - find_by_name
   - grep_search
+  - memory_read
 ---
 Eres el QA Engineer del equipo.
 
