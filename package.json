@@ -10,11 +10,12 @@
     "package:claude": "node scripts/build.mjs --target claude-code --package",
     "package:all": "node scripts/build.mjs --target all --package",
     "setup:hooks": "node scripts/setup-hooks.mjs",
+    "sync": "node scripts/sync.mjs",
     "install:all": "node scripts/build.mjs --install-all",
     "install:antigravity": "node scripts/build.mjs --target antigravity --install",
     "install:claude": "node scripts/build.mjs --target claude-code --install",
     "install:codex": "node scripts/build.mjs --target codex --install",
-    "test": "node --test --test-concurrency=1 tests/build.test.mjs tests/qa-verification.test.mjs tests/agent-optimization.test.mjs tests/codex.test.mjs tests/approval-control.test.mjs tests/fix-skill.test.mjs tests/host-plugins.test.mjs tests/vscode-client.test.mjs"
+    "test": "node --test --test-concurrency=1 tests/build.test.mjs tests/qa-verification.test.mjs tests/agent-optimization.test.mjs tests/codex.test.mjs tests/approval-control.test.mjs tests/fix-skill.test.mjs tests/host-plugins.test.mjs tests/vscode-client.test.mjs tests/sync.test.mjs"
   },
   "keywords": [
     "subagentes",

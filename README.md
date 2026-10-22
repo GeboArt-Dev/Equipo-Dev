@@ -703,3 +703,13 @@ Shared cross-project memory in an Obsidian vault, read by `product-owner`, `arch
 ```
 
 Installs Node ≥ 18, Obsidian, the vault (default `~/Documents/EquipoDev-Memoria`, customizable), the Local REST API plugin (HTTP server on `127.0.0.1:27123` only), the `OBSIDIAN_API_KEY` and `OBSIDIAN_VAULT_PATH` variables, and registers `obsidian-graph-memory@1.0.1` (read-only). Scripts: `scripts/memoria/setup.ps1` and `setup.sh`. Obsidian must be open for it to respond. Uninstall: `claude mcp remove graph-memory --scope user` and remove the variables.
+
+## 🔄 Syncing with your tools
+
+The git hook (`npm run setup:hooks`) no longer replaces files while your tools are open: before syncing it checks whether **Claude Code, Antigravity, Codex or VS Code** are running. If they are, it warns and skips the sync without breaking the commit. Close them and run:
+
+```text
+npm run sync              # syncs if everything is closed (exit code 2 otherwise)
+npm run sync -- --wait    # waits up to 5 min for you to close them
+npm run sync -- --force   # skips the check (at your own risk)
+```

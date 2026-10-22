@@ -138,7 +138,7 @@ function Step-Autostart {
   Out-Step 'autostart' 'OK' 'Obsidian iniciara con Windows'
 }
 
-$all = 'node','obsidian','vault','plugin','apikey','config','mcp'
+$all = 'node','obsidian','vault','plugin','apikey','config','mcp','autostart'
 $run = if ($Step -eq 'all') { $all } else { @($Step) }
 foreach ($s in $run) {
   try { & ("Step-" + (Get-Culture).TextInfo.ToTitleCase($s)) } catch { Out-Step $s 'ERROR' $_.Exception.Message }

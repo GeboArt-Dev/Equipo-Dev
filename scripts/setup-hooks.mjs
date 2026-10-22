@@ -18,8 +18,8 @@ const HOOKS_DIR = path.join(GIT_DIR, 'hooks')
 
 const HOOK_SCRIPT = `#!/bin/sh
 # [equipo-dev] Sincronizacion automatica multi-IDE tras commit o merge
-echo "[auto-sync] Actualizando plugins en Antigravity, Claude Code y Codex..."
-node scripts/build.mjs --install-all
+echo "[auto-sync] Sincronizando plugins (exige cerrar Claude Code, Antigravity, Codex y VS Code)..."
+node scripts/sync.mjs --hook
 `
 
 export function setupHooks(action = 'install') {

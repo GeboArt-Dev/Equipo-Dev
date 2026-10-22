@@ -703,3 +703,13 @@ Memoria compartida entre proyectos en un vault de Obsidian, leída por `product-
 ```
 
 Instala Node ≥ 18, Obsidian, el vault (por defecto `~/Documents/EquipoDev-Memoria`, personalizable), el plugin Local REST API (servidor HTTP solo en `127.0.0.1:27123`), las variables `OBSIDIAN_API_KEY` y `OBSIDIAN_VAULT_PATH`, y registra `obsidian-graph-memory@1.0.1` (solo lectura). Scripts: `scripts/memoria/setup.ps1` y `setup.sh`. Obsidian debe estar abierto para que responda. Desinstalar: `claude mcp remove graph-memory --scope user` y quitar las variables.
+
+## 🔄 Sincronización con tus herramientas
+
+El hook de git (`npm run setup:hooks`) ya no reemplaza archivos con las herramientas abiertas: antes de sincronizar comprueba si **Claude Code, Antigravity, Codex o VS Code** están en ejecución. Si lo están, avisa y omite la sincronización sin romper el commit. Ciérralas y ejecuta:
+
+```text
+npm run sync              # sincroniza si todo está cerrado (código 2 si no)
+npm run sync -- --wait    # espera hasta 5 min a que las cierres
+npm run sync -- --force   # omite la comprobación (bajo tu responsabilidad)
+```
