@@ -693,16 +693,38 @@ La versión 0.8.0 separa el marketplace Claude de los plugins de agentes VS Code
 | `manageHost` | `scripts/host-plugins.mjs` | Diagnostica y gestiona cada host comprobando conflictos. |
 | `printReport` | `scripts/host-plugins.mjs` | Emite evidencia estructurada o legible de la operación. |
 
-## 🧠 Memoria de largo plazo (opcional)
+## 🧠 Memoria (Obsidian): Fuente de Verdad del Proyecto
 
-Memoria compartida entre proyectos en un vault de Obsidian, leída por `product-owner`, `architect` y `code-reviewer` y escrita por el orquestador al cerrar `/feature` y `/fix`. Nunca bloquea: sin memoria el equipo funciona igual.
+La memoria de largo plazo en Obsidian es la **fuente de verdad compartida entre proyectos** para toda la documentación de ingeniería (specs, UX, ADR, QA, fixes, decisiones y aprendizajes). **Toda la documentación vive en el vault (`$OBSIDIAN_VAULT_PATH`), nunca en `docs/` del repo**.
 
 ```text
-/memoria-setup          # instala lo que falte (idempotente, pide confirmación)
-/memoria-setup check    # solo informa del estado
+/memoria-setup          # instala o verifica el vault y MCP (idempotente)
+/memoria-setup check    # solo informa del estado de salud
 ```
 
-Instala Node ≥ 18, Obsidian, el vault (por defecto `~/Documents/EquipoDev-Memoria`, personalizable), el plugin Local REST API (servidor HTTP solo en `127.0.0.1:27123`), las variables `OBSIDIAN_API_KEY` y `OBSIDIAN_VAULT_PATH`, y registra `obsidian-graph-memory@1.0.1` (solo lectura). Scripts: `scripts/memoria/setup.ps1` y `setup.sh`. Obsidian debe estar abierto para que responda. Desinstalar: `claude mcp remove graph-memory --scope user` y quitar las variables.
+### Estructura en el Vault
+```text
+<vault>/
+└── Proyectos/
+    └── <proyecto>/
+        ├── <proyecto>.md              # Nota índice del proyecto
+        ├── Specs/Spec - <feature>.md  # Especificaciones funcionales (Product Owner)
+        ├── UX/UX - <feature>.md       # Flujos de pantalla y estados (Diseñador UX)
+        ├── ADR/ADR <NNN> - <feature>.md # Decisiones arquitectónicas y contratos (Arquitecto)
+        ├── QA/QA - <feature>.md       # Informes de prueba de aceptación (QA Engineer)
+        └── Fixes/Fix - <slug>.md      # Reportes livianos de remediación técnica
+```
+
+### Reglas de Memoria
+- **Consultar siempre**: al empezar cualquier tarea, el orquestador y cada subagente consultan la memoria del proyecto (`graph_query_related` sobre `<proyecto>`) antes de actuar.
+- **Guardar siempre**: cada nota nueva lleva frontmatter `tags: [<proyecto>, <tipo>]`, nombre único con prefijo de tipo (`Spec - `, `UX - `, `ADR <NNN> - `, `QA - `, `Fix - `) y un enlace `[[<proyecto>]]`; además se añade a la nota índice del proyecto. Al terminar se ejecuta `graph_refresh`.
+- **Si Obsidian no responde**: se avisa al dueño y **no** se escribe documentación en `docs/` del repositorio.
+
+### Definition of Done (DoD)
+- Criterios de aceptación cubiertos por tests y todos en verde.
+- QA APROBADO y Code Reviewer sin hallazgos Bloqueantes.
+- UI conforme a la UX y al design system.
+- `README.md` del proyecto actualizado con el cambio realizado y el número de versión (SemVer: `/fix` → parche, `/feature` → menor, cambio incompatible → mayor), también sincronizado en `package.json`.
 
 ## 🔄 Sincronización con tus herramientas
 

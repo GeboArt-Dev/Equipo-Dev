@@ -693,16 +693,38 @@ Version 0.8.0 separates Claude marketplace management from VS Code Agent Plugins
 | `manageHost` | `scripts/host-plugins.mjs` | Diagnoses and manages each host with conflict checks. |
 | `printReport` | `scripts/host-plugins.mjs` | Emits structured or readable operation evidence. |
 
-## 🧠 Long-term memory (optional)
+## 🧠 Memory (Obsidian): Project Source of Truth
 
-Shared cross-project memory in an Obsidian vault, read by `product-owner`, `architect` and `code-reviewer` and written by the orchestrator when closing `/feature` and `/fix`. It never blocks: without memory the team works as usual.
+Long-term memory in Obsidian is the **cross-project source of truth** for all engineering documentation (specs, UX, ADR, QA, fixes, decisions, and learnings). **All documentation lives in the vault (`$OBSIDIAN_VAULT_PATH`), never in `docs/` inside the repo**.
 
 ```text
-/memoria-setup          # installs what is missing (idempotent, asks for confirmation)
-/memoria-setup check    # status report only
+/memoria-setup          # installs or verifies vault and MCP (idempotent)
+/memoria-setup check    # health check status report
 ```
 
-Installs Node ≥ 18, Obsidian, the vault (default `~/Documents/EquipoDev-Memoria`, customizable), the Local REST API plugin (HTTP server on `127.0.0.1:27123` only), the `OBSIDIAN_API_KEY` and `OBSIDIAN_VAULT_PATH` variables, and registers `obsidian-graph-memory@1.0.1` (read-only). Scripts: `scripts/memoria/setup.ps1` and `setup.sh`. Obsidian must be open for it to respond. Uninstall: `claude mcp remove graph-memory --scope user` and remove the variables.
+### Vault Structure
+```text
+<vault>/
+└── Proyectos/
+    └── <proyecto>/
+        ├── <proyecto>.md              # Project index note
+        ├── Specs/Spec - <feature>.md  # Functional specifications (Product Owner)
+        ├── UX/UX - <feature>.md       # Screen flows and states (UX Designer)
+        ├── ADR/ADR <NNN> - <feature>.md # Architecture decisions & contracts (Architect)
+        ├── QA/QA - <feature>.md       # Acceptance test reports (QA Engineer)
+        └── Fixes/Fix - <slug>.md      # Lightweight remediation reports
+```
+
+### Memory Rules
+- **Always consult**: before starting any task, the orchestrator and every subagent consult project memory (`graph_query_related` on `<proyecto>`) before acting.
+- **Always save**: every new note carries frontmatter `tags: [<proyecto>, <tipo>]`, a unique name with a type prefix (`Spec - `, `UX - `, `ADR <NNN> - `, `QA - `, `Fix - `) and a `[[<proyecto>]]` link, while also being appended to the project index note. Upon completion, run `graph_refresh`.
+- **If Obsidian does not respond**: the owner is alerted, and **no** documentation is written into `docs/` in the repository.
+
+### Definition of Done (DoD)
+- Acceptance criteria covered by tests and all passing.
+- QA APPROVED and Code Reviewer with 0 blocking findings.
+- UI matching UX design and design system.
+- Project `README.md` updated with the change and version number (SemVer: `/fix` → patch, `/feature` → minor, breaking change → major), synchronized in `package.json`.
 
 ## 🔄 Syncing with your tools
 

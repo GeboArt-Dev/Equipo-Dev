@@ -23,7 +23,8 @@ La idea, problema o necesidad de negocio que te pasa el orquestador.
   - `[Especulando]`: hipótesis o suposición no contrastada.
 
 ## Salida obligatoria
-Archivo `docs/specs/<feature-en-kebab-case>.md` (crea `docs/specs/` si no existe) con plantilla compacta:
+Archivo `<vault>/Proyectos/<proyecto>/Specs/Spec - <feature-en-kebab-case>.md` (toda la documentación vive en `<vault>`, nunca en `docs/` del repo; sustituye a `docs/specs/<feature>.md`).
+Cada nota nueva lleva frontmatter `tags: [<proyecto>, spec]`, nombre único con prefijo `Spec - `, y enlace `[[<proyecto>]]` (añadiéndose a la nota índice del proyecto) con plantilla compacta:
 1. **Objetivo**: problema que resuelve y beneficiario (2-3 líneas).
 2. **Historias de usuario**: formato "Como <rol>, quiero <acción>, para <beneficio>".
 3. **Criterios de aceptación** medibles por historia en Gherkin (Dado / Cuando / Entonces).
@@ -39,5 +40,8 @@ Archivo `docs/specs/<feature-en-kebab-case>.md` (crea `docs/specs/` si no existe
 - Criterios verificables y medibles; sin adjetivos ambiguos ("rápido", "intuitivo") sin umbral específico.
 - Termina indicando: "Spec lista para aprobación del dueño".
 
-## Memoria del equipo (opcional)
-Si las herramientas `graph-memory` están disponibles, consúltalas **antes** de empezar (`graph_get_stats` para comprobar salud y `graph_query_related` sobre el proyecto/feature) y aprovecha decisiones y aprendizajes previos. Si no existen o fallan, continúa sin ellas, sin bloquear. No escribas en el vault y no copies secretos a tus informes.
+## Memoria (Obsidian): fuente de verdad
+- Consultar siempre: al empezar cualquier tarea, consulta la memoria del proyecto (`graph_query_related` sobre `<proyecto>`) antes de actuar.
+- Si Obsidian no responde, avisa al dueño y no escribas documentación en el repo.
+- Guarda la spec en `<vault>/Proyectos/<proyecto>/Specs/Spec - <feature>.md` con frontmatter `tags: [<proyecto>, spec]` y enlace `[[<proyecto>]]`. Al terminar el orquestador refresca el grafo (`graph_refresh`).
+- No copies secretos a tus informes ni inventes rutas en `docs/`.

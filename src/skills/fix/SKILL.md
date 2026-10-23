@@ -50,7 +50,9 @@ Antes de empezar, carga la skill `team-rules` y aplícala. {{SUBAGENT_DISPATCH_G
 - Si no hay hallazgos bloqueantes: avanza a Cierre y Registro.
 
 ### 4. Cierre y Registro Sintético
-- Genera el reporte ligero en `docs/fixes/<slug>.md`, derivando `<slug>` del título o descripción en kebab-case limpio (máximo 40 caracteres, solo caracteres alfanuméricos y guiones `[a-z0-9-]`).
+- Toda la documentación del proyecto vive en `<vault>`, nunca en `docs/` del repo. Genera el reporte ligero en `<vault>/Proyectos/<proyecto>/Fixes/Fix - <slug>.md` (sustituye al histórico `docs/fixes/<slug>.md`), derivando `<slug>` del título o descripción en kebab-case limpio (máximo 40 caracteres, solo caracteres alfanuméricos y guiones `[a-z0-9-]`).
+- Cada nota lleva frontmatter `tags: [<proyecto>, fix]`, título `# Fix: <Título Sintético del Defecto>`, enlace `[[<proyecto>]]` y se añade al índice del proyecto.
+- Actualiza el `README.md` del proyecto con el cambio y bump de versión SemVer (parche para `/fix`) en `package.json`. Al terminar ejecuta `graph_refresh`. Si Obsidian no responde, se avisa al dueño y no se escribe documentación en el repo.
 - Plantilla estricta del documento:
 ```markdown
 # Fix: <Título Sintético del Defecto>

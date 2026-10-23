@@ -6,10 +6,10 @@ description: Muestra el estado del equipo de desarrollo (qué rol trabaja, qué 
 
 Normalmente este comando lo responde el panel en vivo del plugin. Si estás leyendo estas instrucciones, el panel no está activo en esta pantalla: arma el estado tú a partir de los archivos del proyecto.
 
-Argumento opcional: nombre de la feature o del fix. Si no se da, usa la feature o fix con archivos modificados más recientemente en `docs/`.
+Argumento opcional: nombre de la feature o del fix. Si no se da, usa la feature o fix con archivos modificados más recientemente en el vault `<vault>/Proyectos/<proyecto>/` o en `docs/`.
 
 0. **Detección de tipo de flujo (FEATURE vs FIX)**:
-   - Inspecciona `docs/fixes/` y `git status`. Si el flujo en curso o los cambios más recientes corresponden a una remediación (`/fix` o archivos bajo `docs/fixes/`), clasifica como `Tipo: FIX`.
+   - Inspecciona `<vault>/Proyectos/<proyecto>/Fixes/` (o `docs/fixes/`) y `git status`. Si el flujo en curso o los cambios más recientes corresponden a una remediación (`/fix` o archivos bajo `docs/fixes/`), clasifica como `Tipo: FIX`.
    - En flujos `FIX`:
      - Oculta por completo las filas correspondientes a `Product Owner`, `Diseño UX` y `Arquitecto`.
      - Suprime las compuertas `⏸` de especificación y diseño.
