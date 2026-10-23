@@ -50,9 +50,11 @@ Antes de empezar, carga la skill `team-rules` y aplícala. {{SUBAGENT_DISPATCH_G
 - Si no hay hallazgos bloqueantes: avanza a Cierre y Registro.
 
 ### 4. Cierre y Registro Sintético
-- Toda la documentación del proyecto vive en `<vault>`, nunca en `docs/` del repo. Genera el reporte ligero en `<vault>/Proyectos/<proyecto>/Fixes/Fix - <slug>.md` (sustituye al histórico `docs/fixes/<slug>.md`), derivando `<slug>` del título o descripción en kebab-case limpio (máximo 40 caracteres, solo caracteres alfanuméricos y guiones `[a-z0-9-]`).
+- Toda la documentación vive en `<vault>` (`$OBSIDIAN_VAULT_PATH`), nunca en el repo. Genera el reporte en `<vault>/Proyectos/<proyecto>/Fixes/Fix - <slug>.md` (sustituye al histórico `docs/fixes/<slug>.md`), derivando `<slug>` del título o descripción en kebab-case limpio (máximo 40 caracteres, solo alfanuméricos y guiones `[a-z0-9-]`).
+- `<proyecto>`: valor de `Proyecto en memoria:` en {{AGENT_GUIDE_FILE}} o nombre de la carpeta (creando `Proyectos/<proyecto>/` e índice si no existían).
 - Cada nota lleva frontmatter `tags: [<proyecto>, fix]`, título `# Fix: <Título Sintético del Defecto>`, enlace `[[<proyecto>]]` y se añade al índice del proyecto.
-- Actualiza el `README.md` del proyecto con el cambio y bump de versión SemVer (parche para `/fix`) en `package.json`. Al terminar ejecuta `graph_refresh`. Si Obsidian no responde, se avisa al dueño y no se escribe documentación en el repo.
+- Consultar siempre la memoria del proyecto y las carpetas compartidas `Decisiones/` y `Aprendizajes/`.
+- Actualiza el `README.md` del proyecto con el cambio y bump de versión SemVer (parche para `/fix`) en `package.json`. Al terminar ejecuta `graph_refresh`. Si Obsidian no responde, avisar al dueño y no escribir documentación hasta resolverlo. Exportar a `docs/` solo bajo pedido del dueño como copia de solo lectura.
 - Plantilla estricta del documento:
 ```markdown
 # Fix: <Título Sintético del Defecto>

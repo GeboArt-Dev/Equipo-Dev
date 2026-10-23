@@ -715,10 +715,12 @@ Long-term memory in Obsidian is the **cross-project source of truth** for all en
         └── Fixes/Fix - <slug>.md      # Lightweight remediation reports
 ```
 
-### Memory Rules
-- **Always consult**: before starting any task, the orchestrator and every subagent consult project memory (`graph_query_related` on `<proyecto>`) before acting.
+### Memory Rules (Cross-Platform)
+- **`<proyecto>`**: the value of `Proyecto en memoria:` in the project's guide file (`CLAUDE.md`, `AGENTS.md`, `.cursorrules`, etc.); if absent, the project folder name (creating `Proyectos/<proyecto>/` + index note, linking from `Proyectos`, and adding the line to the guide file while notifying the owner).
+- **Always consult**: before starting any task, the orchestrator and every subagent consult project memory and the shared `Decisiones/` and `Aprendizajes/` folders.
 - **Always save**: every new note carries frontmatter `tags: [<proyecto>, <tipo>]`, a unique name with a type prefix (`Spec - `, `UX - `, `ADR <NNN> - `, `QA - `, `Fix - `) and a `[[<proyecto>]]` link, while also being appended to the project index note. Upon completion, run `graph_refresh`.
-- **If Obsidian does not respond**: the owner is alerted, and **no** documentation is written into `docs/` in the repository.
+- **If Obsidian does not respond**: the owner is alerted, and **no documentation is written until resolved**.
+- **Export to repo only upon owner request**: copy project notes into `docs/` in the repo as a **read-only** copy (indicating date and origin). This copy is not edited directly; changes are made in the vault and re-exported.
 
 ### Definition of Done (DoD)
 - Acceptance criteria covered by tests and all passing.

@@ -715,10 +715,12 @@ La memoria de largo plazo en Obsidian es la **fuente de verdad compartida entre 
         └── Fixes/Fix - <slug>.md      # Reportes livianos de remediación técnica
 ```
 
-### Reglas de Memoria
-- **Consultar siempre**: al empezar cualquier tarea, el orquestador y cada subagente consultan la memoria del proyecto (`graph_query_related` sobre `<proyecto>`) antes de actuar.
+### Reglas de Memoria (Multi-Plataforma)
+- **`<proyecto>`**: el valor de `Proyecto en memoria:` en el archivo de contexto del proyecto (`CLAUDE.md`, `AGENTS.md`, `.cursorrules`, etc.); si no existe, el nombre de la carpeta del proyecto (crear `Proyectos/<proyecto>/` + nota índice, enlazarla desde `Proyectos` y añadir la línea al archivo guía del proyecto avisando al dueño).
+- **Consultar siempre**: al empezar cualquier tarea, el orquestador y cada subagente consultan la memoria del proyecto y las carpetas compartidas `Decisiones/` y `Aprendizajes/`.
 - **Guardar siempre**: cada nota nueva lleva frontmatter `tags: [<proyecto>, <tipo>]`, nombre único con prefijo de tipo (`Spec - `, `UX - `, `ADR <NNN> - `, `QA - `, `Fix - `) y un enlace `[[<proyecto>]]`; además se añade a la nota índice del proyecto. Al terminar se ejecuta `graph_refresh`.
-- **Si Obsidian no responde**: se avisa al dueño y **no** se escribe documentación en `docs/` del repositorio.
+- **Si Obsidian no responde**: se avisa al dueño y **no** se escribe documentación hasta resolverlo.
+- **Exportar al repo solo bajo pedido del dueño**: copiar las notas del proyecto a `docs/` del repo como copia de **solo lectura** (indicando fecha y origen). Esa copia no se edita directamente; los cambios se hacen en el vault y se vuelve a exportar.
 
 ### Definition of Done (DoD)
 - Criterios de aceptación cubiertos por tests y todos en verde.

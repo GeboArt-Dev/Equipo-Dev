@@ -39,10 +39,12 @@ Circuito técnico directo para corrección de bugs, excepciones en ejecución y 
 4. **Artefacto de reporte liviano**: Registro sintético en `<vault>/Proyectos/<proyecto>/Fixes/Fix - <slug>.md` (sustituye al histórico `docs/fixes/<slug>.md`) resumiendo RCA, parche, test de regresión y verificación de no-regresión.
 
 ## Memoria (Obsidian): fuente de verdad
-- `<vault>` = `$OBSIDIAN_VAULT_PATH` (ej. `D:\EquipoDev-Memoria` o `~/Documents/EquipoDev-Memoria`). Toda la documentación del proyecto (specs, UX, ADR, QA, fixes, decisiones y aprendizajes) vive ahí, **nunca en `docs/` del repo**.
-- **Consultar siempre**: al empezar cualquier tarea, el orquestador y cada subagente consultan la memoria del proyecto (`graph_query_related` sobre `<proyecto>`) antes de actuar.
-- **Guardar siempre**: cada nota nueva lleva frontmatter `tags: [<proyecto>, <tipo>]`, un nombre único con prefijo de tipo (`Spec - <feature>`, `UX - <feature>`, `ADR <NNN> - <feature>`, `QA - <feature>`, `Fix - <slug>`) y un enlace `[[<proyecto>]]`; también se añade a la nota índice del proyecto (`<vault>/Proyectos/<proyecto>/<proyecto>.md` o `[[<proyecto>]]`). Al terminar se ejecuta `graph_refresh`.
-- **Si Obsidian no responde**: se avisa al dueño y no se escribe documentación en el repo.
+- `<vault>` = `$OBSIDIAN_VAULT_PATH` (D:\EquipoDev-Memoria). Toda la documentación de todos los proyectos (specs, UX, ADR, QA, fixes, decisiones y aprendizajes) vive ahí, **nunca en el repo**.
+- `<proyecto>`: el valor de `Proyecto en memoria:` en el {{AGENT_GUIDE_FILE}} del proyecto (o `CLAUDE.md`); si no existe, el nombre de la carpeta del proyecto (crear `Proyectos/<proyecto>/` + nota índice, enlazarla desde `Proyectos` y añadir la línea al {{AGENT_GUIDE_FILE}} del proyecto avisando al dueño).
+- **Consultar siempre**: al empezar cualquier tarea, el orquestador y cada subagente consultan la memoria del proyecto y las carpetas compartidas `Decisiones/` y `Aprendizajes/`.
+- **Guardar siempre**: nombre único con prefijo de tipo (`Spec - `, `UX - `, `ADR <NNN> - `, `QA - `, `Fix - `), frontmatter `tags: [<proyecto>, <tipo>]`, enlace `[[<proyecto>]]` y entrada en la nota índice del proyecto. Al terminar, `graph_refresh`.
+- **Si Obsidian no responde**: avisar al dueño y no escribir documentación hasta resolverlo.
+- **Exportar al repo solo bajo pedido del dueño**: copiar las notas del proyecto a `docs/` del repo como copia de solo lectura (indicando fecha y origen). Esa copia no se edita; los cambios se hacen en el vault y se vuelve a exportar.
 
 ## Contexto del proyecto
 - Leer el {{AGENT_GUIDE_FILE}} del proyecto antes de delegar: su stack, comandos y restricciones son obligatorios para todos los roles y prevalecen sobre estas reglas en lo específico del proyecto.

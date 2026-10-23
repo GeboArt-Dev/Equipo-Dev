@@ -22,11 +22,19 @@ Circuito técnico directo para bugs, excepciones y regresiones (`/fix <descripci
 2. **Desarrollador (Dev)**: Diagnóstico de Causa Raíz (RCA ≤ 5 líneas), test automatizado de regresión obligatorio (rojo a verde) y parche mínimo.
 3. **QA Engineer**: Valida la suite completa de pruebas (máximo 3 reintentos antes de escalar al dueño).
 4. **Code Reviewer**: Auditoría de seguridad OWASP y calidad (máximo 3 reintentos).
-5. **Artefacto sintético**: Registra la remediación en `docs/fixes/<slug>.md`.
+5. **Artefacto sintético**: Registra la remediación en `<vault>/Proyectos/<proyecto>/Fixes/Fix - <slug>.md` (sustituye a `docs/fixes/<slug>.md`).
+
+## Memoria (Obsidian): fuente de verdad
+- `<vault>` = `$OBSIDIAN_VAULT_PATH` (D:\EquipoDev-Memoria). Toda la documentación de todos los proyectos vive ahí, nunca en el repo.
+- `<proyecto>`: valor de `Proyecto en memoria:` en `.cursorrules`; si no existe, nombre de la carpeta del proyecto (crear `Proyectos/<proyecto>/` + nota índice, enlazarla desde `Proyectos` y añadir la línea a `.cursorrules` avisando al dueño).
+- Consultar siempre: al empezar cualquier tarea, el orquestador y cada rol consultan la memoria del proyecto y las carpetas compartidas `Decisiones/` y `Aprendizajes/`.
+- Guardar siempre: nombre único con prefijo de tipo (`Spec - `, `UX - `, `ADR <NNN> - `, `QA - `, `Fix - `), frontmatter `tags: [<proyecto>, <tipo>]`, enlace `[[<proyecto>]]` y entrada en la nota índice del proyecto. Al terminar, refrescar memoria (`graph_refresh`).
+- Si Obsidian no responde: avisar al dueño y no escribir documentación hasta resolverlo.
+- Exportar al repo solo bajo pedido del dueño: copia de solo lectura a `docs/` con fecha y origen (no se edita en el repo, se modifica en el vault y se vuelve a exportar).
 
 ## Reglas Obligatorias y Seguridad
 - Salvaguardas críticas inviolables en ambos modos y flujos: Nunca realices `git commit` ni `git push` sin autorización explícita del dueño; no ejecutes comandos destructivos sin confirmación humana previa.
-- No avances de fase sin los artefactos correspondientes en `docs/`.
+- No avances de fase sin los artefactos correspondientes en el vault.
 - No inventes requerimientos ni contratos técnicos que no estén en el ADR.
 - Seguridad: Nunca expongas credenciales ni secretos en código, valida toda entrada externa.
-- Definition of Done: Todos los tests en verde, QA aprobado y sin hallazgos bloqueantes.
+- Definition of Done: Todos los tests en verde, QA aprobado, sin hallazgos bloqueantes y README con número de versión actualizado (SemVer: `/fix` parche, `/feature` menor) también en `package.json`.

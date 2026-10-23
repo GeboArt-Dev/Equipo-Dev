@@ -66,6 +66,9 @@ Reglas y Salvaguardas:
   - Al 3er fallo consecutivo de QA o hallazgos bloqueantes reiterados en Code Reviewer, detén el flujo y escala inmediatamente al dueño.
 
 ## Memoria (Obsidian): fuente de verdad
-- Consultar siempre: al empezar cualquier tarea, el orquestador y cada subagente consultan la memoria del proyecto (`graph_query_related` sobre `<proyecto>`) antes de actuar.
-- Guardar siempre: cada nota nueva lleva frontmatter `tags: [<proyecto>, <tipo>]`, un nombre único con prefijo de tipo (`Spec - <feature>`, `UX - <feature>`, `ADR <NNN> - <feature>`, `QA - <feature>`) y un enlace `[[<proyecto>]]`; también se añade a la nota índice del proyecto. Al terminar se ejecuta `graph_refresh`.
-- Si Obsidian no responde, se avisa al dueño y no se escribe documentación en el repo.
+- `<vault>` = `$OBSIDIAN_VAULT_PATH` (D:\EquipoDev-Memoria). Toda la documentación de todos los proyectos vive ahí, nunca en el repo.
+- `<proyecto>`: valor de `Proyecto en memoria:` en {{AGENT_GUIDE_FILE}}; si no existe, nombre de la carpeta del proyecto (crear `Proyectos/<proyecto>/` + nota índice, enlazarla desde `Proyectos` y añadir la línea al {{AGENT_GUIDE_FILE}} avisando al dueño).
+- Consultar siempre: al empezar cualquier tarea, el orquestador y cada subagente consultan la memoria del proyecto (`graph_query_related` sobre `<proyecto>`) y las carpetas compartidas `Decisiones/` y `Aprendizajes/`.
+- Guardar siempre: nombre único con prefijo de tipo (`Spec - `, `UX - `, `ADR <NNN> - `, `QA - `), frontmatter `tags: [<proyecto>, <tipo>]`, enlace `[[<proyecto>]]` y entrada en la nota índice del proyecto. Al terminar, `graph_refresh`.
+- Si Obsidian no responde, avisar al dueño y no escribir documentación hasta resolverlo.
+- Exportar al repo solo bajo pedido del dueño: copia de solo lectura a `docs/` con fecha y origen (no se edita en el repo, se actualiza en el vault y se vuelve a exportar).

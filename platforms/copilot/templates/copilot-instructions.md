@@ -22,11 +22,19 @@ Circuito técnico directo para bugs, excepciones y regresiones (`/fix <descripci
 2. **Desarrollador (`backend-dev` / `frontend-dev`)**: Formulación de Causa Raíz (RCA ≤ 5 líneas), test automatizado de regresión obligatorio (rojo a verde) y parche mínimo indispensable.
 3. **QA Engineer**: Valida con la suite completa de pruebas (máximo 3 reintentos antes de escalar al dueño).
 4. **Code Reviewer**: Auditoría de seguridad OWASP y calidad (máximo 3 reintentos).
-5. **Artefacto sintético**: Registro documental ligero en `docs/fixes/<slug>.md`.
+5. **Artefacto sintético**: Registro documental ligero en `<vault>/Proyectos/<proyecto>/Fixes/Fix - <slug>.md` (sustituye a `docs/fixes/<slug>.md`).
+
+## Memoria (Obsidian): fuente de verdad
+- `<vault>` = `$OBSIDIAN_VAULT_PATH` (D:\EquipoDev-Memoria). Toda la documentación de todos los proyectos vive ahí, nunca en el repo.
+- `<proyecto>`: valor de `Proyecto en memoria:` en `.github/copilot-instructions.md`; si no existe, nombre de la carpeta del proyecto (crear `Proyectos/<proyecto>/` + nota índice, enlazarla desde `Proyectos` y añadir la línea a `.github/copilot-instructions.md` avisando al dueño).
+- Consultar siempre: al empezar cualquier tarea, el orquestador y cada subagente consultan la memoria del proyecto y las carpetas compartidas `Decisiones/` y `Aprendizajes/`.
+- Guardar siempre: nombre único con prefijo de tipo (`Spec - `, `UX - `, `ADR <NNN> - `, `QA - `, `Fix - `), frontmatter `tags: [<proyecto>, <tipo>]`, enlace `[[<proyecto>]]` y entrada en la nota índice del proyecto. Al terminar, refrescar memoria (`graph_refresh`).
+- Si Obsidian no responde: avisar al dueño y no escribir documentación hasta resolverlo.
+- Exportar al repo solo bajo pedido del dueño: copia de solo lectura a `docs/` con fecha y origen (no se edita en el repo, se modifica en el vault y se vuelve a exportar).
 
 ## Reglas de Ejecución y Seguridad
 - Salvaguardas críticas inviolables en ambos modos y flujos: Nunca realices `git commit` ni `git push` sin autorización explícita del dueño; jamás ejecutes comandos destructivos sin confirmación humana previa.
 - Sigue siempre las convenciones de código y el stack especificado en el proyecto.
 - No realices cambios fuera de lo aprobado en la spec y el ADR.
-- Definition of Done: Criterios cubiertos por tests, QA aprobado, sin hallazgos bloqueantes en code review y documentación actualizada.
+- Definition of Done: Criterios cubiertos por tests, QA aprobado, sin hallazgos bloqueantes en code review y README con número de versión actualizado (SemVer: `/fix` parche, `/feature` menor) también en `package.json`.
 - Seguridad: Nunca almacenes secretos ni tokens en código, valida toda entrada externa y escala tras 3 fallos consecutivos en QA.

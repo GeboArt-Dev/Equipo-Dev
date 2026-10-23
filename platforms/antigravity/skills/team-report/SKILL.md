@@ -6,10 +6,10 @@ description: Muestra el estado del equipo de desarrollo (qué rol trabaja, qué 
 
 En Antigravity no hay panel lateral: arma el estado tú combinando los archivos del proyecto con la bitácora del plugin. No lances subagentes ni modifiques archivos.
 
-Argumento opcional: nombre de la feature o del fix. Si no se da, usa la feature o fix con archivos modificados más recientemente en `docs/`.
+Argumento opcional: nombre de la feature o del fix. Si no se da, usa la feature o fix con archivos modificados más recientemente en el vault (`<vault>/Proyectos/<proyecto>/`) o en `docs/`.
 
 0. **Detección de tipo de flujo (FEATURE vs FIX)**:
-   - Inspecciona `docs/fixes/` y la bitácora (`bitacora.mjs` o comandos recientes con `/fix`).
+   - Inspecciona el vault (`<vault>/Proyectos/<proyecto>/Fixes/`), `docs/fixes/` y la bitácora (`bitacora.mjs` o comandos recientes con `/fix`).
    - Si la actividad corresponde a una remediación (`Tipo: FIX`):
      - Oculta completamente las filas de Product Owner, Diseño UX y Arquitecto.
      - Suprime las compuertas `⏸` de especificación y diseño.
@@ -27,7 +27,7 @@ Argumento opcional: nombre de la feature o del fix. Si no se da, usa la feature 
 1. **Bitácora**: la carpeta del plugin es la que está dos niveles por encima de la carpeta de este `SKILL.md` (`<plugin>/skills/team-report/SKILL.md`). Ejecuta:
    `node "<plugin>/hooks/bitacora.mjs" --show "<raíz del proyecto>"`
    Te da cuántas veces se lanzó cada rol, cuándo fue el último lanzamiento y los últimos movimientos. Si falla o no hay Node, sigue sin ella y dilo en una línea.
-2. **Archivos**: busca la feature (sin distinguir mayúsculas ni guiones) en `docs/specs/`, `docs/ux/`, `docs/adr/` y `docs/qa/`, y revisa `git status`.
+2. **Archivos**: busca la feature (sin distinguir mayúsculas ni guiones) en el vault `<vault>/Proyectos/<proyecto>/` (subcarpetas `Specs/`, `UX/`, `ADR/` y `QA/`) o en `docs/specs/`, `docs/ux/`, `docs/adr/` y `docs/qa/`, y revisa `git status`.
 3. Deduce el estado de cada paso para flujos estándar de feature:
    - Product Owner: ✔ si hay spec (indica "spec auto-aprobada" si opera en modo continuo).
    - Diseño UX: ✔ si hay `docs/ux/<feature>.md`; ○ si no (indica "no aplica" si la spec no tiene interfaz).
