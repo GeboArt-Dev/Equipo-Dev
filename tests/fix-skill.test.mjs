@@ -97,8 +97,8 @@ test('Contratos en src/skills/fix/SKILL.md: Frontmatter, RCA, test obligatorio, 
   assert.match(content, /Gestión de secretos/)
 })
 
-test('Contratos de /fix en src/skills/reglas-equipo/SKILL.md', () => {
-  const content = fs.readFileSync(path.join(SRC_DIR, 'skills', 'reglas-equipo', 'SKILL.md'), 'utf8')
+test('Contratos de /fix en src/skills/dev-rules/SKILL.md', () => {
+  const content = fs.readFileSync(path.join(SRC_DIR, 'skills', 'dev-rules', 'SKILL.md'), 'utf8')
   assert.match(content, /## Protocolo de Remediación Técnica \(`\/fix`\)/)
   assert.match(content, /`backend-dev` o `frontend-dev`/)
   assert.match(content, /Test automatizado de regresión obligatorio/)
@@ -106,17 +106,17 @@ test('Contratos de /fix en src/skills/reglas-equipo/SKILL.md', () => {
   assert.match(content, /máximo 3 reintentos antes de escalar al dueño/)
 })
 
-test('Contratos de tipo FIX en team-report agnóstico y plataformas', () => {
-  const srcReport = fs.readFileSync(path.join(SRC_DIR, 'skills', 'team-report', 'SKILL.md'), 'utf8')
+test('Contratos de tipo FIX en dev-report agnóstico y plataformas', () => {
+  const srcReport = fs.readFileSync(path.join(SRC_DIR, 'skills', 'dev-report', 'SKILL.md'), 'utf8')
   assert.match(srcReport, /Tipo: FIX/)
   assert.match(srcReport, /Oculta por completo las filas correspondientes a `Product Owner`, `Diseño UX` y `Arquitecto`/)
   assert.match(srcReport, /Modo: Remediación directa \(Dev -> QA -> Reviewer\)/)
 
-  const agReport = fs.readFileSync(path.join(PLATFORMS_DIR, 'antigravity', 'skills', 'team-report', 'SKILL.md'), 'utf8')
+  const agReport = fs.readFileSync(path.join(PLATFORMS_DIR, 'antigravity', 'skills', 'dev-report', 'SKILL.md'), 'utf8')
   assert.match(agReport, /Tipo: FIX/)
   assert.match(agReport, /Oculta completamente las filas de Product Owner, Diseño UX y Arquitecto/)
 
-  const codexReport = fs.readFileSync(path.join(PLATFORMS_DIR, 'codex', 'skills', 'team-report', 'SKILL.md'), 'utf8')
+  const codexReport = fs.readFileSync(path.join(PLATFORMS_DIR, 'codex', 'skills', 'dev-report', 'SKILL.md'), 'utf8')
   assert.match(codexReport, /Tipo: FIX/)
   assert.match(codexReport, /ocultando Product Owner, UX y Arquitecto/)
 })

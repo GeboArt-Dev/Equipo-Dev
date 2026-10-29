@@ -72,6 +72,21 @@ Transforma ideas en código listo para producción, probado y revisado por pares
 | 🧪 | **Ingeniero QA** | `qa-engineer` | Suites mínimas esenciales (1 caso feliz + bordes críticos por criterio Gherkin), rol de Documentador integrado (actualización continua de README y referencia técnica) y veredicto binario. | `docs/qa/<feature>.md` + Actualización README | `balanced` (Sonnet / Inherit) |
 | 🛡️ | **Revisor de Código** | `code-reviewer` | Auditoría exclusiva de hallazgos bloqueantes (seguridad OWASP, contratos de ADR, funcionalidad rota; cero observaciones de estilo), formato de 1 línea y veredicto binario. | Informe de Revisión (Solo Bloqueantes) | `pro` (Opus / Pro) |
 
+### 🎯 Tête Team (Marketing Digital & Performance 360°) - Tête Creative Agency
+
+| Avatar | Rol | Identificador | Responsabilidades Principales | Salidas Clave | Nivel de Modelo |
+|:---:|---|---|---|---|:---:|
+| 👔 | **Director de Operaciones** | `operations-director` | Orquestador de la metodología TÊTE 360°, asignación por departamento y síntesis de propuesta consolidada. | Propuesta unificada | `pro` |
+| 🧭 | **Estrategia y Consultoría** | `strategy-consultant` | Diagnósticos de negocio (DESCUBRIR), posicionamiento, propuesta de valor y plan estratégico (DISEÑAR). | `docs/estrategias/` | `pro` |
+| 📊 | **Inteligencia y Analítica** | `data-analyst` | Modelado de CAC/ROAS/LTV, eventos de atribución, contraste empírico de hipótesis y selección de CRM. | `docs/reportes/` | `pro` |
+| 🎨 | **Director Creativo & Arte** | `creative-director` | Concepto narrativo (Big Idea), guías de dirección de arte, manual de estilo visual y tono por marca. | `docs/creativos/` | `pro` |
+| ✍️ | **Redactor Publicitario** | `copywriter` | Copys persuasivos de alta conversión, guiones de video estructurados y mínimo 2 variantes A/B obligatorias. | `docs/creativos/` | `balanced` |
+| 📈 | **Media Buyer / Trafficker** | `performance-buyer` | Plan de medios, segmentación de audiencias, eventos CAPI/Píxel y pauta (Meta, Google, TikTok, LinkedIn Ads). | `docs/activaciones/` | `balanced` |
+| ⚡ | **Tecnología y CRM** | `automation-crm` | Arquitectura de embudos (TOFU/MOFU/BOFU), workflows, webhooks y secuencias de email (HubSpot/ActiveCampaign). | `docs/activaciones/` | `balanced` |
+| 🤝 | **Gestor de Cuentas** | `account-lead` | Gestión de relaciones, briefings por marca cliente y gobierno de la Memoria por Cuenta. | `memoria/cuentas/` | `balanced` |
+| 🔍 | **Director de QA & Políticas** | `qa-director` | Auditoría en vivo de políticas oficiales de anuncios (Meta, Google, TikTok, LinkedIn), guardrails y variantes A/B. | `docs/qa/` | `pro` |
+
+
 ---
 
 ## 🔄 Cómo Funciona (Flujo de Trabajo)
@@ -204,7 +219,7 @@ Luego copia la carpeta `dist/antigravity/equipo-dev` al directorio correspondien
 1. Abre tu IDE de Antigravity / VS Code.
 2. Abre la paleta de comandos (`Ctrl+Shift+P` en Windows/Linux, `Cmd+Shift+P` en macOS).
 3. Ejecuta: **`Developer: Reload Window`**.
-4. Las habilidades `/feature`, `/fix`, `/team-report`, `/equipo-reiniciar` y los subagentes quedarán activos inmediatamente.
+4. Las habilidades `/feature`, `/fix`, `/dev-report`, `/equipo-reiniciar` y los subagentes quedarán activos inmediatamente.
 
 ---
 
@@ -227,7 +242,7 @@ claude plugin install equipo-dev@equipo-dev-local --scope user
 
 Si existe `equipo-dev@synced` u otro origen activo, la instalación se detiene con `origin-conflict`. Decide conservar/actualizar el origen de tu cuenta o deshabilitarlo expresamente mediante el gestor de Claude antes de instalar el local. Si una política lo impone, debe intervenir el administrador. Las copias manuales se conservan; copiar a `.claude/plugins` no registra una actualización. No se cambian credenciales, políticas ni preferencias de actualización automática.
 
-En la extensión oficial abre `/plugins`, comprueba origen/versión y ejecuta `/reload-plugins` o inicia otra sesión. Verifica cinco skills (`feature`, `fix`, `team-report`, `team-reset`, `team-rules`), siete agentes, ejecuta el reporte documental `team-report` y confirma que `fix` aparece sin pedir una reparación ficticia. Valida el panel por separado. El registro CLI no prueba qué versión cargó una conversación abierta.
+En la extensión oficial abre `/plugins`, comprueba origen/versión y ejecuta `/reload-plugins` o inicia otra sesión. Verifica cinco skills (`feature`, `fix`, `dev-report`, `team-reset`, `dev-rules`), siete agentes, ejecuta el reporte documental `dev-report` y confirma que `fix` aparece sin pedir una reparación ficticia. Valida el panel por separado. El registro CLI no prueba qué versión cargó una conversación abierta.
 
 ### 2b. Plugins de agentes de VS Code
 
@@ -305,11 +320,11 @@ Salida: `dist/codex/equipo-dev/`. La instalación administra cinco carpetas en `
 |---|---|
 | `equipo-dev-feature` | Delega siete recursos de rol y mantiene aprobaciones de spec/ADR. |
 | `equipo-dev-fix` | Ejecuta circuito técnico directo de remediación rápida (Dev -> QA -> Reviewer) con test de regresión. |
-| `equipo-dev-team-rules` | Carga las reglas compartidas. |
-| `equipo-dev-team-report` | Informa en texto artefactos inspeccionados, aprobaciones y validación pendiente. |
+| `equipo-dev-dev-rules` | Carga las reglas compartidas. |
+| `equipo-dev-dev-report` | Informa en texto artefactos inspeccionados, aprobaciones y validación pendiente. |
 | `equipo-dev-team-reset` | Explica que no hay panel persistente que reiniciar; conserva documentos. |
 
-Comprueba las cinco identidades en el selector del cliente; reinícialo si no aparecen. Selecciona explícitamente `equipo-dev-feature` o `equipo-dev-fix` (CLI/IDE pueden exponer `$equipo-dev-feature` o `/skills`; la sintaxis depende del host). Instalar correctamente acredita archivos, no reconocimiento. En un proyecto desechable, pide una feature pequeña, comprueba su pausa de aprobación de spec y selecciona `equipo-dev-team-report` para verificar la aprobación pendiente. Estas comprobaciones funcionales son necesarias antes de certificar un cliente.
+Comprueba las cinco identidades en el selector del cliente; reinícialo si no aparecen. Selecciona explícitamente `equipo-dev-feature` o `equipo-dev-fix` (CLI/IDE pueden exponer `$equipo-dev-feature` o `/skills`; la sintaxis depende del host). Instalar correctamente acredita archivos, no reconocimiento. En un proyecto desechable, pide una feature pequeña, comprueba su pausa de aprobación de spec y selecciona `equipo-dev-dev-report` para verificar la aprobación pendiente. Estas comprobaciones funcionales son necesarias antes de certificar un cliente.
 
 Los siete roles Markdown están en `equipo-dev-feature/references/agents`; no son agentes nativos registrados. El host proporciona modelos, herramientas y permisos. Sin delegación autorizada, la feature pausa antes del rol afectado; el reporte sigue disponible. UX necesita la skill externa `ui-ux-pro-max` y Python 3, que el paquete no instala; las features sin UI omiten UX. Codex no tiene hooks del paquete ni panel en vivo.
 
@@ -386,11 +401,11 @@ Si cerraste la sesión o cambiaste de rama, retoma el trabajo sin perder el avan
 
 El equipo inspecciona `docs/specs/`, `docs/ux/`, `docs/adr/` y `docs/qa/`, revisa `git status` y te propone continuar exactamente desde el paso pendiente sin rehacer lo completado.
 
-### 4. Consultar el Estado del Equipo (`/team-report`)
+### 4. Consultar el Estado del Equipo (`/dev-report`)
 Revisa en tiempo real el progreso de los roles, el modo de ejecución activo y las aprobaciones pendientes:
 
 ```text
-/team-report
+/dev-report
 ```
 
 Ejemplo de respuesta en Modo Supervisado:
@@ -585,7 +600,7 @@ Introduce la habilidad canónica `/fix` para la remediación rápida y quirúrgi
 | `parseKind` | `platforms/claude-code/hooks/register.tsx` | Identifica si la invocación corresponde a un flujo de tipo fix o feature. |
 | `startsNewFlow` | `platforms/claude-code/hooks/register.tsx` | Permite el inicio autónomo de un flujo fix directamente desde desarrolladores técnicos. |
 | `fix` (Agnóstico) | `src/skills/fix/SKILL.md` | Habilidad canónica que orquesta el circuito directo Dev -> QA -> Reviewer con test de regresión obligatorio. |
-| `team-report` (FIX) | `src/skills/team-report/SKILL.md` | Reporta el estado suprimiendo roles de negocio y compuertas de diseño en modo FIX. |
+| `dev-report` (FIX) | `src/skills/dev-report/SKILL.md` | Reporta el estado suprimiendo roles de negocio y compuertas de diseño en modo FIX. |
 | `SKILLS.fix` | `scripts/codex.mjs` | Registra el paquete y recurso de distribución para la skill fix en Codex. |
 
 ---
@@ -602,8 +617,8 @@ Introduce los modificadores idempotentes `--no-pause` y `--auto-approve` para `/
 | `parseMode` | `platforms/claude-code/hooks/register.tsx` | Analiza argumentos de la invocación para resolver el modo (`supervised` o `continuous`) en Claude Code. |
 | `summary` | `platforms/claude-code/hooks/register.tsx` | Renderiza el estado del panel suprimiendo indicadores `⏸` en modo continuo e informando el modo activo. |
 | `feature` (Agnóstico) | `src/skills/feature/SKILL.md` | Habilidad canónica con soporte para omitir compuertas 1 y 2 bajo supuestos razonables en modo continuo. |
-| `reglas-equipo` | `src/skills/reglas-equipo/SKILL.md` | Habilidad canónica que formaliza los Modos de Ejecución y la inviolabilidad de las salvaguardas de seguridad. |
-| `team-report` (Reporte) | `src/skills/team-report/SKILL.md` | Habilidad canónica de reporte que documenta el modo activo y suprime pausas en modo continuo. |
+| `dev-rules` | `src/skills/dev-rules/SKILL.md` | Habilidad canónica que formaliza los Modos de Ejecución y la inviolabilidad de las salvaguardas de seguridad. |
+| `dev-report` (Reporte) | `src/skills/dev-report/SKILL.md` | Habilidad canónica de reporte que documenta el modo activo y suprime pausas en modo continuo. |
 
 ---
 
@@ -638,17 +653,17 @@ Añade generación e instalación Codex por usuario con cuatro skills prefijadas
 
 ---
 
-### 📦 Nuevas Capacidades y Cambios (renombrar-equipo-panel-a-team-report)
-- **Estandarización Internacional del Comando de Estado**: Se renombra la habilidad canónica y adaptadores de `equipo-panel` a `team-report` (`/team-report` y `/equipo-dev:team-report`) bajo sustitución estricta inmediata en todas las plataformas soportadas (Antigravity, Claude Code, Cursor y Copilot).
+### 📦 Nuevas Capacidades y Cambios (renombrar-equipo-panel-a-dev-report)
+- **Estandarización Internacional del Comando de Estado**: Se renombra la habilidad canónica y adaptadores de `equipo-panel` a `dev-report` (`/dev-report` y `/equipo-dev:dev-report`) bajo sustitución estricta inmediata en todas las plataformas soportadas (Antigravity, Claude Code, Cursor y Copilot).
 - **Cero Referencias Obsoletas y Consistencia Multiplataforma**: Se actualizan el manifiesto agnóstico, hooks y UI de Claude Code, overrides de Antigravity y documentación completa eliminando alias obsoletos.
 
 ### 🔧 Referencia Técnica de Funciones y Hooks
 | Identificador | Ubicación | Descripción (1 frase corta) |
 |---|---|---|
-| `PANE` | `platforms/claude-code/hooks/register.tsx` | Identificador interno fijado a `'team-report'` para el renderizado del panel lateral en Claude Code. |
-| `PANEL_CMDS` | `platforms/claude-code/hooks/register.tsx` | Lista de comandos interceptados (`['equipo-dev:team-report', 'team-report']`) para abrir el panel de estado. |
-| `team-report` (Agnóstico) | `src/skills/team-report/SKILL.md` | Habilidad canónica agnóstica para inspeccionar y deducir el estado de subagentes en modo texto. |
-| `team-report` (Antigravity) | `platforms/antigravity/skills/team-report/SKILL.md` | Override para Antigravity que combina la inspección de artefactos en `docs/` con la bitácora del plugin. |
+| `PANE` | `platforms/claude-code/hooks/register.tsx` | Identificador interno fijado a `'dev-report'` para el renderizado del panel lateral en Claude Code. |
+| `PANEL_CMDS` | `platforms/claude-code/hooks/register.tsx` | Lista de comandos interceptados (`['equipo-dev:dev-report', 'dev-report']`) para abrir el panel de estado. |
+| `dev-report` (Agnóstico) | `src/skills/dev-report/SKILL.md` | Habilidad canónica agnóstica para inspeccionar y deducir el estado de subagentes en modo texto. |
+| `dev-report` (Antigravity) | `platforms/antigravity/skills/dev-report/SKILL.md` | Override para Antigravity que combina la inspección de artefactos en `docs/` con la bitácora del plugin. |
 
 ---
 

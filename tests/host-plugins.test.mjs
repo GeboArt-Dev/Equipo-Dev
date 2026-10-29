@@ -136,7 +136,7 @@ test('native packages contain five normalized skills/seven agents and separate h
   const f = fixture(t)
   for (const host of ['claude-code', 'vscode-agent']) {
     const directory = f.prepare(host)
-    assert.deepEqual(fs.readdirSync(path.join(directory, 'skills')).sort(), ['feature', 'fix', 'memoria-setup', 'team-report', 'team-reset', 'team-rules'])
+    assert.deepEqual(fs.readdirSync(path.join(directory, 'skills')).sort(), ['dev-report', 'dev-rules', 'feature', 'fix', 'memoria-setup', 'team-reset'])
     for (const name of fs.readdirSync(path.join(directory, 'skills'))) assert.equal(parseFrontmatter(fs.readFileSync(path.join(directory, 'skills', name, 'SKILL.md'), 'utf8')).attributes.name, name)
     assert.equal(fs.readdirSync(path.join(directory, host === 'claude-code' ? 'agents' : 'com.github.copilot/agents')).length, 7)
     assert.equal(fs.existsSync(path.join(directory, 'hooks/register.tsx')), host === 'claude-code')

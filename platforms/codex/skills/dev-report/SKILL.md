@@ -1,6 +1,6 @@
 ---
-name: equipo-dev-team-report
-description: Consulta el estado de una feature o fix cuando se solicita explícitamente equipo-dev-team-report o el estado de Equipo Dev en Codex.
+name: equipo-dev-dev-report
+description: Consulta el estado de una feature o fix cuando se solicita explícitamente equipo-dev-dev-report o el estado de Equipo Dev en Codex.
 ---
 # Estado de Equipo Dev
 

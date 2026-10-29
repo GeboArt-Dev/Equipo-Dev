@@ -1,6 +1,6 @@
 ---
-name: team-report
-description: Muestra el estado del equipo de desarrollo (qué rol trabaja, qué pasos terminaron y si se espera aprobación del dueño). Úsalo cuando el usuario escriba /team-report o pregunte en qué va el equipo o una feature.
+name: dev-report
+description: Muestra el estado del equipo de desarrollo (qué rol trabaja, qué pasos terminaron y si se espera aprobación del dueño). Úsalo cuando el usuario escriba /dev-report o pregunte en qué va el equipo o una feature.
 ---
 # Estado del equipo (Antigravity)
 
@@ -24,7 +24,7 @@ Argumento opcional: nombre de la feature o del fix. Si no se da, usa la feature 
        Siguiente paso: Cierre y autorización del dueño para commit/push
        ```
 
-1. **Bitácora**: la carpeta del plugin es la que está dos niveles por encima de la carpeta de este `SKILL.md` (`<plugin>/skills/team-report/SKILL.md`). Ejecuta:
+1. **Bitácora**: la carpeta del plugin es la que está dos niveles por encima de la carpeta de este `SKILL.md` (`<plugin>/skills/dev-report/SKILL.md`). Ejecuta:
    `node "<plugin>/hooks/bitacora.mjs" --show "<raíz del proyecto>"`
    Te da cuántas veces se lanzó cada rol, cuándo fue el último lanzamiento y los últimos movimientos. Si falla o no hay Node, sigue sin ella y dilo en una línea.
 2. **Archivos**: busca la feature (sin distinguir mayúsculas ni guiones) en el vault `<vault>/Proyectos/<proyecto>/` (subcarpetas `Specs/`, `UX/`, `ADR/` y `QA/`) o en `docs/specs/`, `docs/ux/`, `docs/adr/` y `docs/qa/`, y revisa `git status`.

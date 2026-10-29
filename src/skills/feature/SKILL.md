@@ -14,7 +14,7 @@ Al arrancar, emite obligatoriamente en la cabecera (primera o segunda línea):
 - Modo continuo: `Modo: Continuo / Autónomo (aprobaciones de diseño desactivadas)`
 - Modo supervisado: `Modo: Supervisado / Interactivo (aprobaciones estándar activadas)`
 
-Antes de empezar, carga la skill `team-rules` y aplícala. {{SUBAGENT_DISPATCH_GUIDE}}
+Antes de empezar, carga la skill `dev-rules` y aplícala. {{SUBAGENT_DISPATCH_GUIDE}}
 
 0. **Retomar antes de empezar** (siempre, antes de lanzar ningún subagente):
    - Al retomar (`/feature continuemos con...`), el flujo opera en **Modo Supervisado** por defecto, a menos que el usuario incluya explícitamente `--no-pause` o `--auto-approve`.

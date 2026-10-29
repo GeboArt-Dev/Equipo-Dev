@@ -116,7 +116,7 @@ export function manageHost({ root = ROOT, home = os.homedir(), host, operation =
       if (operation !== 'diagnose') { if (!prepare) throw error('invalid-package', 'Falta preparación del paquete.'); prepare(host); report.completedSteps.push('prepared'); report.artifacts = []; inspectFiles(report, root, home, runner) }
       report.status = 'manual-action-required'; report.exitCode = 2
       report.settings = { 'chat.pluginLocations': { [path.join(root, 'dist/vscode-agent/equipo-dev')]: true } }
-      report.nextSteps.push('En VS Code identifique Equipo Dev y su origen en Agent Customizations/Agent Plugins (o /plugin del harness). Resuelva la copia antigua desde el mismo gestor antes de activar otra; no edite la caché.', 'Integre la entrada chat.pluginLocations mostrada en Settings JSON, conservando entradas existentes. Esta ubicación local requiere reconstrucción para actualizar.', 'Recargue ventana o abra sesión nueva; compruebe versión/origen, cinco skills, siete agentes, team-report y reconocimiento de fix. No hay panel TSX en este host.')
+      report.nextSteps.push('En VS Code identifique Equipo Dev y su origen en Agent Customizations/Agent Plugins (o /plugin del harness). Resuelva la copia antigua desde el mismo gestor antes de activar otra; no edite la caché.', 'Integre la entrada chat.pluginLocations mostrada en Settings JSON, conservando entradas existentes. Esta ubicación local requiere reconstrucción para actualizar.', 'Recargue ventana o abra sesión nueva; compruebe versión/origen, cinco skills, siete agentes, dev-report y reconocimiento de fix. No hay panel TSX en este host.')
     } else {
       report.clientVersion.cli = command(runner, ['--version']).trim().split('\n')[0]
       capabilities(runner, operation)
@@ -132,7 +132,7 @@ export function manageHost({ root = ROOT, home = os.homedir(), host, operation =
       const marketPath = checkedPath(path.join(root, 'dist/marketplace'), path.join(root, 'dist'))
       if (market.length > 1) throw error('path-conflict', 'Marketplace local duplicado; resuélvalo desde Claude.')
       if (market[0]) {
-        const source = typeof market[0].source === 'string' ? market[0].source : market[0].source?.path
+        const source = market[0].path || market[0].installLocation || (typeof market[0].source === 'string' && path.isAbsolute(market[0].source) ? market[0].source : market[0].source?.path)
         if (!source || !path.isAbsolute(source) || path.resolve(source).toLowerCase() !== marketPath.toLowerCase()) throw error('path-conflict', 'El marketplace equipo-dev-local apunta a otro origen o no se pudo comprobar su ruta. No se reemplazó.')
       }
       if (operation !== 'diagnose') {
@@ -152,7 +152,7 @@ export function manageHost({ root = ROOT, home = os.homedir(), host, operation =
         if (installed.length !== 1 || installed[0].version !== report.sourceVersion || installed[0].enabled !== true) throw error('command-failed', 'El inventario posterior no confirma versión, alcance y habilitación esperados; revise /plugins y reintente.')
         report.completedSteps.push('registration-verified')
       }
-      report.nextSteps.push('En la extensión oficial Claude use /plugins para comprobar origen y versión; ejecute /reload-plugins o abra una sesión nueva.', 'Compruebe team-report, reconocimiento de fix, cinco skills y siete roles. El registro CLI no demuestra carga en una conversación; valide el panel por separado.')
+      report.nextSteps.push('En la extensión oficial Claude use /plugins para comprobar origen y versión; ejecute /reload-plugins o abra una sesión nueva.', 'Compruebe dev-report, reconocimiento de fix, cinco skills y siete roles. El registro CLI no demuestra carga en una conversación; valide el panel por separado.')
     }
     issue(report, 'verification-pending', 'La carga y el uso dentro del cliente siguen pendientes de comprobación.')
   } catch (e) {

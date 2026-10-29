@@ -108,7 +108,7 @@ test('Resolución completa de tokens contextuales en agentes y skills', () => {
 })
 
 test('Overrides de skills en Antigravity', () => {
-  const panelSkill = fs.readFileSync(path.join(DIST, 'antigravity', 'equipo-dev', 'skills', 'team-report', 'SKILL.md'), 'utf8')
+  const panelSkill = fs.readFileSync(path.join(DIST, 'antigravity', 'equipo-dev', 'skills', 'dev-report', 'SKILL.md'), 'utf8')
   assert.ok(panelSkill.includes('# Estado del equipo (Antigravity)'))
   assert.ok(panelSkill.includes('hooks/bitacora.mjs'))
 

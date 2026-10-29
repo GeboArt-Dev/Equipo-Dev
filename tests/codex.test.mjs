@@ -51,7 +51,7 @@ test('Codex: generación determinista, 5 skills y 7 recursos trazables', () => {
   assert.match(feature, /Detente y espera aprobación/)
   const ux = fs.readFileSync(path.join(out, 'skills/equipo-dev-feature/references/agents/ux-designer.md'), 'utf8')
   assert.match(ux, /Si falta la skill o Python/)
-  const report = fs.readFileSync(path.join(out, 'skills/equipo-dev-team-report/SKILL.md'), 'utf8')
+  const report = fs.readFileSync(path.join(out, 'skills/equipo-dev-dev-report/SKILL.md'), 'utf8')
   assert.match(report, /existente no acredita aprobación/)
 })
 
@@ -97,7 +97,7 @@ test('no adopta archivo sin registro aunque tenga contenido idéntico', t => {
   fs.mkdirSync(path.join(base, 'equipo-dev-feature'), { recursive: true })
   fs.copyFileSync(path.join(pkg, 'skills', entryPath), path.join(base, entryPath))
   assert.throws(() => installCodex(pkg, base), /CODEX_CONFLICT/)
-  assert.equal(fs.existsSync(path.join(base, 'equipo-dev-team-rules')), false)
+  assert.equal(fs.existsSync(path.join(base, 'equipo-dev-dev-rules')), false)
 })
 
 test('manifiestos: traversal, ADS, reservados, case collision, esquema y ámbito', () => {

@@ -89,8 +89,8 @@ test('Contratos requeridos en src/skills/feature/SKILL.md', () => {
   assert.match(content, /Al 3er fallo consecutivo de QA/)
 })
 
-test('Contratos requeridos en src/skills/reglas-equipo/SKILL.md', () => {
-  const content = fs.readFileSync(path.join(SRC_DIR, 'skills', 'reglas-equipo', 'SKILL.md'), 'utf8')
+test('Contratos requeridos en src/skills/dev-rules/SKILL.md', () => {
+  const content = fs.readFileSync(path.join(SRC_DIR, 'skills', 'dev-rules', 'SKILL.md'), 'utf8')
 
   assert.match(content, /## Modos de Ejecución/)
   assert.match(content, /Modo Supervisado \/ Interactivo \(por defecto\)/)
@@ -103,19 +103,19 @@ test('Contratos requeridos en src/skills/reglas-equipo/SKILL.md', () => {
   assert.match(content, /rechaza 3 veces consecutivas/)
 })
 
-test('Contratos requeridos en src/skills/team-report/SKILL.md y platforms/antigravity/', () => {
-  const srcReport = fs.readFileSync(path.join(SRC_DIR, 'skills', 'team-report', 'SKILL.md'), 'utf8')
+test('Contratos requeridos en src/skills/dev-report/SKILL.md y platforms/antigravity/', () => {
+  const srcReport = fs.readFileSync(path.join(SRC_DIR, 'skills', 'dev-report', 'SKILL.md'), 'utf8')
   assert.match(srcReport, /Modo: <Supervisado \/ Interactivo \| Continuo \/ Autónomo>/)
   assert.match(srcReport, /suprime estrictamente la línea `⏸`/)
 
-  const antigravityReport = fs.readFileSync(path.join(PLATFORMS_DIR, 'antigravity', 'skills', 'team-report', 'SKILL.md'), 'utf8')
+  const antigravityReport = fs.readFileSync(path.join(PLATFORMS_DIR, 'antigravity', 'skills', 'dev-report', 'SKILL.md'), 'utf8')
   assert.match(antigravityReport, /Modo: <Supervisado \/ Interactivo \| Continuo \/ Autónomo>/)
   assert.match(antigravityReport, /En modo continuo, suprime estrictamente la línea `⏸`/)
 })
 
 test('Contratos requeridos en adaptadores de plataformas', () => {
-  // Codex team-report
-  const codexReport = fs.readFileSync(path.join(PLATFORMS_DIR, 'codex', 'skills', 'team-report', 'SKILL.md'), 'utf8')
+  // Codex dev-report
+  const codexReport = fs.readFileSync(path.join(PLATFORMS_DIR, 'codex', 'skills', 'dev-report', 'SKILL.md'), 'utf8')
   assert.match(codexReport, /Supervisado por defecto vs Continuo \/ Autónomo/)
   assert.match(codexReport, /existente no acredita aprobación/)
 
@@ -156,7 +156,7 @@ test('Compilación y propagación determinista a dist/ para todos los targets', 
   assert.match(distAntiFeature, /--no-pause/)
   assert.doesNotMatch(distAntiFeature, /\{\{/)
 
-  const distAntiReport = fs.readFileSync(path.join(DIST_DIR, 'antigravity', 'equipo-dev', 'skills', 'team-report', 'SKILL.md'), 'utf8')
+  const distAntiReport = fs.readFileSync(path.join(DIST_DIR, 'antigravity', 'equipo-dev', 'skills', 'dev-report', 'SKILL.md'), 'utf8')
   assert.match(distAntiReport, /Modo: <Supervisado \/ Interactivo \| Continuo \/ Autónomo>/)
   assert.doesNotMatch(distAntiReport, /\{\{/)
 
@@ -166,7 +166,7 @@ test('Compilación y propagación determinista a dist/ para todos los targets', 
   assert.match(distCodexFeature, /--no-pause/)
   assert.doesNotMatch(distCodexFeature, /\{\{/)
 
-  const distCodexReport = fs.readFileSync(path.join(DIST_DIR, 'codex', 'equipo-dev', 'skills', 'equipo-dev-team-report', 'SKILL.md'), 'utf8')
+  const distCodexReport = fs.readFileSync(path.join(DIST_DIR, 'codex', 'equipo-dev', 'skills', 'equipo-dev-dev-report', 'SKILL.md'), 'utf8')
   assert.match(distCodexReport, /Supervisado por defecto vs Continuo \/ Autónomo/)
   assert.doesNotMatch(distCodexReport, /\{\{/)
 

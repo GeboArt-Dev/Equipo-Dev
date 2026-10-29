@@ -1,5 +1,5 @@
 ---
-name: team-report
+name: dev-report
 description: Consulta el estado documental de una feature o fix en VS Code.
 ---
 # Estado del equipo

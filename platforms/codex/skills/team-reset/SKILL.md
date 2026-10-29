@@ -4,4 +4,4 @@ description: Explica el reinicio del flujo Equipo Dev en Codex cuando se solicit
 ---
 # Reiniciar Equipo Dev
 
-Codex no tiene un panel persistente de Equipo Dev que vaciar. Informa esta limitación sin borrar documentos, código ni evidencia de aprobaciones. Para iniciar otra feature, selecciona [equipo-dev-feature](../equipo-dev-feature/SKILL.md) e indica su nombre. Consulta [equipo-dev-team-report](../equipo-dev-team-report/SKILL.md) para retomar el trabajo existente.
+Codex no tiene un panel persistente de Equipo Dev que vaciar. Informa esta limitación sin borrar documentos, código ni evidencia de aprobaciones. Para iniciar otra feature, selecciona [equipo-dev-feature](../equipo-dev-feature/SKILL.md) e indica su nombre. Consulta [equipo-dev-dev-report](../equipo-dev-dev-report/SKILL.md) para retomar el trabajo existente.

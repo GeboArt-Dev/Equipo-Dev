@@ -102,7 +102,7 @@ export function buildHost(root, host, parseFrontmatter) {
   const files = new Map()
   const transform = text => {
     for (const [from, to] of Object.entries(config.tokens)) text = text.replaceAll(from, to)
-    text = text.replace(/(?<=skills[\\/])reglas-equipo(?=[\\/])/g, 'team-rules').replace(/(?<=skills[\\/])equipo-reiniciar(?=[\\/])/g, 'team-reset')
+    text = text.replace(/(?<=skills[\\/])dev-rules(?=[\\/])/g, 'dev-rules').replace(/(?<=skills[\\/])equipo-reiniciar(?=[\\/])/g, 'team-reset')
     if (/\{\{[A-Z_]+\}\}/.test(text)) throw new Error('invalid-package: unresolved token')
     return text.replace(/\r\n/g, '\n')
   }

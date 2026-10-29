@@ -13,7 +13,7 @@ y este proyecto se adhiere a [Semantic Versioning](https://semver.org/spec/v2.0.
 - **Habilidad Canónica de Remediación Rápida (`/fix`)**: Incorporación del comando `/fix <descripción o traza>` para la corrección quirúrgica de bugs, excepciones y regresiones (ADR 006). Ahorro de entre 60% y 75% de tokens y reducción de latencia en ≥50% al suprimir etapas de PO, UX, Arquitecto y pausas de diseño.
 - **Test de Regresión Obligatorio**: Requisito innegociable de formulación de Causa Raíz (RCA ≤ 5 líneas), test automatizado que reproduce el fallo (rojo a verde) y parche de código mínimo indispensable.
 - **Documentación Liviana de Defectos**: Generación automática de artefactos sintéticos en `docs/fixes/<slug>.md` con registro de RCA, archivos modificados y verificación de no-regresión.
-- **Filtrado Dinámico en `/team-report`**: Ocultación completa de las filas de Product Owner, Diseñador UX y Arquitecto y compuertas `⏸` de diseño en flujos de tipo `FIX`, mostrando únicamente el circuito técnico activo (`Dev`, `QA`, `Reviewer`).
+- **Filtrado Dinámico en `/dev-report`**: Ocultación completa de las filas de Product Owner, Diseñador UX y Arquitecto y compuertas `⏸` de diseño en flujos de tipo `FIX`, mostrando únicamente el circuito técnico activo (`Dev`, `QA`, `Reviewer`).
 - **Soporte de Panel en Vivo para Claude Code**: Tipos extendidos con `FlowKind = 'feature' | 'fix'` y renderizado en `register.tsx` de un panel compacto de 3 roles técnicos para remediaciones FIX.
 - **Empaquetado de Plugins (`--package`)**: Soporte para generación automática de paquetes `.zip` y `.plugin` (`npm run package:claude`, `npm run package:all`) compatibles con la interfaz gráfica de Claude Desktop y cargadores de extensiones.
 - **Sincronización Automática Multi-IDE (Git Hooks)**: Incorporación de `scripts/setup-hooks.mjs` y comando `npm run setup:hooks` para instalar hooks de `post-commit` y `post-merge`, manteniendo Antigravity, Claude Code y Codex actualizados automáticamente tras cada commit o pull.
@@ -35,7 +35,7 @@ y este proyecto se adhiere a [Semantic Versioning](https://semver.org/spec/v2.0.
 - **Ampliación de Pruebas Automatizadas**: Cobertura expandida a 58 pruebas automatizadas nativas (`58/58 passed`), incorporando `tests/agent-optimization.test.mjs`, `tests/codex.test.mjs` y `tests/approval-control.test.mjs`.
 
 ### Cambiado
-- **Renombrado de Habilidad Canónica**: Renombrado de `equipo-panel` a `team-report` (`/team-report`) en definiciones canónicas, adaptadores de plataforma, pruebas y documentación (ADR 003).
+- **Renombrado de Habilidad Canónica**: Renombrado de `equipo-panel` a `dev-report` (`/dev-report`) en definiciones canónicas, adaptadores de plataforma, pruebas y documentación (ADR 003).
 - **Actualización Integral de Documentación**: Sincronización completa de las guías en inglés y español con especificaciones de modos de ejecución, instalación multi-plataforma y tablas de referencia.
 
 ---

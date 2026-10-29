@@ -2,7 +2,7 @@
   "name": "equipo-dev",
   "displayName": "Equipo Dev",
   "version": "0.8.0",
-  "description": "Equipo de desarrollo de software con subagentes (Product Owner, Diseñador UI/UX, Arquitecto, Backend, Frontend, QA y Code Reviewer), el flujo /feature con aprobaciones del dueño y panel/estado en vivo.",
+  "description": "Equipo de desarrollo de software con subagentes especializados, flujos /feature y /fix, aprobaciones del dueño y panel en vivo.",
   "author": {
     "name": "GeboArt.Dev"
   },
@@ -19,6 +19,6 @@
     "/feature reservas de citas online",
     "/feature continuemos con CheckIn",
     "/fix Cannot read properties of undefined",
-    "/team-report"
+    "/dev-report"
   ]
 }

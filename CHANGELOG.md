@@ -13,7 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Surgical Problem Resolution Skill (`/fix`)**: Added `/fix <description or stacktrace>` canonical skill for rapid, cost-effective defect and regression remediation (ADR 006). Reduces token expenditure by 60%–75% and latency by ≥50% by bypassing product-owner, ux-designer, architect, and design approval pauses.
 - **Mandatory Automated Regression Testing**: Requires developer to provide an automated test reproducing the issue (red to green) and a minimal code patch before QA validation.
 - **Lightweight Defect Documentation**: Automated generation of `docs/fixes/<slug>.md` audit artifacts documenting root cause analysis (RCA ≤ 5 lines), modified files, and regression test verification.
-- **Dynamic Team Status Filtering**: `/team-report` dynamically hides non-participating business roles (Product Owner, UX Designer, Architect) and design pause indicators (`⏸`) when inspecting `FIX` workflows, displaying exclusively the active technical circuit (`Dev`, `QA`, `Reviewer`).
+- **Dynamic Team Status Filtering**: `/dev-report` dynamically hides non-participating business roles (Product Owner, UX Designer, Architect) and design pause indicators (`⏸`) when inspecting `FIX` workflows, displaying exclusively the active technical circuit (`Dev`, `QA`, `Reviewer`).
 - **Claude Code Live Side Panel Fix Mode**: Extended TypeScript definitions with `FlowKind = 'feature' | 'fix'` and updated `hooks/register.tsx` to render a compact 3-role live side panel for fix workflows.
 - **Package Archive Generation (`--package`)**: Added packaging capabilities producing ready-to-load `.zip` and `.plugin` bundles (`npm run package:claude`, `npm run package:all`) with root-level manifests for Claude Desktop GUI and extension loaders.
 - **Automated Multi-IDE Synchronization (Git Hooks)**: Added `scripts/setup-hooks.mjs` and `npm run setup:hooks` to install `post-commit` and `post-merge` hooks, keeping Antigravity, Claude Code, and Codex automatically synchronized upon every commit and pull.
@@ -35,7 +35,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Automated Test Suites**: Expanded test coverage to 58 automated tests (`58/58 passed`), adding `tests/agent-optimization.test.mjs`, `tests/codex.test.mjs`, and `tests/approval-control.test.mjs`.
 
 ### Changed
-- **Canonical Skill Renaming**: Renamed `equipo-panel` to `team-report` (`/team-report`) across canonical definitions, platform adapters, tests, and documentation (ADR 003).
+- **Canonical Skill Renaming**: Renamed `equipo-panel` to `dev-report` (`/dev-report`) across canonical definitions, platform adapters, tests, and documentation (ADR 003).
 - **Documentation Overhaul**: Synchronized English and Spanish documentation with comprehensive guides for execution modes, multi-platform installation, and command references.
 
 ---

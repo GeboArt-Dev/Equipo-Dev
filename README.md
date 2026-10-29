@@ -204,7 +204,7 @@ Then copy the folder `dist/antigravity/equipo-dev` to the appropriate path:
 1. Open your Antigravity IDE / VS Code.
 2. Open the Command Palette (`Ctrl+Shift+P` on Windows/Linux, `Cmd+Shift+P` on macOS).
 3. Run: **`Developer: Reload Window`**.
-4. The `/feature`, `/fix`, `/team-report`, and `/equipo-reiniciar` skills, as well as the subagents, are now active.
+4. The `/feature`, `/fix`, `/dev-report`, and `/equipo-reiniciar` skills, as well as the subagents, are now active.
 
 ---
 
@@ -227,7 +227,7 @@ claude plugin install equipo-dev@equipo-dev-local --scope user
 
 If `equipo-dev@synced` or another active origin appears, installation stops with `origin-conflict`. Choose whether to keep/update that account-managed copy, or explicitly disable it in Claude's manager before installing the local origin. Mandatory organizational plugins require administrator action. Legacy manual copies are preserved; copying into `.claude/plugins` does not register an update. No credentials, policies or automatic-update preferences are changed.
 
-In the official extension, open `/plugins`, verify origin/version, then `/reload-plugins` or start a new session. Verify five skills (`feature`, `fix`, `team-report`, `team-reset`, `team-rules`), seven agents, run the documentary `team-report` and confirm `fix` is discoverable without requesting a fictitious repair. Validate the side panel separately. A CLI registration is not proof that an open conversation loaded it.
+In the official extension, open `/plugins`, verify origin/version, then `/reload-plugins` or start a new session. Verify five skills (`feature`, `fix`, `dev-report`, `team-reset`, `dev-rules`), seven agents, run the documentary `dev-report` and confirm `fix` is discoverable without requesting a fictitious repair. Validate the side panel separately. A CLI registration is not proof that an open conversation loaded it.
 
 ### 2b. VS Code Agent Plugins
 
@@ -305,11 +305,11 @@ Output: `dist/codex/equipo-dev/`. Installation manages five folders in `.agents/
 |---|---|
 | `equipo-dev-feature` | Delegates seven role resources and preserves spec/ADR approval gates. |
 | `equipo-dev-fix` | Executes direct technical bugfix circuit (Dev -> QA -> Reviewer) with regression test. |
-| `equipo-dev-team-rules` | Loads shared team rules. |
-| `equipo-dev-team-report` | Reports inspected artifacts, approvals and pending validation in text. |
+| `equipo-dev-dev-rules` | Loads shared team rules. |
+| `equipo-dev-dev-report` | Reports inspected artifacts, approvals and pending validation in text. |
 | `equipo-dev-team-reset` | Explains that there is no persistent panel to reset; preserves documents. |
 
-Check all five names in the client's skill selector; restart if needed. Select `equipo-dev-feature` or `equipo-dev-fix` explicitly (CLI/IDE may expose `$equipo-dev-feature` or `/skills`; syntax depends on the host). Installation success confirms files, not recognition. In a disposable project, request a small feature, check its spec approval pause, then select `equipo-dev-team-report` and verify approval is pending. These functional checks are required before certifying a client.
+Check all five names in the client's skill selector; restart if needed. Select `equipo-dev-feature` or `equipo-dev-fix` explicitly (CLI/IDE may expose `$equipo-dev-feature` or `/skills`; syntax depends on the host). Installation success confirms files, not recognition. In a disposable project, request a small feature, check its spec approval pause, then select `equipo-dev-dev-report` and verify approval is pending. These functional checks are required before certifying a client.
 
 The seven Markdown roles live in `equipo-dev-feature/references/agents`; they are not registered native agents. Models, tools and permissions come from the host. Without authorized delegation, feature execution pauses before the affected role; reporting remains available. UX needs external `ui-ux-pro-max` and Python 3, neither installed by this package; features without UI skip UX. Codex has no package hooks or live panel.
 
@@ -386,11 +386,11 @@ If you closed your session or switched branches, resume seamlessly:
 
 The team inspects `docs/specs/`, `docs/ux/`, `docs/adr/`, and `docs/qa/`, analyzes git status, and proposes resuming from the exact unfinished step without repeating completed work.
 
-### 4. Check Live Team Status (`/team-report`)
+### 4. Check Live Team Status (`/dev-report`)
 At any time, inspect team progress, active execution mode, and pending approvals:
 
 ```text
-/team-report
+/dev-report
 ```
 
 Output format in Supervised Mode:
@@ -585,7 +585,7 @@ Introduce la habilidad canónica `/fix` para la remediación rápida y quirúrgi
 | `parseKind` | `platforms/claude-code/hooks/register.tsx` | Identifica si la invocación corresponde a un flujo de tipo fix o feature. |
 | `startsNewFlow` | `platforms/claude-code/hooks/register.tsx` | Permite el inicio autónomo de un flujo fix directamente desde desarrolladores técnicos. |
 | `fix` (Agnóstico) | `src/skills/fix/SKILL.md` | Habilidad canónica que orquesta el circuito directo Dev -> QA -> Reviewer con test de regresión obligatorio. |
-| `team-report` (FIX) | `src/skills/team-report/SKILL.md` | Reporta el estado suprimiendo roles de negocio y compuertas de diseño en modo FIX. |
+| `dev-report` (FIX) | `src/skills/dev-report/SKILL.md` | Reporta el estado suprimiendo roles de negocio y compuertas de diseño en modo FIX. |
 | `SKILLS.fix` | `scripts/codex.mjs` | Registra el paquete y recurso de distribución para la skill fix en Codex. |
 
 ---
@@ -602,8 +602,8 @@ Introduce los modificadores idempotentes `--no-pause` y `--auto-approve` para `/
 | `parseMode` | `platforms/claude-code/hooks/register.tsx` | Analiza argumentos de la invocación para resolver el modo (`supervised` o `continuous`) en Claude Code. |
 | `summary` | `platforms/claude-code/hooks/register.tsx` | Renderiza el estado del panel suprimiendo indicadores `⏸` en modo continuo e informando el modo activo. |
 | `feature` (Agnóstico) | `src/skills/feature/SKILL.md` | Habilidad canónica con soporte para omitir compuertas 1 y 2 bajo supuestos razonables en modo continuo. |
-| `reglas-equipo` | `src/skills/reglas-equipo/SKILL.md` | Habilidad canónica que formaliza los Modos de Ejecución y la inviolabilidad de las salvaguardas de seguridad. |
-| `team-report` (Reporte) | `src/skills/team-report/SKILL.md` | Habilidad canónica de reporte que documenta el modo activo y suprime pausas en modo continuo. |
+| `dev-rules` | `src/skills/dev-rules/SKILL.md` | Habilidad canónica que formaliza los Modos de Ejecución y la inviolabilidad de las salvaguardas de seguridad. |
+| `dev-report` (Reporte) | `src/skills/dev-report/SKILL.md` | Habilidad canónica de reporte que documenta el modo activo y suprime pausas en modo continuo. |
 
 ---
 
@@ -638,17 +638,17 @@ Adds user-scoped Codex generation and installation with four prefixed skills, se
 
 ---
 
-### 📦 Nuevas Capacidades y Cambios (renombrar-equipo-panel-a-team-report)
-- **Estandarización Internacional del Comando de Estado**: Se renombra la habilidad canónica y adaptadores de `equipo-panel` a `team-report` (`/team-report` y `/equipo-dev:team-report`) bajo sustitución estricta inmediata en todas las plataformas soportadas (Antigravity, Claude Code, Cursor y Copilot).
+### 📦 Nuevas Capacidades y Cambios (renombrar-equipo-panel-a-dev-report)
+- **Estandarización Internacional del Comando de Estado**: Se renombra la habilidad canónica y adaptadores de `equipo-panel` a `dev-report` (`/dev-report` y `/equipo-dev:dev-report`) bajo sustitución estricta inmediata en todas las plataformas soportadas (Antigravity, Claude Code, Cursor y Copilot).
 - **Cero Referencias Obsoletas y Consistencia Multiplataforma**: Se actualizan el manifiesto agnóstico, hooks y UI de Claude Code, overrides de Antigravity y documentación completa eliminando alias obsoletos.
 
 ### 🔧 Referencia Técnica de Funciones y Hooks
 | Identificador | Ubicación | Descripción (1 frase corta) |
 |---|---|---|
-| `PANE` | `platforms/claude-code/hooks/register.tsx` | Identificador interno fijado a `'team-report'` para el renderizado del panel lateral en Claude Code. |
-| `PANEL_CMDS` | `platforms/claude-code/hooks/register.tsx` | Lista de comandos interceptados (`['equipo-dev:team-report', 'team-report']`) para abrir el panel de estado. |
-| `team-report` (Agnóstico) | `src/skills/team-report/SKILL.md` | Habilidad canónica agnóstica para inspeccionar y deducir el estado de subagentes en modo texto. |
-| `team-report` (Antigravity) | `platforms/antigravity/skills/team-report/SKILL.md` | Override para Antigravity que combina la inspección de artefactos en `docs/` con la bitácora del plugin. |
+| `PANE` | `platforms/claude-code/hooks/register.tsx` | Identificador interno fijado a `'dev-report'` para el renderizado del panel lateral en Claude Code. |
+| `PANEL_CMDS` | `platforms/claude-code/hooks/register.tsx` | Lista de comandos interceptados (`['equipo-dev:dev-report', 'dev-report']`) para abrir el panel de estado. |
+| `dev-report` (Agnóstico) | `src/skills/dev-report/SKILL.md` | Habilidad canónica agnóstica para inspeccionar y deducir el estado de subagentes en modo texto. |
+| `dev-report` (Antigravity) | `platforms/antigravity/skills/dev-report/SKILL.md` | Override para Antigravity que combina la inspección de artefactos en `docs/` con la bitácora del plugin. |
 
 ---
 

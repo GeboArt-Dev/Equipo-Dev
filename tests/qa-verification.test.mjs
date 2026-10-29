@@ -59,7 +59,7 @@ test('HU-1: Todos los 7 agentes canónicos y 5 skills están presentes en src/',
     assert.ok(fs.existsSync(path.join(SRC_DIR, 'agents', agent)), `Agente canónico faltante: ${agent}`)
   }
 
-  const expectedSkills = ['feature', 'fix', 'reglas-equipo', 'team-report', 'equipo-reiniciar']
+  const expectedSkills = ['feature', 'fix', 'dev-rules', 'dev-report', 'equipo-reiniciar']
   for (const skill of expectedSkills) {
     assert.ok(fs.existsSync(path.join(SRC_DIR, 'skills', skill, 'SKILL.md')), `Skill canónica faltante: ${skill}`)
   }

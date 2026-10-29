@@ -21,7 +21,7 @@ Tipo: FIX
 Modo: Remediación directa (Dev -> QA -> Reviewer)
 ```
 
-Antes de empezar, carga la skill `team-rules` y aplícala. {{SUBAGENT_DISPATCH_GUIDE}}
+Antes de empezar, carga la skill `dev-rules` y aplícala. {{SUBAGENT_DISPATCH_GUIDE}}
 
 ### 1. Asignación y Diagnóstico (Desarrollador)
 - **Despacho inicial**:
@@ -89,4 +89,4 @@ Antes de empezar, carga la skill `team-rules` y aplícala. {{SUBAGENT_DISPATCH_G
 
 ## Memoria de largo plazo (opcional)
 
-Antes de convocar a `code-reviewer`, indícale que consulte la memoria del equipo (ver `team-rules`). Al **cerrar el fix**, el orquestador registra en el vault una nota en `Aprendizajes/` con la causa raíz y el patrón del defecto (enlazada con wikilinks al proyecto) y llama a `graph_refresh`. Nunca incluyas secretos ni trazas con datos sensibles. Si la memoria no está instalada o no responde, omite este paso sin bloquear el flujo.
+Antes de convocar a `code-reviewer`, indícale que consulte la memoria del equipo (ver `dev-rules`). Al **cerrar el fix**, el orquestador registra en el vault una nota en `Aprendizajes/` con la causa raíz y el patrón del defecto (enlazada con wikilinks al proyecto) y llama a `graph_refresh`. Nunca incluyas secretos ni trazas con datos sensibles. Si la memoria no está instalada o no responde, omite este paso sin bloquear el flujo.
