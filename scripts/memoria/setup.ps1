@@ -1,11 +1,13 @@
 <#
 .SYNOPSIS
-  Instalador idempotente de la memoria de largo plazo (Obsidian + obsidian-graph-memory) para equipo-dev.
+  Instalador idempotente de la memoria de largo plazo (Obsidian + Local REST API + obsidian-graph-memory) para equipo-dev.
+  100% autónomo y funcional para usuarios externos del repositorio público de equipo-dev,
+  y con delegación automática transparente hacia la suite canónica cuando opera dentro de TETE360.
 .DESCRIPTION
   Cada paso se ejecuta por separado con -Step y admite -Check (solo informa, no modifica nada).
   Pasos: node, obsidian, vault, plugin, config, apikey, mcp, autostart, all.
   Salida por paso: "<paso>: OK|FALTA|ERROR - detalle". Nunca imprime la API key.
-  Los pasos que modifican el sistema solo se ejecutan con -Yes (el skill lo pasa tras confirmar con el dueño).
+  Los pasos que modifican el sistema solo se ejecutan con -Yes.
 #>
 param(
   [ValidateSet('node','obsidian','vault','plugin','config','apikey','mcp','autostart','all')]
@@ -14,30 +16,51 @@ param(
   [switch]$Yes,
   [string]$VaultPath
 )
+
+# Delegacion transparente al canonico si esta dentro de TETE360 y no se fuerza modo standalone
+$candidatePaths = @(
+  (Join-Path $PSScriptRoot '..\..\..\..\scripts\memoria\setup.ps1'),
+  (Join-Path $PSScriptRoot '..\..\..\scripts\memoria\setup.ps1')
+)
+$canonicalScript = $candidatePaths | Where-Object { Test-Path $_ } | Select-Object -First 1
+if ($canonicalScript -and (-not $env:EQUIPO_DEV_STANDALONE)) {
+  & $canonicalScript @PSBoundParameters @args
+  exit $LASTEXITCODE
+}
+
+# --- Modo Autonomo e Independiente para equipo-dev ---
 $ErrorActionPreference = 'Stop'
 $GraphMemoryPkg = 'obsidian-graph-memory@1.0.1'
 $PluginRepo = 'coddingtonbear/obsidian-local-rest-api'
 $PluginId = 'obsidian-local-rest-api'
 $Port = 27123
+$script:hasFailures = $false
 
 if (-not $VaultPath) { $VaultPath = $env:OBSIDIAN_VAULT_PATH }
 if (-not $VaultPath) { $VaultPath = Join-Path ([Environment]::GetFolderPath('MyDocuments')) 'EquipoDev-Memoria' }
 
-function Out-Step($name, $state, $detail) { Write-Output ("{0}: {1} - {2}" -f $name, $state, $detail) }
+function Out-Step($name, $state, $detail) {
+  if ($state -in @('FALTA', 'ERROR')) { $script:hasFailures = $true }
+  Write-Output ("{0}: {1} - {2}" -f $name, $state, $detail)
+}
+
 function Need-Yes($name) {
   if ($Check) { return $false }
   if (-not $Yes) { Out-Step $name 'FALTA' 'requiere confirmacion (use -Yes tras aprobar)'; return $false }
   return $true
 }
+
 function Get-ApiKey {
   $k = [Environment]::GetEnvironmentVariable('OBSIDIAN_API_KEY', 'User')
   if (-not $k) { $k = $env:OBSIDIAN_API_KEY }
   return $k
 }
+
 function Find-Obsidian {
   $c = @("$env:LOCALAPPDATA\Programs\Obsidian\Obsidian.exe", "$env:ProgramFiles\Obsidian\Obsidian.exe")
   return ($c | Where-Object { Test-Path $_ } | Select-Object -First 1)
 }
+
 function Plugin-Dir { Join-Path $VaultPath ".obsidian\plugins\$PluginId" }
 
 function Step-Node {
@@ -58,16 +81,90 @@ function Step-Obsidian {
 }
 
 function Step-Vault {
-  $dirs = 'Proyectos','Decisiones','Aprendizajes','Personas'
-  $ok = (Test-Path (Join-Path $VaultPath '.obsidian')) -and -not ($dirs | Where-Object { -not (Test-Path (Join-Path $VaultPath $_)) })
-  if ($ok) { Out-Step 'vault' 'OK' $VaultPath; return }
-  if (-not (Need-Yes 'vault')) { if ($Check) { Out-Step 'vault' 'FALTA' $VaultPath }; return }
-  foreach ($d in $dirs) { New-Item -ItemType Directory -Force -Path (Join-Path $VaultPath $d) | Out-Null }
-  New-Item -ItemType Directory -Force -Path (Join-Path $VaultPath '.obsidian') | Out-Null
-  $inicio = Join-Path $VaultPath 'Inicio.md'
-  if (-not (Test-Path $inicio)) {
-    Set-Content -Path $inicio -Encoding UTF8 -Value "# Memoria del equipo`n`nBoveda compartida entre proyectos de equipo-dev.`n`n- [[Proyectos]]`n- [[Decisiones]]`n- [[Aprendizajes]]`n"
+  $dirs = @('Proyectos','Decisiones','Aprendizajes','Personas')
+  $hasObsidian = Test-Path (Join-Path $VaultPath '.obsidian')
+  $missingDirs = @()
+  $missingIndices = @()
+
+  foreach ($d in $dirs) {
+    $dirPath = Join-Path $VaultPath $d
+    if (-not (Test-Path $dirPath)) {
+      $missingDirs += $d
+    } else {
+      $indexPath = Join-Path $dirPath "$d.md"
+      if (-not (Test-Path $indexPath)) {
+        $missingIndices += "$d/$d.md"
+      }
+    }
   }
+
+  $inicio = Join-Path $VaultPath 'Inicio.md'
+  $hasInicio = Test-Path $inicio
+
+  $ok = $hasObsidian -and ($missingDirs.Count -eq 0) -and ($missingIndices.Count -eq 0) -and $hasInicio
+  if ($ok) { Out-Step 'vault' 'OK' $VaultPath; return }
+
+  if (-not (Need-Yes 'vault')) {
+    if ($Check) {
+      $detalles = @()
+      if (-not $hasObsidian) { $detalles += 'falta .obsidian' }
+      if ($missingDirs.Count -gt 0) { $detalles += ('carpetas faltantes: ' + ($missingDirs -join ', ')) }
+      if ($missingIndices.Count -gt 0) { $detalles += ('indices faltantes: ' + ($missingIndices -join ', ')) }
+      if (-not $hasInicio) { $detalles += 'falta Inicio.md' }
+      Out-Step 'vault' 'FALTA' ("{0} ({1})" -f $VaultPath, ($detalles -join '; '))
+    }
+    return
+  }
+
+  # Creacion idempotente con indices homonimos
+  New-Item -ItemType Directory -Force -Path (Join-Path $VaultPath '.obsidian') | Out-Null
+  foreach ($d in $dirs) {
+    $dirPath = Join-Path $VaultPath $d
+    if (-not (Test-Path $dirPath)) {
+      New-Item -ItemType Directory -Force -Path $dirPath | Out-Null
+    }
+    $indexPath = Join-Path $dirPath "$d.md"
+    if (-not (Test-Path $indexPath)) {
+      $tag = $d.ToLower()
+      $content = @"
+---
+tipo: indice
+ambito: compartido
+estado: vigente
+tags: [$tag, indice]
+---
+
+# $d
+
+Índice canónico de $d para equipo-dev.
+
+- [[Inicio|← Inicio de la Bóveda]]
+"@
+      Set-Content -Path $indexPath -Encoding UTF8 -Value $content
+    }
+  }
+
+  if (-not (Test-Path $inicio)) {
+    $inicioContent = @"
+---
+tipo: indice
+ambito: compartido
+estado: vigente
+tags: [inicio, indice]
+---
+
+# Memoria del equipo
+
+Bóveda compartida entre proyectos de equipo-dev.
+
+- [[Proyectos/Proyectos|Proyectos]]
+- [[Decisiones/Decisiones|Decisiones]]
+- [[Aprendizajes/Aprendizajes|Aprendizajes]]
+- [[Personas/Personas|Personas]]
+"@
+    Set-Content -Path $inicio -Encoding UTF8 -Value $inicioContent
+  }
+
   Out-Step 'vault' 'OK' $VaultPath
 }
 
@@ -143,3 +240,5 @@ $run = if ($Step -eq 'all') { $all } else { @($Step) }
 foreach ($s in $run) {
   try { & ("Step-" + (Get-Culture).TextInfo.ToTitleCase($s)) } catch { Out-Step $s 'ERROR' $_.Exception.Message }
 }
+
+if ($script:hasFailures) { exit 1 } else { exit 0 }

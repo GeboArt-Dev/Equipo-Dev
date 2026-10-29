@@ -1,27 +1,51 @@
 #!/usr/bin/env bash
-# Instalador idempotente de la memoria de largo plazo (Obsidian + obsidian-graph-memory) para equipo-dev.
-# Uso: setup.sh --step <node|obsidian|vault|plugin|apikey|config|mcp|all> [--check] [--yes] [--vault <ruta>]
+# Instalador idempotente de la memoria de largo plazo (Obsidian + Local REST API + obsidian-graph-memory) para equipo-dev.
+# 100% autónomo y funcional para usuarios externos del repositorio público de equipo-dev,
+# y con delegación automática transparente hacia la suite canónica cuando opera dentro de TETE360.
+# Uso: setup.sh [--step <node|obsidian|vault|plugin|apikey|config|mcp|all>] [--check] [--yes] [--vault <ruta>]
 # Salida por paso: "<paso>: OK|FALTA|ERROR - detalle". Nunca imprime la API key.
 set -u
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+CANONICAL="$SCRIPT_DIR/../../../scripts/memoria/setup.sh"
+if [ -f "$CANONICAL" ] && [ -z "${EQUIPO_DEV_STANDALONE:-}" ]; then
+  exec bash "$CANONICAL" "$@"
+fi
+
+# --- Modo Autónomo e Independiente para equipo-dev ---
 STEP=all; CHECK=0; YES=0; VAULT="${OBSIDIAN_VAULT_PATH:-}"
 GRAPH_PKG='obsidian-graph-memory@1.0.1'; PLUGIN_REPO='coddingtonbear/obsidian-local-rest-api'
 PLUGIN_ID='obsidian-local-rest-api'; PORT=27123
+HAS_FAILURES=0
+
 while [ $# -gt 0 ]; do
   case "$1" in
-    --step) STEP="$2"; shift 2;; --check) CHECK=1; shift;; --yes) YES=1; shift;;
-    --vault) VAULT="$2"; shift 2;; *) echo "argumento desconocido: $1"; exit 2;;
+    --step) STEP="$2"; shift 2;;
+    --check) CHECK=1; shift;;
+    --yes) YES=1; shift;;
+    --vault) VAULT="$2"; shift 2;;
+    *) echo "argumento desconocido: $1"; exit 2;;
   esac
 done
+
 [ -z "$VAULT" ] && VAULT="$HOME/Documents/EquipoDev-Memoria"
 PDIR="$VAULT/.obsidian/plugins/$PLUGIN_ID"
 OS=$(uname -s)
 
-out() { echo "$1: $2 - $3"; }
-need_yes() { # 0 = puede modificar
+out() {
+  local name="$1" state="$2" detail="$3"
+  if [ "$state" = "FALTA" ] || [ "$state" = "ERROR" ]; then
+    HAS_FAILURES=1
+  fi
+  echo "$name: $state - $detail"
+}
+
+need_yes() {
   [ "$CHECK" = 1 ] && return 1
   [ "$YES" = 1 ] || { out "$1" FALTA "requiere confirmacion (use --yes tras aprobar)"; return 1; }
   return 0
 }
+
 profile_file() { case "${SHELL:-}" in */zsh) echo "$HOME/.zshrc";; *) echo "$HOME/.bashrc";; esac; }
 
 step_node() {
@@ -43,13 +67,63 @@ step_obsidian() {
 }
 
 step_vault() {
-  local ok=1; [ -d "$VAULT/.obsidian" ] || ok=0
-  for d in Proyectos Decisiones Aprendizajes Personas; do [ -d "$VAULT/$d" ] || ok=0; done
-  [ $ok = 1 ] && { out vault OK "$VAULT"; return; }
-  [ "$CHECK" = 1 ] && { out vault FALTA "$VAULT"; return; }
+  local dirs=(Proyectos Decisiones Aprendizajes Personas)
+  local ok=1
+  [ -d "$VAULT/.obsidian" ] || ok=0
+  [ -f "$VAULT/Inicio.md" ] || ok=0
+
+  for d in "${dirs[@]}"; do
+    [ -d "$VAULT/$d" ] || ok=0
+    [ -f "$VAULT/$d/$d.md" ] || ok=0
+  done
+
+  if [ $ok -eq 1 ]; then out vault OK "$VAULT"; return; fi
+  if [ "$CHECK" = 1 ]; then out vault FALTA "$VAULT"; return; fi
   need_yes vault || return
-  mkdir -p "$VAULT/.obsidian" "$VAULT"/{Proyectos,Decisiones,Aprendizajes,Personas}
-  [ -f "$VAULT/Inicio.md" ] || printf '# Memoria del equipo\n\nBoveda compartida entre proyectos de equipo-dev.\n\n- [[Proyectos]]\n- [[Decisiones]]\n- [[Aprendizajes]]\n' > "$VAULT/Inicio.md"
+
+  mkdir -p "$VAULT/.obsidian"
+  for d in "${dirs[@]}"; do
+    mkdir -p "$VAULT/$d"
+    local idx="$VAULT/$d/$d.md"
+    if [ ! -f "$idx" ]; then
+      local tag; tag=$(echo "$d" | tr '[:upper:]' '[:lower:]')
+      cat <<EOF > "$idx"
+---
+tipo: indice
+ambito: compartido
+estado: vigente
+tags: [$tag, indice]
+---
+
+# $d
+
+Índice canónico de $d para equipo-dev.
+
+- [[Inicio|← Inicio de la Bóveda]]
+EOF
+    fi
+  done
+
+  if [ ! -f "$VAULT/Inicio.md" ]; then
+    cat <<EOF > "$VAULT/Inicio.md"
+---
+tipo: indice
+ambito: compartido
+estado: vigente
+tags: [inicio, indice]
+---
+
+# Memoria del equipo
+
+Bóveda compartida entre proyectos de equipo-dev.
+
+- [[Proyectos/Proyectos|Proyectos]]
+- [[Decisiones/Decisiones|Decisiones]]
+- [[Aprendizajes/Aprendizajes|Aprendizajes]]
+- [[Personas/Personas|Personas]]
+EOF
+  fi
+
   out vault OK "$VAULT"
 }
 
@@ -112,3 +186,5 @@ if [ "$STEP" = all ]; then steps="node obsidian vault plugin apikey config mcp";
 for s in $steps; do
   case "$s" in node|obsidian|vault|plugin|apikey|config|mcp) "step_$s";; *) out "$s" ERROR "paso desconocido";; esac
 done
+
+if [ "$HAS_FAILURES" -ne 0 ]; then exit 1; else exit 0; fi
