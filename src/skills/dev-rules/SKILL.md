@@ -13,7 +13,7 @@ description: Reglas del equipo de desarrollo (flujo PO → UX → arquitecto →
 - **Modo Continuo / Autónomo (con `--no-pause` o `--auto-approve`)**: Flujo acelerado desatendido donde se omiten las pausas de aprobación intermedia de diseño (Spec y UX + ADR se consideran auto-aprobadas).
   - Regla de supuestos técnicos: Ante dudas o preguntas abiertas no bloqueantes para el negocio, el subagente u orquestador adopta supuestos técnicos razonables y los documenta explícitamente en el artefacto (Spec o ADR) y en la respuesta. Si una ambigüedad es estrictamente bloqueante para el alcance de negocio, el flujo se detiene para pedir aclaración al dueño.
 
-## Flujo obligatorio por feature
+## Flujo obligatorio de Ingeniería de Software (`/dev`)
 1. `product-owner` → `<vault>/Proyectos/<proyecto>/Specs/Spec - <feature>.md`
 2. ⏸ Pausa: aprobación del dueño (omitida en modo continuo salvo duda bloqueante de negocio).
 3. `ux-designer` (si hay interfaz) → `<vault>/Proyectos/<proyecto>/UX/UX - <feature>.md` + `design-system/<proyecto>/MASTER.md`, usando `ui-ux-pro-max`.
@@ -24,19 +24,19 @@ description: Reglas del equipo de desarrollo (flujo PO → UX → arquitecto →
 8. `code-reviewer` → veredicto. Si hay CAMBIOS REQUERIDOS, volver al paso 6.
 
 Ningún rol empieza sin el archivo de salida del rol anterior.
-Una feature ya empezada se retoma desde el último paso completado según los archivos del vault en `<vault>/Proyectos/<proyecto>/` (o `docs/` en repositorios históricos); nunca se rehace un paso existente sin que el dueño lo pida. El comando para retomar opera en modo supervisado por defecto a menos que se incluya `--no-pause` o `--auto-approve`.
-Para cambios pequeños (bug simple, ajuste menor) el dueño puede autorizar ir directo a dev + reviewer.
+Una tarea ya empezada se retoma mediante `/dev continuemos con...` desde el último paso completado según los archivos del vault en `<vault>/Proyectos/<proyecto>/`; nunca se rehace un paso existente sin que el dueño lo pida. El comando para retomar opera en modo supervisado por defecto a menos que se incluya `--no-pause` o `--auto-approve`.
+Para cambios pequeños (bug simple, ajuste menor) se canaliza directamente con `/devfix`.
 Features sin interfaz (solo backend) omiten `ux-designer`.
 
-## Protocolo de Remediación Técnica (`/fix`)
+## Protocolo de Remediación Técnica (`/devfix`)
 Circuito técnico directo para corrección de bugs, excepciones en ejecución y regresiones, omitiendo Product Owner, UX Designer, Arquitecto y pausas de diseño:
 1. **Desarrollador (`backend-dev` o `frontend-dev`)**:
    - Diagnóstico de Causa Raíz (RCA ≤ 5 líneas).
    - Test automatizado de regresión obligatorio (falla antes del arreglo, pasa con el parche).
-   - Parche de código mínimo indispensable. Si la solución demanda rediseño visual, esquemas arquitectónicos nuevos o endpoints no existentes, se detiene y se canaliza mediante `/feature`.
+   - Parche de código mínimo indispensable. Si la solución demanda rediseño visual, esquemas arquitectónicos nuevos o endpoints no existentes, se detiene y se canaliza mediante `/dev`.
 2. **QA Engineer (`qa-engineer`)**: Ejecuta la suite completa de pruebas. Si rechaza, reintento a Dev (máximo 3 reintentos antes de escalar al dueño).
 3. **Code Reviewer (`code-reviewer`)**: Auditoría de seguridad OWASP y calidad sin hallazgos bloqueantes (máximo 3 vueltas).
-4. **Artefacto de reporte liviano**: Registro sintético en `<vault>/Proyectos/<proyecto>/Fixes/Fix - <slug>.md` (sustituye al histórico `docs/fixes/<slug>.md`) resumiendo RCA, parche, test de regresión y verificación de no-regresión.
+4. **Artefacto de reporte liviano**: Registro sintético en `<vault>/Proyectos/<proyecto>/Fixes/Fix - <slug>.md` resumiendo RCA, parche, test de regresión y verificación de no-regresión.
 
 ## Memoria (Obsidian): fuente de verdad
 - `<vault>` = `$OBSIDIAN_VAULT_PATH` (D:\EquipoDev-Memoria). Toda la documentación de todos los proyectos (specs, UX, ADR, QA, fixes, decisiones y aprendizajes) vive ahí, **nunca en el repo**.
