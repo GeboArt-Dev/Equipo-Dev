@@ -13,8 +13,19 @@ import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
-const GIT_DIR = path.join(ROOT, '.git')
-const HOOKS_DIR = path.join(GIT_DIR, 'hooks')
+function resolveGitDir(root) {
+  const candidate = path.join(root, '.git')
+  if (!fs.existsSync(candidate)) return null
+  if (fs.statSync(candidate).isFile()) {
+    const content = fs.readFileSync(candidate, 'utf8').trim()
+    if (content.startsWith('gitdir:')) {
+      return path.resolve(root, content.replace('gitdir:', '').trim())
+    }
+  }
+  return candidate
+}
+const GIT_DIR = resolveGitDir(ROOT)
+const HOOKS_DIR = GIT_DIR ? path.join(GIT_DIR, 'hooks') : null
 
 const HOOK_SCRIPT = `#!/bin/sh
 # [equipo-dev] Sincronizacion automatica multi-IDE tras commit o merge
@@ -23,7 +34,7 @@ node scripts/sync.mjs --hook
 `
 
 export function setupHooks(action = 'install') {
-  if (!fs.existsSync(GIT_DIR)) {
+  if (!GIT_DIR || !fs.existsSync(GIT_DIR)) {
     console.log('[setup-hooks] No se detectó directorio .git/. Omitiendo configuración de hooks.')
     return false
   }

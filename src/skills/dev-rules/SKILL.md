@@ -6,7 +6,7 @@ description: Reglas del equipo de desarrollo (flujo PO → UX → arquitecto →
 
 ## Roles
 - El usuario es el **dueño**: define la visión y aprueba la spec y el ADR.
-- La sesión principal actúa como **Tech Lead / orquestador**: delega en los subagentes, no se salta pasos y no hace el trabajo de un rol que tiene subagente propio.
+- La sesión principal actúa como **Tech Lead / orquestador**: punto único de entrada, analiza la solicitud, determina y emite la selección de agentes necesarios (`Necesito: ✅ / No necesito: ❌`), delega en los subagentes especializados, no se salta pasos y no hace el trabajo de un rol que tiene subagente propio. Consolida los resultados finales.
 
 ## Modos de Ejecución
 - **Modo Supervisado / Interactivo (por defecto)**: Flujo estándar con compuertas de aprobación del dueño en los pasos 2 (Spec) y 5 (UX + ADR). Requiere confirmación humana expresa antes de proceder a la siguiente fase.
@@ -55,6 +55,12 @@ Circuito técnico directo para corrección de bugs, excepciones en ejecución y 
 - QA APROBADO y reviewer sin hallazgos Bloqueantes.
 - UI conforme a la UX y al design system (estados y accesibilidad incluidos).
 - README del proyecto actualizado con el cambio realizado y el número de versión (SemVer: `/fix` → parche, `/feature` → menor, cambio incompatible → mayor), también en `package.json`.
+
+## Trazabilidad y Banners Simétricos de Rol (Codex y Entornos Monohilo)
+En entornos sin panel gráfico lateral de subprocesos:
+- **Apertura**: `🤖 [ROL ACTIVO: <rol>] ➔ <Acción concisa en ejecución>`
+- **Cierre**: `🏁 [ROL COMPLETADO: <rol>] ➔ <Entregable / Artefacto validado>`
+- **Context-Folding**: Los artefactos extensos (Specs, ADRs, reportes QA) se persisten completos en la bóveda Obsidian (`D:\EquipoDev-Memoria`). En el chat se emite una síntesis ejecutiva estructurada (15 a 25 líneas) para preservar la ventana de contexto.
 
 ## Seguridad y Salvaguardas Críticas
 Las siguientes salvaguardas son inviolables tanto en Modo Supervisado como en Modo Continuo / Autónomo:

@@ -12,6 +12,12 @@ Uso: /fix <descripción del error, traza o archivo afectado>
 ```
 Detén la ejecución inmediatamente sin convocar subagentes.
 
+## ⚠️ PROTOCOLO DE DESPACHO OBLIGATORIO (SUBAGENT HANDOFF)
+Si eres el agente principal/asistente raíz de la conversación y dispones de herramientas de subagentes (`invoke_subagent`):
+1. **TIENES ESTRICTAMENTE PROHIBIDO** aplicar parches o modificar código directamente en el hilo principal.
+2. **DEBES invocar de inmediato al subagente `backend-dev` o `frontend-dev`** según la naturaleza del error mediante `invoke_subagent`.
+3. Cede el control de la remediación al desarrollador para que ejecute el RCA y los tests.
+
 ## Circuito Técnico Directo (Dev -> QA -> Code Reviewer)
 Este flujo omite estrictamente las etapas de Product Owner, UX Designer y Arquitecto, suprimiendo pausas de diseño y no generando archivos en `docs/specs/`, `docs/ux/` ni `docs/adr/`.
 

@@ -6,6 +6,12 @@ description: Ejecuta o retoma el flujo del equipo para una feature (PO → UX �
 
 Argumento: `[--no-pause | --auto-approve]` seguido de la descripción de la feature en lenguaje natural, o el nombre de una feature ya empezada ("continuemos con CheckIn").
 
+## ⚠️ PROTOCOLO DE DESPACHO OBLIGATORIO (SUBAGENT HANDOFF)
+Si eres el agente principal/asistente raíz de la conversación y dispones de herramientas de subagentes (`invoke_subagent`):
+1. **TIENES ESTRICTAMENTE PROHIBIDO** implementar código, crear specs o saltarte las etapas directamente en el hilo principal.
+2. **DEBES invocar inmediatamente al subagente correspondiente** mediante `invoke_subagent` (comenzando por `product-owner` para nuevas features).
+3. Cede el control del paso a cada subagente especialista.
+
 ## Modos de Ejecución
 - **Modo Continuo / Autónomo**: Se activa si el comando contiene los modificadores `--no-pause` o `--auto-approve` (insensible a mayúsculas/minúsculas, en cualquier posición). Extrae el flag de la descripción para obtener la descripción neta de la feature. Omite las pausas de aprobación de diseño humano de Spec (Pausa 1) y de Diseño UX + ADR (Pausa 2).
 - **Modo Supervisado / Interactivo**: Es el comportamiento predeterminado si no se incluye ninguno de los flags anteriores. Requiere confirmación humana en el paso 1 (Spec) y en el paso 3 (UX + ADR).
