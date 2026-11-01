@@ -3,7 +3,7 @@ import os from 'node:os'
 import path from 'node:path'
 import { createHash } from 'node:crypto'
 
-export const SKILLS = { feature: 'equipo-dev-feature', fix: 'equipo-dev-fix', 'dev-rules': 'equipo-dev-dev-rules', 'dev-report': 'equipo-dev-dev-report', 'equipo-reiniciar': 'equipo-dev-team-reset' }
+export const SKILLS = { feature: 'equipo-dev-feature', dev: 'equipo-dev-dev', devfix: 'equipo-dev-devfix', 'dev-rules': 'equipo-dev-dev-rules', 'dev-report': 'equipo-dev-dev-report', 'equipo-reiniciar': 'equipo-dev-team-reset' }
 export const ROLES = ['architect', 'backend-dev', 'code-reviewer', 'frontend-dev', 'product-owner', 'qa-engineer', 'ux-designer']
 const PACKAGE = 'equipo-dev-codex'
 const META = '.equipo-dev-install'
