@@ -39,11 +39,11 @@ Circuito técnico directo para corrección de bugs, excepciones en ejecución y 
 4. **Artefacto de reporte liviano**: Registro sintético en `<vault>/Proyectos/<proyecto>/Fixes/Fix - <slug>.md` resumiendo RCA, parche, test de regresión y verificación de no-regresión.
 
 ## Memoria (Obsidian): fuente de verdad
-- `<vault>` = `$OBSIDIAN_VAULT_PATH` (D:\EquipoDev-Memoria). Toda la documentación de todos los proyectos (specs, UX, ADR, QA, fixes, decisiones y aprendizajes) vive ahí, **nunca en el repo**.
+- `<vault>` = Resuelto dinámicamente mediante `--vault` > `$OBSIDIAN_VAULT_PATH` > `.tete360-init.json` > ubicación canónica del OS. Toda la documentación de todos los proyectos (specs, UX, ADR, QA, fixes, decisiones y aprendizajes) vive ahí, **nunca en el repo**.
 - `<proyecto>`: el valor de `Proyecto en memoria:` en el {{AGENT_GUIDE_FILE}} del proyecto (o `CLAUDE.md`); si no existe, el nombre de la carpeta del proyecto (crear `Proyectos/<proyecto>/` + nota índice, enlazarla desde `Proyectos` y añadir la línea al {{AGENT_GUIDE_FILE}} del proyecto avisando al dueño).
-- **Consultar siempre**: al empezar cualquier tarea, el orquestador y cada subagente consultan la memoria del proyecto y las carpetas compartidas `Decisiones/` y `Aprendizajes/`.
+- **Consultar siempre**: al empezar cualquier tarea, el orquestador y cada rol consultan la memoria del proyecto y las carpetas compartidas `Decisiones/` y `Aprendizajes/`.
 - **Guardar siempre**: nombre único con prefijo de tipo (`Spec - `, `UX - `, `ADR <NNN> - `, `QA - `, `Fix - `), frontmatter `tags: [<proyecto>, <tipo>]`, enlace `[[<proyecto>]]` y entrada en la nota índice del proyecto. Al terminar, `graph_refresh`.
-- **Si Obsidian no responde**: avisar al dueño y no escribir documentación hasta resolverlo.
+- **Cliente Dual de Memoria**: La persistencia se canaliza mediante `vault-client.mjs` (intento REST API 127.0.0.1:27123 + fallback directo a filesystem si la app Obsidian está cerrada y fue autorizado en `.tete360-init.json`). Si el acceso no está autorizado y la API no responde, avisar al dueño.
 - **Exportar al repo solo bajo pedido del dueño**: copiar las notas del proyecto a `docs/` del repo como copia de solo lectura (indicando fecha y origen). Esa copia no se edita; los cambios se hacen en el vault y se vuelve a exportar.
 
 ## Contexto del proyecto
@@ -60,7 +60,7 @@ Circuito técnico directo para corrección de bugs, excepciones en ejecución y 
 En entornos sin panel gráfico lateral de subprocesos:
 - **Apertura**: `🤖 [ROL ACTIVO: <rol>] ➔ <Acción concisa en ejecución>`
 - **Cierre**: `🏁 [ROL COMPLETADO: <rol>] ➔ <Entregable / Artefacto validado>`
-- **Context-Folding**: Los artefactos extensos (Specs, ADRs, reportes QA) se persisten completos en la bóveda Obsidian (`D:\EquipoDev-Memoria`). En el chat se emite una síntesis ejecutiva estructurada (15 a 25 líneas) para preservar la ventana de contexto.
+- **Context-Folding**: Los artefactos extensos (Specs, ADRs, reportes QA) se persisten completos en la bóveda Obsidian (`<vault>`). En el chat se emite una síntesis ejecutiva estructurada (15 a 25 líneas) para preservar la ventana de contexto.
 
 ## Seguridad y Salvaguardas Críticas
 Las siguientes salvaguardas son inviolables tanto en Modo Supervisado como en Modo Continuo / Autónomo:

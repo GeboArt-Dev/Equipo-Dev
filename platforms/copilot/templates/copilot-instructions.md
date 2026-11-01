@@ -25,7 +25,7 @@ Circuito técnico directo para bugs, excepciones y regresiones (`/fix <descripci
 5. **Artefacto sintético**: Registro documental ligero en `<vault>/Proyectos/<proyecto>/Fixes/Fix - <slug>.md` (sustituye a `docs/fixes/<slug>.md`).
 
 ## Memoria (Obsidian): fuente de verdad
-- `<vault>` = `$OBSIDIAN_VAULT_PATH` (D:\EquipoDev-Memoria). Toda la documentación de todos los proyectos vive ahí, nunca en el repo.
+- `<vault>` = Resuelto dinámicamente (`$OBSIDIAN_VAULT_PATH` o `.tete360-init.json`). Toda la documentación de todos los proyectos vive ahí, nunca en el repo.
 - `<proyecto>`: valor de `Proyecto en memoria:` en `.github/copilot-instructions.md`; si no existe, nombre de la carpeta del proyecto (crear `Proyectos/<proyecto>/` + nota índice, enlazarla desde `Proyectos` y añadir la línea a `.github/copilot-instructions.md` avisando al dueño).
 - Consultar siempre: al empezar cualquier tarea, el orquestador y cada subagente consultan la memoria del proyecto y las carpetas compartidas `Decisiones/` y `Aprendizajes/`.
 - Guardar siempre: nombre único con prefijo de tipo (`Spec - `, `UX - `, `ADR <NNN> - `, `QA - `, `Fix - `), frontmatter `tags: [<proyecto>, <tipo>]`, enlace `[[<proyecto>]]` y entrada en la nota índice del proyecto. Al terminar, refrescar memoria (`graph_refresh`).

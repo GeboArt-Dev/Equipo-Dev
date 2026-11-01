@@ -72,7 +72,7 @@ Reglas y Salvaguardas:
   - Al 3er fallo consecutivo de QA o hallazgos bloqueantes reiterados en Code Reviewer, detén el flujo y escala inmediatamente al dueño.
 
 ## Memoria (Obsidian): fuente de verdad
-- `<vault>` = `$OBSIDIAN_VAULT_PATH` (D:\EquipoDev-Memoria). Toda la documentación de todos los proyectos vive ahí, nunca en el repo.
+- `<vault>` = Resuelto dinámicamente (--vault > $OBSIDIAN_VAULT_PATH > .tete360-init.json > default del OS). Toda la documentación de todos los proyectos vive ahí, nunca en el repo.
 - `<proyecto>`: valor de `Proyecto en memoria:` en {{AGENT_GUIDE_FILE}}; si no existe, nombre de la carpeta del proyecto (crear `Proyectos/<proyecto>/` + nota índice, enlazarla desde `Proyectos` y añadir la línea al {{AGENT_GUIDE_FILE}} avisando al dueño).
 - Consultar siempre: al empezar cualquier tarea, el orquestador y cada subagente consultan la memoria del proyecto (`graph_query_related` sobre `<proyecto>`) y las carpetas compartidas `Decisiones/` y `Aprendizajes/`.
 - Guardar siempre: nombre único con prefijo de tipo (`Spec - `, `UX - `, `ADR <NNN> - `, `QA - `), frontmatter `tags: [<proyecto>, <tipo>]`, enlace `[[<proyecto>]]` y entrada en la nota índice del proyecto. Al terminar, `graph_refresh`.
