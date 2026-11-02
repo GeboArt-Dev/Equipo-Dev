@@ -6,11 +6,22 @@ description: Ejecuta o retoma el flujo del equipo para una feature (PO → UX �
 
 Argumento: `[--no-pause | --auto-approve]` seguido de la descripción de la feature en lenguaje natural, o el nombre de una feature ya empezada ("continuemos con CheckIn").
 
-## ⚠️ PROTOCOLO DE DESPACHO OBLIGATORIO (SUBAGENT HANDOFF)
-Si eres el agente principal/asistente raíz de la conversación y dispones de herramientas de subagentes (`invoke_subagent`):
-1. **TIENES ESTRICTAMENTE PROHIBIDO** implementar código, crear specs o saltarte las etapas directamente en el hilo principal.
-2. **DEBES invocar inmediatamente al subagente correspondiente** mediante `invoke_subagent` (comenzando por `product-owner` para nuevas features).
-3. Cede el control del paso a cada subagente especialista.
+## ⚡ PROTOCOLO DE DELEGACIÓN ADAPTATIVA Y EJECUCIÓN DUAL
+
+Inspecciona en tiempo de ejecución las herramientas disponibles:
+- **Modo Multi-Agente / Despacho Concurrente (Harness con soporte de subagentes)**:
+  Si dispones de herramientas de subagentes (`invoke_subagent` en Antigravity o `Agent` en Claude Code):
+  1. No implementes todo en el hilo raíz si dispones de la herramienta de despacho.
+  2. Invoca inmediatamente al subagente correspondiente (`product-owner`, `ux-designer`, `architect`, `backend-dev` / `frontend-dev`, `qa-engineer`, `code-reviewer`).
+  3. Cede el control del paso a cada subagente especialista.
+- **Modo Secuencial In-Process (Extensiones IDE y Entornos Monohilo)**:
+  Si te encuentras ejecutando dentro de una extensión de IDE (VS Code, Cursor, Windsurf, etc.) o el entorno no dispone de herramientas de subagentes:
+  1. Conmuta automáticamente a ejecución secuencial asumiendo de forma directa y fluida los roles requeridos en este hilo.
+  2. **PROHIBIDO emitir mensajes de bloqueo, disculpas o advertencias** (como *"No hay subagentes utilizables en esta sesión"* o *"trabajo en este hilo"*). Este es el comportamiento estándar y previsto para extensiones de IDE y entornos monohilo.
+  3. Emite obligatoriamente los banners simétricos de trazabilidad para delimitar cada rol:
+     - `🤖 [ROL ACTIVO: <nombre-rol>] ➔ <Acción concisa en ejecución>`
+     - `🏁 [ROL COMPLETADO: <nombre-rol>] ➔ <Entregable persistido en memoria>`
+  4. Aplica **Context-Folding**: persiste los documentos en la memoria Obsidian (`<vault>`) y emite en el chat la síntesis ejecutiva estructurada (15 a 25 líneas).
 
 ## Modos de Ejecución
 - **Modo Continuo / Autónomo**: Se activa si el comando contiene los modificadores `--no-pause` o `--auto-approve` (insensible a mayúsculas/minúsculas, en cualquier posición). Extrae el flag de la descripción para obtener la descripción neta de la feature. Omite las pausas de aprobación de diseño humano de Spec (Pausa 1) y de Diseño UX + ADR (Pausa 2).

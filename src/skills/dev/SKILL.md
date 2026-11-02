@@ -26,17 +26,21 @@ Al arrancar, emite obligatoriamente en la cabecera:
 
 ---
 
-## ⚡ PROTOCOLO DE DELEGACIÓN ADAPTATIVA
+## ⚡ PROTOCOLO DE DELEGACIÓN ADAPTATIVA Y EJECUCIÓN DUAL
 
 Inspecciona en tiempo de ejecución las herramientas disponibles:
-- **Entorno con Subagentes (`invoke_subagent` presente)**:
+- **Modo Multi-Agente / Despacho Concurrente (Harness con soporte de subagentes)**:
+  Si dispones de herramientas de subagentes (`invoke_subagent` en Antigravity o `Agent` en Claude Code):
   1. No implementes todo en el hilo raíz si tienes la herramienta de despacho.
   2. Invoca ordenadamente a los subagentes especialistas (`product-owner`, `ux-designer`, `architect`, `backend-dev` / `frontend-dev`, `qa-engineer`, `code-reviewer`).
-- **Entorno Monohilo / Sin Subagentes (Fallback In-Process Secuencial)**:
-  Si `invoke_subagent` no está disponible, ejecuta secuencialmente cada perspectiva en el mismo hilo emitiendo obligatoriamente los banners simétricos:
-  - `🤖 [ROL ACTIVO: <nombre-rol>] ➔ <Acción concisa en ejecución>`
-  - `🏁 [ROL COMPLETADO: <nombre-rol>] ➔ <Entregable persistido en memoria>`
-- **Context-Folding**: Los artefactos íntegros se persisten en el vault de Obsidian (`<vault>`). En el chat solo se emite la síntesis ejecutiva estructurada (15 a 25 líneas).
+- **Modo Secuencial In-Process (Extensiones IDE y Entornos Monohilo)**:
+  Si te encuentras ejecutando dentro de una extensión de IDE (VS Code, Cursor, Windsurf, etc.) o el entorno no dispone de herramientas de subagentes:
+  1. Conmuta automáticamente a ejecución secuencial asumiendo de forma directa y fluida los roles requeridos en este hilo.
+  2. **PROHIBIDO emitir mensajes de bloqueo, disculpas o advertencias** (como *"No hay subagentes utilizables en esta sesión"* o *"trabajo en este hilo"*). Este es el comportamiento estándar y previsto para extensiones de IDE y entornos monohilo.
+  3. Emite obligatoriamente los banners simétricos de trazabilidad para delimitar cada rol:
+     - `🤖 [ROL ACTIVO: <nombre-rol>] ➔ <Acción concisa en ejecución>`
+     - `🏁 [ROL COMPLETADO: <nombre-rol>] ➔ <Entregable persistido en memoria>`
+  4. Aplica **Context-Folding**: Los artefactos íntegros se persisten en el vault de Obsidian (`<vault>`). En el chat solo se emite la síntesis ejecutiva estructurada (15 a 25 líneas).
 
 ---
 

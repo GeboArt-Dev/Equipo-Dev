@@ -25,11 +25,22 @@ Al arrancar, emite en la cabecera:
 ╚══════════════════════════════════════════════════════════════════════╝
 ```
 
-## ⚠️ PROTOCOLO DE DESPACHO OBLIGATORIO (SUBAGENT HANDOFF)
-Si eres el agente principal/asistente raíz de la conversación y dispones de herramientas de subagentes (`invoke_subagent`):
-1. **TIENES ESTRICTAMENTE PROHIBIDO** aplicar parches o modificar código directamente en el hilo principal.
-2. **DEBES invocar de inmediato al subagente `backend-dev` o `frontend-dev`** según la naturaleza del error mediante `invoke_subagent`.
-3. Cede el control de la remediación al desarrollador para que ejecute el RCA y los tests.
+## ⚡ PROTOCOLO DE DELEGACIÓN ADAPTATIVA Y EJECUCIÓN DUAL
+
+Inspecciona en tiempo de ejecución las herramientas disponibles:
+- **Modo Multi-Agente / Despacho Concurrente (Harness con soporte de subagentes)**:
+  Si dispones de herramientas de subagentes (`invoke_subagent` en Antigravity o `Agent` en Claude Code):
+  1. No apliques parches directamente en el hilo principal si dispones de la herramienta de despacho.
+  2. Invoca de inmediato al subagente `backend-dev` o `frontend-dev` según la naturaleza del error.
+  3. Cede el control de la remediación al desarrollador para que ejecute el RCA y los tests.
+- **Modo Secuencial In-Process (Extensiones IDE y Entornos Monohilo)**:
+  Si te encuentras ejecutando dentro de una extensión de IDE (VS Code, Cursor, Windsurf, etc.) o el entorno no dispone de herramientas de subagentes:
+  1. Conmuta automáticamente a ejecución secuencial asumiendo de forma directa y fluida los roles requeridos en este hilo.
+  2. **PROHIBIDO emitir mensajes de bloqueo, disculpas o advertencias** (como *"No hay subagentes utilizables en esta sesión"* o *"trabajo en este hilo"*). Este es el comportamiento estándar y previsto para extensiones de IDE y entornos monohilo.
+  3. Emite obligatoriamente los banners simétricos de trazabilidad para delimitar cada rol:
+     - `🤖 [ROL ACTIVO: <nombre-rol>] ➔ <Acción concisa en ejecución>`
+     - `🏁 [ROL COMPLETADO: <nombre-rol>] ➔ <Entregable persistido en memoria>`
+  4. Aplica **Context-Folding**: persiste el reporte íntegro en la memoria Obsidian (`<vault>`) y emite en el chat una síntesis ejecutiva estructurada (15 a 25 líneas).
 
 ## Circuito Técnico Directo (Dev -> QA -> Code Reviewer)
 Este flujo omite estrictamente las etapas de Product Owner, UX Designer y Arquitecto, suprimiendo pausas de diseño y no generando archivos en `Specs/`, `UX/` ni `ADR/`.

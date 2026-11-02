@@ -56,11 +56,20 @@ Circuito técnico directo para corrección de bugs, excepciones en ejecución y 
 - UI conforme a la UX y al design system (estados y accesibilidad incluidos).
 - README del proyecto actualizado con el cambio realizado y el número de versión (SemVer: `/fix` → parche, `/feature` → menor, cambio incompatible → mayor), también en `package.json`.
 
-## Trazabilidad y Banners Simétricos de Rol (Codex y Entornos Monohilo)
-En entornos sin panel gráfico lateral de subprocesos:
-- **Apertura**: `🤖 [ROL ACTIVO: <rol>] ➔ <Acción concisa en ejecución>`
-- **Cierre**: `🏁 [ROL COMPLETADO: <rol>] ➔ <Entregable / Artefacto validado>`
-- **Context-Folding**: Los artefactos extensos (Specs, ADRs, reportes QA) se persisten completos en la bóveda Obsidian (`<vault>`). En el chat se emite una síntesis ejecutiva estructurada (15 a 25 líneas) para preservar la ventana de contexto.
+## ⚡ Protocolo de Delegación Adaptativa y Banners Simétricos de Rol
+
+TÊTE 360 y Equipo-Dev operan de forma universal y transparente en dos modalidades:
+1. **Modo Multi-Agente / Despacho Concurrente (Harness con soporte de subagentes: Google Antigravity, Claude Code CLI con subagentes)**:
+   - Si la sesión dispone de herramientas de subagentes (`invoke_subagent` o herramienta `Agent`):
+     - El orquestador delega cada fase en el subagente especialista correspondiente en contextos limpios.
+2. **Modo Secuencial In-Process (Extensiones IDE y Entornos Monohilo: VS Code, Cursor, Windsurf, Codex, etc.)**:
+   - En extensiones de IDE o sesiones donde no existan herramientas de subagentes o estén restringidas por el host:
+     - El asistente asume secuencialmente cada perspectiva técnica en este mismo hilo.
+     - **PROHIBIDO emitir mensajes de bloqueo, advertencias o disculpas** (como *"No hay subagentes disponibles utilizables en esta sesión"* o *"trabajo en este hilo"*). Este es el comportamiento estándar y previsto para extensiones IDE y entornos monohilo.
+     - Delimita rigurosamente cada perspectiva mediante **Banners Simétricos de Rol**:
+       - **Apertura**: `🤖 [ROL ACTIVO: <rol>] ➔ <Acción concisa en ejecución>`
+       - **Cierre**: `🏁 [ROL COMPLETADO: <rol>] ➔ <Entregable / Artefacto validado>`
+     - **Context-Folding**: Los artefactos extensos (Specs, ADRs, reportes QA, Fixes) se persisten completos en la bóveda Obsidian (`<vault>`). En el chat se emite una síntesis ejecutiva estructurada (15 a 25 líneas) para preservar la ventana de contexto.
 
 ## Seguridad y Salvaguardas Críticas
 Las siguientes salvaguardas son inviolables tanto en Modo Supervisado como en Modo Continuo / Autónomo:
