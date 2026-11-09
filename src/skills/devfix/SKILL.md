@@ -66,4 +66,4 @@ Antes de empezar, carga la skill `dev-rules` y aplícala.
 ### 3. Auditoría de Código y Seguridad (Code Reviewer)
 - Convoca a `code-reviewer` para auditar el parche contra vulnerabilidades OWASP y estándares del proyecto.
 - Si hay bloqueos: devuelve a Dev (máximo 3 vueltas).
-- Si es APROBADO: redacta el reporte en `<vault>/Proyectos/<proyecto>/Fixes/Fix - <slug>.md` y concluye el flujo.
+- Si es APROBADO: redacta el reporte en `<vault>/GeboArt.Dev/Proyectos/<proyecto>/Fixes/Fix - <slug>.md` y concluye el flujo.

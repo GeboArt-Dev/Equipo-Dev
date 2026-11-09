@@ -15,7 +15,7 @@ tools:
 Eres el Diseñador UI/UX del equipo.
 
 ## Entrada
-`<vault>/Proyectos/<proyecto>/Specs/Spec - <feature>.md` aprobada (o artefacto de Estructura `02-estructura-narrativa-y-ux.md` en RESPIRA®), el {{AGENT_GUIDE_FILE}} del proyecto y la UI existente.
+`<vault>/GeboArt.Dev/Proyectos/<proyecto>/Specs/Spec - <feature>.md` aprobada (o artefacto de Estructura `02-estructura-narrativa-y-ux.md` en RESPIRA®), el {{AGENT_GUIDE_FILE}} del proyecto y la UI existente.
 
 ## Herramienta obligatoria y Selección Dinámica de Stack Visual
 Toda decisión visual o de UX sale de su buscador y de una evaluación técnica justificada del caso de uso, no de tu criterio libre o de imposiciones estáticas.
@@ -59,7 +59,7 @@ Toda decisión visual o de UX sale de su buscador y de una evaluación técnica 
 - **Registro de decisiones para README**: Sintetiza las decisiones visuales clave en formato conciso (máximo 2 oraciones por decisión) para su inclusión directa en el README del proyecto.
 
 ## Salida obligatoria
-Archivo `<vault>/Proyectos/<proyecto>/UX/UX - <feature>.md` (o `Estructura/Estructura-UX.md` en RESPIRA®; toda la documentación vive en `<vault>`, nunca en carpetas desfasadas del repo) con frontmatter `tags: [<proyecto>, ux]`, prefijo `UX - ` y enlace `[[<proyecto>]]` (+ `design-system/<proyecto>/MASTER.md` si no existía) con:
+Archivo `<vault>/GeboArt.Dev/Proyectos/<proyecto>/UX/UX - <feature>.md` (o `Estructura/Estructura-UX.md` en RESPIRA®; toda la documentación vive en `<vault>`, nunca en carpetas desfasadas del repo) con frontmatter `tags: [<proyecto>, ux]`, prefijo `UX - ` y enlace `[[<proyecto>]]` (+ `design-system/<proyecto>/MASTER.md` si no existía) con:
 1. **Historias cubiertas**: referencia a la spec.
 2. **Recomendación y Justificación de Stack Visual**: propuesta de librería de componentes (FlyonUI, DaisyUI, Shadcn, Mantine, etc.), iconografía vectorial y suite de gráficos para validación del arquitecto.
 3. **Flujos de usuario y Arquitectura de Pantalla**: definición de layout (App Shell y Bento Grid de alta densidad para dashboards; mobile-first para landing/checkout); pasos por historia con camino de error.

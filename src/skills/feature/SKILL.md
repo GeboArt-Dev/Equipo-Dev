@@ -35,7 +35,7 @@ Antes de empezar, carga la skill `dev-rules` y aplícala. {{SUBAGENT_DISPATCH_GU
 
 0. **Retomar antes de empezar** (siempre, antes de lanzar ningún subagente):
    - Al retomar (`/feature continuemos con...`), el flujo opera en **Modo Supervisado** por defecto, a menos que el usuario incluya explícitamente `--no-pause` o `--auto-approve`.
-   - Busca archivos de la feature por nombre, sin distinguir mayúsculas ni guiones (`checkin`, `check-in`, `check_in`), en el vault `<vault>/Proyectos/<proyecto>/` (subcarpetas `Specs/`, `UX/`, `ADR/` y `QA/`) o en `docs/specs/`, `docs/ux/`, `docs/adr/` y `docs/qa/`. Revisa también los cambios pendientes con `git status`.
+   - Busca archivos de la feature por nombre, sin distinguir mayúsculas ni guiones (`checkin`, `check-in`, `check_in`), en el vault `<vault>/GeboArt.Dev/Proyectos/<proyecto>/` (subcarpetas `Specs/`, `UX/`, `ADR/` y `QA/`) o en `docs/specs/`, `docs/ux/`, `docs/adr/` y `docs/qa/`. Revisa también los cambios pendientes con `git status`.
    - Si no hay nada: es una feature nueva, sigue en el paso 1.
    - Si hay archivos, determina el último paso completado:
      - Hay spec y nada más: falta la aprobación de la spec (en modo continuo se asume auto-aprobada salvo duda bloqueante; en modo supervisado se espera confirmación).
@@ -46,16 +46,16 @@ Antes de empezar, carga la skill `dev-rules` y aplícala. {{SUBAGENT_DISPATCH_GU
    - Si hay varias features con nombre parecido, pregunta cuál es. Nunca relances el `product-owner` sobre una spec existente salvo que el dueño pida cambiarla: en ese caso pásale la spec actual y los cambios pedidos.
 
 1. **Especificación**: lanza `product-owner` con la descripción neta.
-   - Salida: `<vault>/Proyectos/<proyecto>/Specs/Spec - <feature>.md`.
-   - **Modo Supervisado**: Muestra al dueño un resumen de `<vault>/Proyectos/<proyecto>/Specs/Spec - <feature>.md` (o `docs/specs/<feature>.md`) y las preguntas abiertas. **Detente y espera aprobación.** Si pide cambios, vuelve a lanzar `product-owner` con ellos.
+   - Salida: `<vault>/GeboArt.Dev/Proyectos/<proyecto>/Specs/Spec - <feature>.md`.
+   - **Modo Supervisado**: Muestra al dueño un resumen de `<vault>/GeboArt.Dev/Proyectos/<proyecto>/Specs/Spec - <feature>.md` (o `docs/specs/<feature>.md`) y las preguntas abiertas. **Detente y espera aprobación.** Si pide cambios, vuelve a lanzar `product-owner` con ellos.
    - **Modo Continuo**: Revisa las preguntas abiertas de la spec. Si existen dudas bloqueantes para el alcance de negocio, detén el flujo y solicita aclaración (`⏸ Esperando aclaración de alcance...`). Si no hay dudas o son decisiones técnicas no bloqueantes, adopta supuestos técnicos razonables más simples, documéntalos en la respuesta y en la spec, y avanza inmediatamente al paso 2 (o al paso 3 si no hay interfaz) sin detenerte.
 
 2. **Diseño UX** (solo si la feature tiene interfaz): lanza `ux-designer` con la ruta de la spec aprobada.
-   Usa los comandos de `ui-ux-pro-max` y produce `<vault>/Proyectos/<proyecto>/UX/UX - <feature>.md` (o `docs/ux/<feature>.md`) (+ `design-system/<proyecto>/MASTER.md` si no existía). Evalúa dinámicamente y propone el stack visual más conveniente (componentes, iconos, gráficos) y la arquitectura de layout (App Shell + Bento Grid para dashboards / analítica).
+   Usa los comandos de `ui-ux-pro-max` y produce `<vault>/GeboArt.Dev/Proyectos/<proyecto>/UX/UX - <feature>.md` (o `docs/ux/<feature>.md`) (+ `design-system/<proyecto>/MASTER.md` si no existía). Evalúa dinámicamente y propone el stack visual más conveniente (componentes, iconos, gráficos) y la arquitectura de layout (App Shell + Bento Grid para dashboards / analítica).
    Si deja preguntas abiertas: en modo supervisado muéstralas al dueño antes de seguir; en modo continuo, adopta supuestos técnicos razonables y documéntalos.
 
 3. **Diseño técnico**: lanza `architect` con la spec aprobada y, si existe, el diseño UX.
-   Salida: `<vault>/Proyectos/<proyecto>/ADR/ADR <NNN> - <feature>.md` (o `docs/adr/<NNN>-<feature>.md`). Formaliza el stack visual, layout shell y autoriza expresamente las dependencias de interfaz y gráficos.
+   Salida: `<vault>/GeboArt.Dev/Proyectos/<proyecto>/ADR/ADR <NNN> - <feature>.md` (o `docs/adr/<NNN>-<feature>.md`). Formaliza el stack visual, layout shell y autoriza expresamente las dependencias de interfaz y gráficos.
    - **Modo Supervisado**: Muestra al dueño el resumen UX (flujos, pantallas, design system) junto a la decisión, los contratos y el plan de tareas. **Detente y espera aprobación** (cubre UX + ADR). Si pide cambios de UX, vuelve a lanzar `ux-designer` y luego `architect`.
    - **Modo Continuo**: Omite la pausa (UX y ADR auto-aprobados) y avanza inmediatamente al paso 4 (implementación). Documenta cualquier supuesto técnico adoptado en el ADR y en el mensaje.
 
@@ -64,7 +64,7 @@ Antes de empezar, carga la skill `dev-rules` y aplícala. {{SUBAGENT_DISPATCH_GU
    Si las tareas no comparten archivos, pueden ir en paralelo; si dependen entre sí, backend primero.
 
 5. **QA**: lanza `qa-engineer`.
-   Salida: `<vault>/Proyectos/<proyecto>/QA/QA - <feature>.md` (o `docs/qa/<feature>.md`).
+   Salida: `<vault>/GeboArt.Dev/Proyectos/<proyecto>/QA/QA - <feature>.md` (o `docs/qa/<feature>.md`).
    Valida tests pasando y el **Visual Definition of Done** (verificación de layout estructurado, iconografía y ausencia de tablas/texto crudo sin estilo).
    Si el veredicto es RECHAZADO, devuelve los bugs al dev correspondiente y repite QA (máximo 3 vueltas; luego escala al dueño).
 

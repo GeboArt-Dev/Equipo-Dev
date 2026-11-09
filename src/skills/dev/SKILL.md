@@ -19,7 +19,7 @@ Al arrancar, emite obligatoriamente en la cabecera:
 ║ 🏢 EQUIPO: Equipo-Dev (Ingeniería de Software)                       ║
 ║ 👤 ROL LÍDER: product-owner                                          ║
 ║ 👥 SECUENCIA: PO ➔ UX ➔ Architect ➔ Dev ➔ QA ➔ Reviewer             ║
-║ 📁 MEMORIA: Bóveda Obsidian (<vault>/Proyectos/<proyecto>/)          ║
+║ 📁 MEMORIA: Bóveda Obsidian (<vault>/GeboArt.Dev/Proyectos/<proyecto>/)          ║
 ║ ⏸️ GOBERNANZA: Requiere aprobación del Dueño en Spec y ADR           ║
 ╚══════════════════════════════════════════════════════════════════════╝
 ```
@@ -56,20 +56,20 @@ Antes de empezar, carga la skill `dev-rules` y aplícala.
 
 0. **Retomar antes de empezar** (siempre, antes de lanzar ningún rol):
    - Al retomar (`/dev continuemos con...`), el flujo opera en **Modo Supervisado** por defecto, a menos que el usuario incluya explícitamente `--no-pause` o `--auto-approve`.
-   - Busca archivos por nombre en `<vault>/Proyectos/<proyecto>/` (subcarpetas `Specs/`, `UX/`, `ADR/` y `QA/`). Revisa también los cambios pendientes con `git status`.
+   - Busca archivos por nombre en `<vault>/GeboArt.Dev/Proyectos/<proyecto>/` (subcarpetas `Specs/`, `UX/`, `ADR/` y `QA/`). Revisa también los cambios pendientes con `git status`.
    - Si no hay nada: es una feature nueva, sigue en el paso 1.
    - Si hay archivos, determina el último paso completado y continúa desde allí con aprobación del dueño.
 
 1. **Especificación**: ejecuta rol `product-owner` con la descripción neta.
-   - Salida: `<vault>/Proyectos/<proyecto>/Specs/Spec - <feature>.md`.
+   - Salida: `<vault>/GeboArt.Dev/Proyectos/<proyecto>/Specs/Spec - <feature>.md`.
    - **Modo Supervisado**: Muestra resumen y preguntas abiertas. **Detente y espera aprobación.**
    - **Modo Continuo**: Adopta supuestos técnicos razonables y avanza.
 
 2. **Diseño UX** (solo si la feature tiene interfaz): ejecuta rol `ux-designer` con la spec aprobada.
-   - Salida: `<vault>/Proyectos/<proyecto>/UX/UX - <feature>.md` + `design-system/<proyecto>/MASTER.md`. Evalúa dinámicamente y propone el stack visual más conveniente (componentes, iconos, gráficos) y arquitectura de pantalla (App Shell + Bento Grid para dashboards / analítica).
+   - Salida: `<vault>/GeboArt.Dev/Proyectos/<proyecto>/UX/UX - <feature>.md` + `design-system/<proyecto>/MASTER.md`. Evalúa dinámicamente y propone el stack visual más conveniente (componentes, iconos, gráficos) y arquitectura de pantalla (App Shell + Bento Grid para dashboards / analítica).
 
 3. **Diseño técnico**: ejecuta rol `architect` con la spec aprobada y UX.
-   - Salida: `<vault>/Proyectos/<proyecto>/ADR/ADR <NNN> - <feature>.md`. Formaliza el stack visual, layout shell y autoriza explícitamente las dependencias de UI/gráficos.
+   - Salida: `<vault>/GeboArt.Dev/Proyectos/<proyecto>/ADR/ADR <NNN> - <feature>.md`. Formaliza el stack visual, layout shell y autoriza explícitamente las dependencias de UI/gráficos.
    - **Modo Supervisado**: **Detente y espera aprobación** (cubre UX + ADR).
    - **Modo Continuo**: Omite la pausa y avanza a implementación.
 
@@ -77,6 +77,6 @@ Antes de empezar, carga la skill `dev-rules` y aplícala.
    - Escriben el código de producción y sus tests unitarios aplicando Bento Grid, componentes ricos (KPIs con badges, micro-gráficos) y accesibilidad.
 
 5. **Validación QA**: ejecuta rol `qa-engineer` con la spec, el ADR y los cambios implementados.
-   - Valida 100% tests pasando, cobertura funcional y **Visual Definition of Done** (verificación de layout estructurado, iconografía y ausencia de tablas/texto crudo sin estilo). Salida: `<vault>/Proyectos/<proyecto>/QA/QA - <feature>.md`.
+   - Valida 100% tests pasando, cobertura funcional y **Visual Definition of Done** (verificación de layout estructurado, iconografía y ausencia de tablas/texto crudo sin estilo). Salida: `<vault>/GeboArt.Dev/Proyectos/<proyecto>/QA/QA - <feature>.md`.
 
 6. **Revisión de código**: ejecuta rol `code-reviewer` para auditar calidad, seguridad, cumplimiento estricto del ADR y ausencia de interfaces sin maquetación profesional.

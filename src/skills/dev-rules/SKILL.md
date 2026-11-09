@@ -14,17 +14,17 @@ description: Reglas del equipo de desarrollo (flujo PO → UX → arquitecto →
   - Regla de supuestos técnicos: Ante dudas o preguntas abiertas no bloqueantes para el negocio, el subagente u orquestador adopta supuestos técnicos razonables y los documenta explícitamente en el artefacto (Spec o ADR) y en la respuesta. Si una ambigüedad es estrictamente bloqueante para el alcance de negocio, el flujo se detiene para pedir aclaración al dueño.
 
 ## Flujo obligatorio de Ingeniería de Software (`/dev`)
-1. `product-owner` → `<vault>/Proyectos/<proyecto>/Specs/Spec - <feature>.md`
+1. `product-owner` → `<vault>/GeboArt.Dev/Proyectos/<proyecto>/Specs/Spec - <feature>.md`
 2. ⏸ Pausa: aprobación del dueño (omitida en modo continuo salvo duda bloqueante de negocio).
-3. `ux-designer` (si hay interfaz) → `<vault>/Proyectos/<proyecto>/UX/UX - <feature>.md` + `design-system/<proyecto>/MASTER.md`, usando `ui-ux-pro-max`.
-4. `architect` → `<vault>/Proyectos/<proyecto>/ADR/ADR <NNN> - <feature>.md` (lee UX si existe).
+3. `ux-designer` (si hay interfaz) → `<vault>/GeboArt.Dev/Proyectos/<proyecto>/UX/UX - <feature>.md` + `design-system/<proyecto>/MASTER.md`, usando `ui-ux-pro-max`.
+4. `architect` → `<vault>/GeboArt.Dev/Proyectos/<proyecto>/ADR/ADR <NNN> - <feature>.md` (lee UX si existe).
 5. ⏸ Pausa: aprobación del dueño (UX + ADR; omitida en modo continuo).
 6. `backend-dev` y/o `frontend-dev` → código + tests unitarios. Frontend sigue UX y el design system.
-7. `qa-engineer` → `<vault>/Proyectos/<proyecto>/QA/QA - <feature>.md` (si RECHAZADO, vuelve al paso 6, máximo 3 vueltas).
+7. `qa-engineer` → `<vault>/GeboArt.Dev/Proyectos/<proyecto>/QA/QA - <feature>.md` (si RECHAZADO, vuelve al paso 6, máximo 3 vueltas).
 8. `code-reviewer` → veredicto. Si hay CAMBIOS REQUERIDOS, volver al paso 6.
 
 Ningún rol empieza sin el archivo de salida del rol anterior.
-Una tarea ya empezada se retoma mediante `/dev continuemos con...` desde el último paso completado según los archivos del vault en `<vault>/Proyectos/<proyecto>/`; nunca se rehace un paso existente sin que el dueño lo pida. El comando para retomar opera en modo supervisado por defecto a menos que se incluya `--no-pause` o `--auto-approve`.
+Una tarea ya empezada se retoma mediante `/dev continuemos con...` desde el último paso completado según los archivos del vault en `<vault>/GeboArt.Dev/Proyectos/<proyecto>/`; nunca se rehace un paso existente sin que el dueño lo pida. El comando para retomar opera en modo supervisado por defecto a menos que se incluya `--no-pause` o `--auto-approve`.
 Para cambios pequeños (bug simple, ajuste menor) se canaliza directamente con `/devfix`.
 Features sin interfaz (solo backend) omiten `ux-designer`.
 
@@ -36,7 +36,7 @@ Circuito técnico directo para corrección de bugs, excepciones en ejecución y 
    - Parche de código mínimo indispensable. Si la solución demanda rediseño visual, esquemas arquitectónicos nuevos o endpoints no existentes, se detiene y se canaliza mediante `/dev`.
 2. **QA Engineer (`qa-engineer`)**: Ejecuta la suite completa de pruebas. Si rechaza, reintento a Dev (máximo 3 reintentos antes de escalar al dueño).
 3. **Code Reviewer (`code-reviewer`)**: Auditoría de seguridad OWASP y calidad sin hallazgos bloqueantes (máximo 3 vueltas).
-4. **Artefacto de reporte liviano**: Registro sintético en `<vault>/Proyectos/<proyecto>/Fixes/Fix - <slug>.md` resumiendo RCA, parche, test de regresión y verificación de no-regresión.
+4. **Artefacto de reporte liviano**: Registro sintético en `<vault>/GeboArt.Dev/Proyectos/<proyecto>/Fixes/Fix - <slug>.md` resumiendo RCA, parche, test de regresión y verificación de no-regresión.
 
 ## Memoria (Obsidian): fuente de verdad
 - `<vault>` = Resuelto dinámicamente mediante `--vault` > `$OBSIDIAN_VAULT_PATH` > `.tete360-init.json` > ubicación canónica del OS. Toda la documentación de todos los proyectos (specs, UX, ADR, QA, fixes, decisiones y aprendizajes) vive ahí, **nunca en el repo**.

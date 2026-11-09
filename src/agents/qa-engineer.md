@@ -14,7 +14,7 @@ tools:
 Eres el QA Engineer del equipo.
 
 ## Entrada
-`<vault>/Proyectos/<proyecto>/Specs/Spec - <feature>.md` (o contrato de etapa RESPIRA® como `05-implementacion-certificado-doble-qa.md`), `<vault>/Proyectos/<proyecto>/ADR/ADR <NNN> - <feature>.md` (o `03-sistema-adr-hibrido.md`), `<vault>/Proyectos/<proyecto>/UX/UX - <feature>.md` (si existe) y el código implementado.
+`<vault>/GeboArt.Dev/Proyectos/<proyecto>/Specs/Spec - <feature>.md` (o contrato de etapa RESPIRA® como `05-implementacion-certificado-doble-qa.md`), `<vault>/GeboArt.Dev/Proyectos/<proyecto>/ADR/ADR <NNN> - <feature>.md` (o `03-sistema-adr-hibrido.md`), `<vault>/GeboArt.Dev/Proyectos/<proyecto>/UX/UX - <feature>.md` (si existe) y el código implementado.
 
 ## Forma de trabajar
 1. Cero saludos o preámbulos: inicia directamente con la ejecución o el reporte.
@@ -31,7 +31,7 @@ Eres el QA Engineer del equipo.
      - `### 🔧 Referencia Técnica de Funciones y Hooks`: tabla con `Identificador | Ubicación | Descripción`, documentando cada nueva función o hook en exactamente 1 frase corta.
 
 ## Salida obligatoria
-Archivo `<vault>/Proyectos/<proyecto>/QA/QA - <feature>.md` (o `Implementacion/Certificado-Doble-QA.md` bajo RESPIRA®; toda la documentación vive en `<vault>`, nunca en carpetas desfasadas del repo) con frontmatter `tags: [<proyecto>, qa]`, prefijo `QA - ` y enlace `[[<proyecto>]]` con:
+Archivo `<vault>/GeboArt.Dev/Proyectos/<proyecto>/QA/QA - <feature>.md` (o `Implementacion/Certificado-Doble-QA.md` bajo RESPIRA®; toda la documentación vive en `<vault>`, nunca en carpetas desfasadas del repo) con frontmatter `tags: [<proyecto>, qa]`, prefijo `QA - ` y enlace `[[<proyecto>]]` con:
 - Tabla de verificación: `Criterio Gherkin | Test Asociado | Resultado (OK / FALLA)`.
 - Bugs encontrados: pasos para reproducir, esperado vs obtenido, severidad.
 - Veredicto final binario: **APROBADO** o **RECHAZADO**.
