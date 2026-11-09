@@ -51,22 +51,25 @@ Antes de empezar, carga la skill `dev-rules` y aplícala. {{SUBAGENT_DISPATCH_GU
    - **Modo Continuo**: Revisa las preguntas abiertas de la spec. Si existen dudas bloqueantes para el alcance de negocio, detén el flujo y solicita aclaración (`⏸ Esperando aclaración de alcance...`). Si no hay dudas o son decisiones técnicas no bloqueantes, adopta supuestos técnicos razonables más simples, documéntalos en la respuesta y en la spec, y avanza inmediatamente al paso 2 (o al paso 3 si no hay interfaz) sin detenerte.
 
 2. **Diseño UX** (solo si la feature tiene interfaz): lanza `ux-designer` con la ruta de la spec aprobada.
-   Usa los comandos de `ui-ux-pro-max` y produce `<vault>/Proyectos/<proyecto>/UX/UX - <feature>.md` (o `docs/ux/<feature>.md`) (+ `design-system/<proyecto>/MASTER.md` si no existía).
+   Usa los comandos de `ui-ux-pro-max` y produce `<vault>/Proyectos/<proyecto>/UX/UX - <feature>.md` (o `docs/ux/<feature>.md`) (+ `design-system/<proyecto>/MASTER.md` si no existía). Evalúa dinámicamente y propone el stack visual más conveniente (componentes, iconos, gráficos) y la arquitectura de layout (App Shell + Bento Grid para dashboards / analítica).
    Si deja preguntas abiertas: en modo supervisado muéstralas al dueño antes de seguir; en modo continuo, adopta supuestos técnicos razonables y documéntalos.
 
 3. **Diseño técnico**: lanza `architect` con la spec aprobada y, si existe, el diseño UX.
-   Salida: `<vault>/Proyectos/<proyecto>/ADR/ADR <NNN> - <feature>.md` (o `docs/adr/<NNN>-<feature>.md`).
+   Salida: `<vault>/Proyectos/<proyecto>/ADR/ADR <NNN> - <feature>.md` (o `docs/adr/<NNN>-<feature>.md`). Formaliza el stack visual, layout shell y autoriza expresamente las dependencias de interfaz y gráficos.
    - **Modo Supervisado**: Muestra al dueño el resumen UX (flujos, pantallas, design system) junto a la decisión, los contratos y el plan de tareas. **Detente y espera aprobación** (cubre UX + ADR). Si pide cambios de UX, vuelve a lanzar `ux-designer` y luego `architect`.
    - **Modo Continuo**: Omite la pausa (UX y ADR auto-aprobados) y avanza inmediatamente al paso 4 (implementación). Documenta cualquier supuesto técnico adoptado en el ADR y en el mensaje.
 
 4. **Implementación**: lanza `backend-dev` y/o `frontend-dev` según el plan del ADR. `frontend-dev` recibe también el diseño UX.
+   Implementan el código y sus tests unitarios aplicando Bento Grid, componentes ricos (tarjetas de KPI con badges, micro-gráficos) y accesibilidad.
    Si las tareas no comparten archivos, pueden ir en paralelo; si dependen entre sí, backend primero.
 
 5. **QA**: lanza `qa-engineer`.
    Salida: `<vault>/Proyectos/<proyecto>/QA/QA - <feature>.md` (o `docs/qa/<feature>.md`).
+   Valida tests pasando y el **Visual Definition of Done** (verificación de layout estructurado, iconografía y ausencia de tablas/texto crudo sin estilo).
    Si el veredicto es RECHAZADO, devuelve los bugs al dev correspondiente y repite QA (máximo 3 vueltas; luego escala al dueño).
 
 6. **Revisión**: lanza `code-reviewer`.
+   Audita calidad, seguridad, cumplimiento estricto del ADR y ausencia de interfaces sin maquetación profesional.
    Si hay hallazgos Bloqueantes, devuelve al dev y repite la revisión (máximo 3 vueltas; luego escala al dueño).
 
 7. **Cierre y Definición de Terminado (DoD)**:

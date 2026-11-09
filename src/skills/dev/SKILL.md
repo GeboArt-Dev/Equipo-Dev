@@ -66,17 +66,17 @@ Antes de empezar, carga la skill `dev-rules` y aplícala.
    - **Modo Continuo**: Adopta supuestos técnicos razonables y avanza.
 
 2. **Diseño UX** (solo si la feature tiene interfaz): ejecuta rol `ux-designer` con la spec aprobada.
-   - Salida: `<vault>/Proyectos/<proyecto>/UX/UX - <feature>.md` + `design-system/<proyecto>/MASTER.md`.
+   - Salida: `<vault>/Proyectos/<proyecto>/UX/UX - <feature>.md` + `design-system/<proyecto>/MASTER.md`. Evalúa dinámicamente y propone el stack visual más conveniente (componentes, iconos, gráficos) y arquitectura de pantalla (App Shell + Bento Grid para dashboards / analítica).
 
 3. **Diseño técnico**: ejecuta rol `architect` con la spec aprobada y UX.
-   - Salida: `<vault>/Proyectos/<proyecto>/ADR/ADR <NNN> - <feature>.md`.
+   - Salida: `<vault>/Proyectos/<proyecto>/ADR/ADR <NNN> - <feature>.md`. Formaliza el stack visual, layout shell y autoriza explícitamente las dependencias de UI/gráficos.
    - **Modo Supervisado**: **Detente y espera aprobación** (cubre UX + ADR).
    - **Modo Continuo**: Omite la pausa y avanza a implementación.
 
 4. **Implementación**: ejecuta roles `backend-dev` y/o `frontend-dev` con las tareas del ADR y el diseño UX.
-   - Escriben el código de producción y sus tests unitarios.
+   - Escriben el código de producción y sus tests unitarios aplicando Bento Grid, componentes ricos (KPIs con badges, micro-gráficos) y accesibilidad.
 
 5. **Validación QA**: ejecuta rol `qa-engineer` con la spec, el ADR y los cambios implementados.
-   - Valida 100% tests pasando y cobertura. Salida: `<vault>/Proyectos/<proyecto>/QA/QA - <feature>.md`.
+   - Valida 100% tests pasando, cobertura funcional y **Visual Definition of Done** (verificación de layout estructurado, iconografía y ausencia de tablas/texto crudo sin estilo). Salida: `<vault>/Proyectos/<proyecto>/QA/QA - <feature>.md`.
 
-6. **Revisión de código**: ejecuta rol `code-reviewer` para auditar calidad, seguridad y cumplimiento del ADR.
+6. **Revisión de código**: ejecuta rol `code-reviewer` para auditar calidad, seguridad, cumplimiento estricto del ADR y ausencia de interfaces sin maquetación profesional.

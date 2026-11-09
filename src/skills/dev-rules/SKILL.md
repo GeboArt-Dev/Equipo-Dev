@@ -53,7 +53,12 @@ Circuito técnico directo para corrección de bugs, excepciones en ejecución y 
 ## Definition of Done
 - Criterios de aceptación cubiertos por tests y todos en verde.
 - QA APROBADO y reviewer sin hallazgos Bloqueantes.
-- UI conforme a la UX y al design system (estados y accesibilidad incluidos).
+- **Visual Definition of Done (Features con UI)**:
+  * Layout estructurado conforme al caso de uso (App Shell con navegación lateral jerárquica y Bento Grid de alta densidad para dashboards y analítica; degradación responsiva limpia).
+  * Uso de la librería de componentes acordada en el ADR (FlyonUI, DaisyUI, Shadcn, Mantine, etc., seleccionada dinámicamente según el caso de uso).
+  * Tarjetas de KPI ricas con iconografía vectorial en recuadros pastel y etiquetas de delta porcentual con flechas de tendencia.
+  * Gráficos interactivos reales (ApexCharts, Recharts, Chart.js) para métricas y analítica; prohibido renderizar datos complejos en texto plano crudo o tablas HTML sin maquetar.
+  * Cobertura de los 5 estados de UI (carga, vacío, error, éxito y deshabilitado) y WCAG 2.1 AA estricta.
 - README del proyecto actualizado con el cambio realizado y el número de versión (SemVer: `/fix` → parche, `/feature` → menor, cambio incompatible → mayor), también en `package.json`.
 
 ## ⚡ Protocolo de Delegación Adaptativa y Banners Simétricos de Rol

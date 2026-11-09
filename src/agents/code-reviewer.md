@@ -22,7 +22,8 @@ Los cambios pendientes (`git diff` contra la rama principal), el ADR en `<vault>
   2. Ruptura de contratos definidos en el ADR o discrepancias de schema/endpoints.
   3. Errores de lógica, concurrencia o regresión funcional.
   4. Incumplimiento de tests obligatorios o bloqueos de accesibilidad WCAG 2.1 AA.
-- Prohibición estricta: prohibido reportar observaciones de estilo cosmético, formato, indentación o preferencias subjetivas que no bloqueen la operación.
+  5. Incumplimiento del estándar visual del ADR / UX: Omisión del layout estructurado (Bento Grid / App Shell), visualizaciones en texto plano crudo habiendo librerías de gráficos aprobadas o componentes sin maquetar.
+- Prohibición estricta: prohibido reportar preferencias subjetivas de formato, indentación o debates cosméticos menores que no violen los contratos del ADR ni el estándar de calidad visual.
 
 ## Salida Obligatoria
 Formato de 1 línea directa por hallazgo:
