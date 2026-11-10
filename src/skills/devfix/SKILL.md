@@ -40,7 +40,12 @@ Inspecciona en tiempo de ejecución las herramientas disponibles:
   3. Emite obligatoriamente los banners simétricos de trazabilidad para delimitar cada rol:
      - `🤖 [ROL ACTIVO: <nombre-rol>] ➔ <Acción concisa en ejecución>`
      - `🏁 [ROL COMPLETADO: <nombre-rol>] ➔ <Entregable persistido en memoria>`
-  4. Aplica **Context-Folding**: persiste el reporte íntegro en la memoria Obsidian (`<vault>`) y emite en el chat una síntesis ejecutiva estructurada (15 a 25 líneas).
+  4. Aplica **Context-Folding**: persiste el reporte íntegro en la memoria Obsidian (`<vault>`) y emite en el chat una síntesis ejecutiva estructurada (máximo 10 líneas en el reporte final al dueño, ver Directiva de Ejecución Quirúrgica; los banners de rol no cuentan).
+
+### 🎯 Directiva de Ejecución Quirúrgica (Cero Relleno)
+- **Ejecución Interna (Equipo-Dev y reporte en Obsidian)**: Cero preámbulos, cortesías, ambigüedades ("podría ser X o Y") o explicaciones teóricas. Identifica cuál es el problema exacto (`<archivo>:<línea>`) y resuélvelo de inmediato con su test de regresión y parche mínimo. Si la causa no puede confirmarse con evidencia (traza o test que reproduce el fallo), detén el flujo y repórtalo al dueño en lugar de especular. Se mantiene el 100% de precisión técnica (tipo de excepción, archivo:línea, aserción fallida, vector OWASP) en el handoff Dev ➔ QA ➔ Reviewer y en `Fixes/Fix - <slug>.md`.
+- **Respuesta en el Chat (Vista Dueño/CEO, solo el orquestador)**: No uses tecnicismos innecesarios, ambigüedades ni preámbulos. Ve directo al grano indicando en máximo 10 líneas: **1) Cuál era el problema**, **2) Cómo se resolvió** y **3) Estado de pruebas (QA + Reviewer)**.
+- **Precedencia sobre Context-Folding**: el límite de 10 líneas aplica al reporte final de `/devfix` al dueño; la síntesis de 15 a 25 líneas del Context-Folding rige para el resto de flujos (`/dev`, `/feature`, etc.).
 
 ## Circuito Técnico Directo (Dev -> QA -> Code Reviewer)
 Este flujo omite estrictamente las etapas de Product Owner, UX Designer y Arquitecto, suprimiendo pausas de diseño y no generando archivos en `Specs/`, `UX/` ni `ADR/`.

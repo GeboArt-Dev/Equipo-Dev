@@ -38,6 +38,11 @@ Circuito técnico directo para corrección de bugs, excepciones en ejecución y 
 3. **Code Reviewer (`code-reviewer`)**: Auditoría de seguridad OWASP y calidad sin hallazgos bloqueantes (máximo 3 vueltas).
 4. **Artefacto de reporte liviano**: Registro sintético en `<vault>/GeboArt.Dev/Proyectos/<proyecto>/Fixes/Fix - <slug>.md` resumiendo RCA, parche, test de regresión y verificación de no-regresión.
 
+### 🎯 Directiva de Ejecución Quirúrgica (Cero Relleno)
+- **Ejecución Interna (Equipo-Dev y reporte en Obsidian)**: Cero preámbulos, cortesías, ambigüedades ("podría ser X o Y") o explicaciones teóricas. Identifica cuál es el problema exacto (`<archivo>:<línea>`) y resuélvelo de inmediato con su test de regresión y parche mínimo. Si la causa no puede confirmarse con evidencia (traza o test que reproduce el fallo), detén el flujo y repórtalo al dueño en lugar de especular. Se mantiene el 100% de precisión técnica (tipo de excepción, archivo:línea, aserción fallida, vector OWASP) en el handoff Dev ➔ QA ➔ Reviewer y en `Fixes/Fix - <slug>.md`.
+- **Respuesta en el Chat (Vista Dueño/CEO, solo el orquestador)**: No uses tecnicismos innecesarios, ambigüedades ni preámbulos. Ve directo al grano indicando en máximo 10 líneas: **1) Cuál era el problema**, **2) Cómo se resolvió** y **3) Estado de pruebas (QA + Reviewer)**.
+- **Precedencia sobre Context-Folding**: el límite de 10 líneas aplica al reporte final de `/devfix` al dueño; la síntesis de 15 a 25 líneas del Context-Folding rige para el resto de flujos (`/dev`, `/feature`, etc.).
+
 ## Memoria (Obsidian): fuente de verdad
 - `<vault>` = Resuelto dinámicamente mediante `--vault` > `$OBSIDIAN_VAULT_PATH` > `.tete360-init.json` > ubicación canónica del OS. Toda la documentación de todos los proyectos (specs, UX, ADR, QA, fixes, decisiones y aprendizajes) vive ahí, **nunca en el repo**.
 - `<proyecto>`: el valor de `Proyecto en memoria:` en el {{AGENT_GUIDE_FILE}} del proyecto (o `CLAUDE.md`); si no existe, el nombre de la carpeta del proyecto (crear `Proyectos/<proyecto>/` + nota índice, enlazarla desde `Proyectos` y añadir la línea al {{AGENT_GUIDE_FILE}} del proyecto avisando al dueño).
@@ -74,7 +79,7 @@ TÊTE 360 y Equipo-Dev operan de forma universal y transparente en dos modalidad
      - Delimita rigurosamente cada perspectiva mediante **Banners Simétricos de Rol**:
        - **Apertura**: `🤖 [ROL ACTIVO: <rol>] ➔ <Acción concisa en ejecución>`
        - **Cierre**: `🏁 [ROL COMPLETADO: <rol>] ➔ <Entregable / Artefacto validado>`
-     - **Context-Folding**: Los artefactos extensos (Specs, ADRs, reportes QA, Fixes) se persisten completos en la bóveda Obsidian (`<vault>`). En el chat se emite una síntesis ejecutiva estructurada (15 a 25 líneas) para preservar la ventana de contexto.
+     - **Context-Folding**: Los artefactos extensos (Specs, ADRs, reportes QA; en `/devfix` el reporte final al dueño se limita a 10 líneas, ver Directiva de Ejecución Quirúrgica) se persisten completos en la bóveda Obsidian (`<vault>`). En el chat se emite una síntesis ejecutiva estructurada (15 a 25 líneas) para preservar la ventana de contexto.
 
 ## Seguridad y Salvaguardas Críticas
 Las siguientes salvaguardas son inviolables tanto en Modo Supervisado como en Modo Continuo / Autónomo:
